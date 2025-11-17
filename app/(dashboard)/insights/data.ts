@@ -34,21 +34,16 @@ export const PROVIDERS = {
  */
 export const AVAILABLE_MODELS = [
   // OpenAI Models (5)
+  { id: "gpt-5.1", name: "GPT-5.1 ", provider: "openai" as const },
+  { id: "gpt-5.1-chat", name: "GPT-5.1 Chat", provider: "openai" as const },
   { id: "gpt-5", name: "GPT-5", provider: "openai" as const },
   { id: "gpt-5-mini", name: "GPT-5 Mini", provider: "openai" as const },
   { id: "gpt-5-nano", name: "GPT-5 Nano", provider: "openai" as const },
-  { id: "gpt-4.1", name: "GPT-4.1", provider: "openai" as const },
-  { id: "gpt-4o", name: "GPT-4o (Omni)", provider: "openai" as const },
 
   // Anthropic Models (5)
   {
-    id: "claude-3.7-sonnet",
-    name: "Claude 3.7 Sonnet",
-    provider: "anthropic" as const,
-  },
-  {
-    id: "claude-4-opus",
-    name: "Claude 4 Opus",
+    id: "claude-4.5-haiku",
+    name: "Claude 4.5 Haiku",
     provider: "anthropic" as const,
   },
   {
@@ -57,13 +52,8 @@ export const AVAILABLE_MODELS = [
     provider: "anthropic" as const,
   },
   {
-    id: "claude-4.5-haiku",
-    name: "Claude 4.5 Haiku",
-    provider: "anthropic" as const,
-  },
-  {
-    id: "claude-3.5-sonnet-20240620",
-    name: "Claude 3.5 Sonnet (2024-06-20)",
+    id: "claude-opus-4.1",
+    name: "Claude 4.1 Opus",
     provider: "anthropic" as const,
   },
 
@@ -80,10 +70,7 @@ export const AVAILABLE_MODELS = [
   },
 ] as const;
 
-/**
- * Modelo padrão
- */
-export const DEFAULT_MODEL = "gpt-5";
+export const DEFAULT_MODEL = "gpt-5.1";
 export const DEFAULT_PROVIDER = "openai";
 
 /**

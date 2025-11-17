@@ -654,7 +654,7 @@ export default async function Page() {
                 <ul className="space-y-3 text-sm text-muted-foreground">
                   <li>
                     <Link
-                      href="https://github.com/felipegcoutinho/opensheets"
+                      href="https://github.com/felipegcoutinho/opensheets-app"
                       target="_blank"
                       className="hover:text-foreground transition-colors flex items-center gap-2"
                     >
@@ -664,7 +664,7 @@ export default async function Page() {
                   </li>
                   <li>
                     <Link
-                      href="https://github.com/felipegcoutinho/opensheets#readme"
+                      href="https://github.com/felipegcoutinho/opensheets-app#readme"
                       target="_blank"
                       className="hover:text-foreground transition-colors"
                     >
@@ -673,7 +673,7 @@ export default async function Page() {
                   </li>
                   <li>
                     <Link
-                      href="https://github.com/felipegcoutinho/opensheets/issues"
+                      href="https://github.com/felipegcoutinho/opensheets-app/issues"
                       target="_blank"
                       className="hover:text-foreground transition-colors"
                     >

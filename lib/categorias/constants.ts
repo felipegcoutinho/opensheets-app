@@ -1,9 +1,3 @@
-/**
- * Category constants and types
- *
- * Consolidated from /lib/categories.ts
- */
-
 export const CATEGORY_TYPES = ["receita", "despesa"] as const;
 
 export type CategoryType = (typeof CATEGORY_TYPES)[number];

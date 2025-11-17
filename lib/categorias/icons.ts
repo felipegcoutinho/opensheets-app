@@ -39,6 +39,7 @@ export const CATEGORY_ICON_OPTIONS: CategoryIconOption[] = [
   { label: "Café", value: "RiCupLine" },
   { label: "Bebida", value: "RiDrinksFill" },
   { label: "Pizza", value: "RiCake3Line" },
+  { label: "Cerveja", value: "RiBeerLine" },
 
   // Transporte
   { label: "Ônibus", value: "RiBusLine" },
