@@ -59,7 +59,9 @@ export function CardFormFields({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="card-name">Nome do cartão</Label>
+        <Label htmlFor="card-name" required>
+          Nome do cartão
+        </Label>
         <Input
           id="card-name"
           value={values.name}

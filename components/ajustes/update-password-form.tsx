@@ -100,8 +100,8 @@ export function UpdatePasswordForm({ authProvider }: UpdatePasswordFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Senha atual */}
       <div className="space-y-2">
-        <Label htmlFor="currentPassword">
-          Senha atual <span className="text-destructive">*</span>
+        <Label htmlFor="currentPassword" required>
+          Senha atual
         </Label>
         <div className="relative">
           <Input
@@ -135,8 +135,8 @@ export function UpdatePasswordForm({ authProvider }: UpdatePasswordFormProps) {
 
       {/* Nova senha */}
       <div className="space-y-2">
-        <Label htmlFor="newPassword">
-          Nova senha <span className="text-destructive">*</span>
+        <Label htmlFor="newPassword" required>
+          Nova senha
         </Label>
         <div className="relative">
           <Input
@@ -205,8 +205,8 @@ export function UpdatePasswordForm({ authProvider }: UpdatePasswordFormProps) {
 
       {/* Confirmar nova senha */}
       <div className="space-y-2">
-        <Label htmlFor="confirmPassword">
-          Confirmar nova senha <span className="text-destructive">*</span>
+        <Label htmlFor="confirmPassword" required>
+          Confirmar nova senha
         </Label>
         <div className="relative">
           <Input

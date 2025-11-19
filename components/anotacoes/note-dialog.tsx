@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useControlledState } from "@/hooks/use-controlled-state";
@@ -295,12 +296,9 @@ export function NoteDialog({
 
           {/* Título */}
           <div className="space-y-2">
-            <label
-              htmlFor="note-title"
-              className="text-sm font-medium text-foreground"
-            >
+            <Label htmlFor="note-title" required>
               Título
-            </label>
+            </Label>
             <Input
               id="note-title"
               ref={titleRef}
@@ -327,12 +325,9 @@ export function NoteDialog({
           {/* Conteúdo - apenas para Notas */}
           {isNote && (
             <div className="space-y-2">
-              <label
-                htmlFor="note-description"
-                className="text-sm font-medium text-foreground"
-              >
+              <Label htmlFor="note-description" required>
                 Conteúdo
-              </label>
+              </Label>
               <Textarea
                 id="note-description"
                 className="field-sizing-fixed"

@@ -107,7 +107,9 @@ export function SignupForm({ className, ...props }: DivProps) {
               <AuthErrorAlert error={error} />
 
               <Field>
-                <FieldLabel htmlFor="name">Nome completo</FieldLabel>
+                <FieldLabel htmlFor="name" required>
+                  Nome completo
+                </FieldLabel>
                 <Input
                   id="name"
                   type="text"
@@ -121,7 +123,9 @@ export function SignupForm({ className, ...props }: DivProps) {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="email">E-mail</FieldLabel>
+                <FieldLabel htmlFor="email" required>
+                  E-mail
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -135,7 +139,9 @@ export function SignupForm({ className, ...props }: DivProps) {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="password">Senha</FieldLabel>
+                <FieldLabel htmlFor="password" required>
+                  Senha
+                </FieldLabel>
                 <Input
                   id="password"
                   type="password"

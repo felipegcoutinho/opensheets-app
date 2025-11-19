@@ -42,7 +42,9 @@ export function UpdateNameForm({ currentName }: UpdateNameFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="firstName">Primeiro nome</Label>
+        <Label htmlFor="firstName" required>
+          Primeiro nome
+        </Label>
         <Input
           id="firstName"
           value={firstName}
@@ -53,7 +55,9 @@ export function UpdateNameForm({ currentName }: UpdateNameFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="lastName">Sobrenome</Label>
+        <Label htmlFor="lastName" required>
+          Sobrenome
+        </Label>
         <Input
           id="lastName"
           value={lastName}

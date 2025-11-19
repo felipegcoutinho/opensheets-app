@@ -129,7 +129,9 @@ export function TransferDialog({
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="transfer-date">Data da transferência</Label>
+              <Label htmlFor="transfer-date" required>
+                Data da transferência
+              </Label>
               <Input
                 id="transfer-date"
                 type="date"
@@ -140,7 +142,9 @@ export function TransferDialog({
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="transfer-period">Período</Label>
+              <Label htmlFor="transfer-period" required>
+                Período
+              </Label>
               <Input
                 id="transfer-period"
                 type="month"
@@ -152,7 +156,9 @@ export function TransferDialog({
             </div>
 
             <div className="flex flex-col gap-2 sm:col-span-2">
-              <Label htmlFor="transfer-amount">Valor</Label>
+              <Label htmlFor="transfer-amount" required>
+                Valor
+              </Label>
               <CurrencyInput
                 id="transfer-amount"
                 value={amount}

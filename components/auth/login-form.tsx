@@ -107,7 +107,9 @@ export function LoginForm({ className, ...props }: DivProps) {
               <AuthErrorAlert error={error} />
 
               <Field>
-                <FieldLabel htmlFor="email">E-mail</FieldLabel>
+                <FieldLabel htmlFor="email" required>
+                  E-mail
+                </FieldLabel>
                 <Input
                   id="email"
                   type="email"
@@ -122,7 +124,9 @@ export function LoginForm({ className, ...props }: DivProps) {
 
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Senha</FieldLabel>
+                  <FieldLabel htmlFor="password" required>
+                    Senha
+                  </FieldLabel>
                 </div>
                 <Input
                   id="password"

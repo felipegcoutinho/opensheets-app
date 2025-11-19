@@ -25,7 +25,9 @@ export function BasicFieldsSection({
     <>
       <div className="flex w-full flex-col gap-2 md:flex-row">
         <div className="w-1/2 space-y-1">
-          <Label htmlFor="purchaseDate">Data da transação</Label>
+          <Label htmlFor="purchaseDate" required>
+            Data da transação
+          </Label>
           <DatePicker
             id="purchaseDate"
             value={formState.purchaseDate}
@@ -57,7 +59,9 @@ export function BasicFieldsSection({
 
       <div className="flex w-full flex-col gap-2 md:flex-row">
         <div className="w-1/2 space-y-1">
-          <Label htmlFor="name">Estabelecimento</Label>
+          <Label htmlFor="name" required>
+            Estabelecimento
+          </Label>
           <EstabelecimentoInput
             id="name"
             value={formState.name}
@@ -70,7 +74,9 @@ export function BasicFieldsSection({
         </div>
 
         <div className="w-1/2 space-y-1">
-          <Label htmlFor="amount">Valor</Label>
+          <Label htmlFor="amount" required>
+            Valor
+          </Label>
           <div className="relative">
             <CurrencyInput
               id="amount"

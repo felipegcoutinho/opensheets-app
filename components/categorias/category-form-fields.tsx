@@ -48,7 +48,9 @@ export function CategoryFormFields({
   return (
     <div className="grid grid-cols-1 gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="category-name">Nome</Label>
+        <Label htmlFor="category-name" required>
+          Nome
+        </Label>
         <Input
           id="category-name"
           value={values.name}

@@ -88,8 +88,8 @@ export function UpdateEmailForm({ currentEmail, authProvider }: UpdateEmailFormP
       {/* Senha de confirmação (apenas para usuários com login por e-mail/senha) */}
       {!isGoogleAuth && (
         <div className="space-y-2">
-          <Label htmlFor="password">
-            Senha atual <span className="text-destructive">*</span>
+          <Label htmlFor="password" required>
+            Senha atual
           </Label>
           <div className="relative">
             <Input
@@ -124,8 +124,8 @@ export function UpdateEmailForm({ currentEmail, authProvider }: UpdateEmailFormP
 
       {/* Novo e-mail */}
       <div className="space-y-2">
-        <Label htmlFor="newEmail">
-          Novo e-mail <span className="text-destructive">*</span>
+        <Label htmlFor="newEmail" required>
+          Novo e-mail
         </Label>
         <Input
           id="newEmail"
@@ -155,8 +155,8 @@ export function UpdateEmailForm({ currentEmail, authProvider }: UpdateEmailFormP
 
       {/* Confirmar novo e-mail */}
       <div className="space-y-2">
-        <Label htmlFor="confirmEmail">
-          Confirmar novo e-mail <span className="text-destructive">*</span>
+        <Label htmlFor="confirmEmail" required>
+          Confirmar novo e-mail
         </Label>
         <div className="relative">
           <Input
