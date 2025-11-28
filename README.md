@@ -206,7 +206,7 @@ Esta é a **melhor opção para desenvolvedores** que vão modificar o código.
 
 #### Pré-requisitos
 
-- Node.js 22+ instalado
+- Node.js 22+ instalado (se usar nvm, execute `nvm install` ou `nvm use`)
 - pnpm instalado (ou npm/yarn)
 - Docker e Docker Compose instalados
 
