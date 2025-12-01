@@ -1,3 +1,4 @@
+import { EstabelecimentoLogo } from "@/components/lancamentos/shared/estabelecimento-logo";
 import MoneyValues from "@/components/money-values";
 import { CardContent } from "@/components/ui/card";
 import type { RecurringExpensesData } from "@/lib/dashboard/expenses/recurring-expenses";
@@ -38,9 +39,7 @@ export function RecurringExpensesWidget({
               key={expense.id}
               className="flex items-start gap-3 border-b border-dashed pb-2 last:border-b-0 last:pb-0"
             >
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <RiRefreshLine className="size-5 text-foreground" />
-              </div>
+              <EstabelecimentoLogo name={expense.name} size={38} />
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-2">

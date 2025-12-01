@@ -134,9 +134,9 @@ export function InstallmentExpensesWidget({
           return (
             <li
               key={expense.id}
-              className="flex items-center gap-3 border-b border-dashed pb-2 last:border-b-0 last:pb-0"
+              className="flex items-center gap-3 border-b border-dashed pb-3 last:border-b-0 last:pb-0"
             >
-              <div className="min-w-0 flex-1 ">
+              <div className="min-w-0 flex-1">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex min-w-0 items-center gap-2">
                     <p className="truncate text-sm font-medium text-foreground">
@@ -169,17 +169,17 @@ export function InstallmentExpensesWidget({
                   </div>
                   <MoneyValues amount={expense.amount} className="shrink-0" />
                 </div>
-                <Progress value={progress} className="h-2" />
 
-                <p className="text-xs text-muted-foreground mt-1">
-                  Restantes {remainingInstallments}
-                  {endDate && ` - Termina em ${endDate}`}
-                  {" - Restante "}
+                <p className="text-xs text-muted-foreground ">
+                  {endDate && `Termina em ${endDate}`}
+                  {` - Restante (${remainingInstallments}) `}
                   <MoneyValues
                     amount={remainingAmount}
                     className="inline-block font-medium"
                   />
                 </p>
+
+                <Progress value={progress} className="h-2 mt-1" />
               </div>
             </li>
           );

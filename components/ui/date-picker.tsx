@@ -1,7 +1,7 @@
 "use client";
 
-import * as React from "react";
 import { RiCalendarLine } from "@remixicon/react";
+import * as React from "react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -164,6 +164,8 @@ export function DatePicker({
             month={month}
             onMonthChange={setMonth}
             onSelect={handleCalendarSelect}
+            fromYear={2020}
+            toYear={new Date().getFullYear() + 10}
             locale={{
               localize: {
                 day: (n) => ["D", "S", "T", "Q", "Q", "S", "S"][n],

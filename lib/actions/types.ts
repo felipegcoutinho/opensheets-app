@@ -1,8 +1,4 @@
 /**
- * Common types for server actions
- */
-
-/**
  * Standard action result type
  */
 export type ActionResult<TData = void> =

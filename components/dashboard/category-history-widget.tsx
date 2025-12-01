@@ -22,8 +22,11 @@ import {
 import { WidgetEmptyState } from "@/components/widget-empty-state";
 import type { CategoryHistoryData } from "@/lib/dashboard/categories/category-history";
 import { getIconComponent } from "@/lib/utils/icons";
-import { RiBarChartBoxLine, RiCloseLine } from "@remixicon/react";
-import { ChevronDownIcon } from "lucide-react";
+import {
+  RiArrowDownSLine,
+  RiBarChartBoxLine,
+  RiCloseLine,
+} from "@remixicon/react";
 import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
@@ -265,7 +268,7 @@ export function CategoryHistoryWidget({ data }: CategoryHistoryWidgetProps) {
                   className="w-full justify-between hover:scale-none"
                 >
                   Selecionar categorias
-                  <ChevronDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  <RiArrowDownSLine className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent

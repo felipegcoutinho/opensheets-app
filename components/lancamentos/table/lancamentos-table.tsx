@@ -51,6 +51,7 @@ import {
   RiCheckLine,
   RiDeleteBin5Line,
   RiEyeLine,
+  RiFileCopyLine,
   RiGroupLine,
   RiHistoryLine,
   RiMoreFill,
@@ -72,6 +73,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { EstabelecimentoLogo } from "../shared/estabelecimento-logo";
 import type {
   ContaCartaoFilterOption,
   LancamentoFilterOption,
@@ -90,6 +92,7 @@ const resolveLogoSrc = (logo: string | null) => {
 
 type BuildColumnsArgs = {
   onEdit?: (item: LancamentoItem) => void;
+  onCopy?: (item: LancamentoItem) => void;
   onConfirmDelete?: (item: LancamentoItem) => void;
   onViewDetails?: (item: LancamentoItem) => void;
   onToggleSettlement?: (item: LancamentoItem) => void;
@@ -101,6 +104,7 @@ type BuildColumnsArgs = {
 
 const buildColumns = ({
   onEdit,
+  onCopy,
   onConfirmDelete,
   onViewDetails,
   onToggleSettlement,
@@ -111,6 +115,7 @@ const buildColumns = ({
 }: BuildColumnsArgs): ColumnDef<LancamentoItem>[] => {
   const noop = () => undefined;
   const handleEdit = onEdit ?? noop;
+  const handleCopy = onCopy ?? noop;
   const handleConfirmDelete = onConfirmDelete ?? noop;
   const handleViewDetails = onViewDetails ?? noop;
   const handleToggleSettlement = onToggleSettlement ?? noop;
@@ -180,6 +185,7 @@ const buildColumns = ({
 
         return (
           <span className="flex items-center gap-2">
+            <EstabelecimentoLogo name={name} size={28} />
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="line-clamp-2 max-w-[180px] font-bold truncate">
@@ -522,6 +528,12 @@ const buildColumns = ({
                 <RiPencilLine className="size-4" />
                 Editar
               </DropdownMenuItem>
+              {row.original.categoriaName !== "Pagamentos" && (
+                <DropdownMenuItem onSelect={() => handleCopy(row.original)}>
+                  <RiFileCopyLine className="size-4" />
+                  Copiar
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 variant="destructive"
                 onSelect={() => handleConfirmDelete(row.original)}
@@ -583,6 +595,7 @@ type LancamentosTableProps = {
   onCreate?: () => void;
   onMassAdd?: () => void;
   onEdit?: (item: LancamentoItem) => void;
+  onCopy?: (item: LancamentoItem) => void;
   onConfirmDelete?: (item: LancamentoItem) => void;
   onBulkDelete?: (items: LancamentoItem[]) => void;
   onViewDetails?: (item: LancamentoItem) => void;
@@ -602,6 +615,7 @@ export function LancamentosTable({
   onCreate,
   onMassAdd,
   onEdit,
+  onCopy,
   onConfirmDelete,
   onBulkDelete,
   onViewDetails,
@@ -625,6 +639,7 @@ export function LancamentosTable({
     () =>
       buildColumns({
         onEdit,
+        onCopy,
         onConfirmDelete,
         onViewDetails,
         onToggleSettlement,
@@ -635,6 +650,7 @@ export function LancamentosTable({
       }),
     [
       onEdit,
+      onCopy,
       onConfirmDelete,
       onViewDetails,
       onToggleSettlement,

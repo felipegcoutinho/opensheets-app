@@ -1,40 +1,19 @@
 "use client";
 
+import { EstabelecimentoLogo } from "@/components/lancamentos/shared/estabelecimento-logo";
 import MoneyValues from "@/components/money-values";
 import { Switch } from "@/components/ui/switch";
-import type { TopExpense, TopExpensesData } from "@/lib/dashboard/expenses/top-expenses";
+import type {
+  TopExpense,
+  TopExpensesData,
+} from "@/lib/dashboard/expenses/top-expenses";
 import { RiArrowUpDoubleLine } from "@remixicon/react";
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { WidgetEmptyState } from "../widget-empty-state";
 
 type TopExpensesWidgetProps = {
   allExpenses: TopExpensesData;
   cardOnlyExpenses: TopExpensesData;
-};
-
-const resolveLogoPath = (logo: string | null) => {
-  if (!logo) {
-    return null;
-  }
-  if (/^(https?:\/\/|data:)/.test(logo)) {
-    return logo;
-  }
-  return logo.startsWith("/") ? logo : `/logos/${logo}`;
-};
-
-const buildInitials = (value: string) => {
-  const parts = value.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) {
-    return "LC";
-  }
-  if (parts.length === 1) {
-    const firstPart = parts[0];
-    return firstPart ? firstPart.slice(0, 2).toUpperCase() : "LC";
-  }
-  const firstChar = parts[0]?.[0] ?? "";
-  const secondChar = parts[1]?.[0] ?? "";
-  return `${firstChar}${secondChar}`.toUpperCase() || "LC";
 };
 
 const formatTransactionDate = (date: Date) => {
@@ -129,30 +108,13 @@ export function TopExpensesWidget({
       ) : (
         <ul className="flex flex-col">
           {data.expenses.map((expense) => {
-            const logo = resolveLogoPath(expense.logo);
-            const initials = buildInitials(expense.name);
-
             return (
               <li
                 key={expense.id}
                 className="flex items-center justify-between gap-3 border-b border-dashed py-2 last:border-b-0 last:pb-0"
               >
                 <div className="flex min-w-0 flex-1 items-center gap-3">
-                  <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
-                    {logo ? (
-                      <Image
-                        src={logo}
-                        alt={`Logo de ${expense.name}`}
-                        width={48}
-                        height={48}
-                        className="h-full w-full object-contain"
-                      />
-                    ) : (
-                      <span className="text-sm font-semibold uppercase text-muted-foreground">
-                        {initials}
-                      </span>
-                    )}
-                  </div>
+                  <EstabelecimentoLogo name={expense.name} size={38} />
 
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">

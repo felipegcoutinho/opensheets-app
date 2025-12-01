@@ -16,6 +16,10 @@ import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
 import { getAvatarSrc } from "@/lib/pagadores/utils";
 import { cn } from "@/lib/utils/ui";
 import {
+  RiBankCard2Line,
+  RiBillLine,
+  RiExchangeDollarLine,
+  RiFileList3Line,
   RiMailLine,
   RiMailSendLine,
   RiUser3Line,
@@ -272,74 +276,149 @@ export function PagadorInfoCard({
             setConfirmOpen(open);
           }}
         >
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Confirmar envio do resumo</DialogTitle>
               <DialogDescription>
-                O resumo de{" "}
+                Resumo de{" "}
                 <span className="font-semibold text-foreground">
                   {summary.periodLabel}
                 </span>{" "}
-                será enviado para{" "}
+                para{" "}
                 <span className="font-medium text-foreground">
-                  {pagador.email ?? "—"}
+                  {pagador.email}
                 </span>
               </DialogDescription>
             </DialogHeader>
 
-            <div className="space-y-3 rounded-lg border border-dashed border-border/70 bg-muted/30 p-4 text-sm text-muted-foreground">
-              <div>
-                <span className="text-xs font-semibold uppercase text-muted-foreground/70">
-                  Totais do mês
-                </span>
-                <p className="text-foreground">
-                  {formatCurrency(summary.totalExpenses)} em despesas
-                  registradas
-                </p>
-                <p className="text-xs">
-                  Cartões: {formatCurrency(summary.paymentSplits.card)} -
-                  Boletos: {formatCurrency(summary.paymentSplits.boleto)} -
-                  Pix/Débito/Dinheiro:{" "}
-                  {formatCurrency(summary.paymentSplits.instant)}
-                </p>
+            <div className="space-y-4">
+              {/* Total Geral */}
+              <div className="rounded-lg border bg-muted/30 p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
+                      <RiExchangeDollarLine className="size-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Total de Despesas
+                      </p>
+                      <p className="text-2xl font-bold text-foreground">
+                        {formatCurrency(summary.totalExpenses)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">
+                      {summary.lancamentoCount} lançamentos
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <span className="text-xs font-semibold uppercase text-muted-foreground/70">
-                  Principais cartões
-                </span>
-                <p>
-                  {summary.cardUsage.length
-                    ? summary.cardUsage
-                        .map(
-                          (item) =>
-                            `${item.name}: ${formatCurrency(item.amount)}`
-                        )
-                        .join(" - ")
-                    : "Sem lançamentos com cartão no período."}
-                </p>
-              </div>
-
-              <div className="rounded-lg border border-border/60 p-3">
-                <div className="space-y-1">
-                  <span className="text-xs font-semibold uppercase text-muted-foreground/70">
-                    Boletos
-                  </span>
-                  <p>
-                    Pagos: {formatCurrency(summary.boletoStats.paidAmount)} (
-                    {summary.boletoStats.paidCount})
+              {/* Grid de Formas de Pagamento */}
+              <div className="grid gap-3 sm:grid-cols-3">
+                {/* Cartões */}
+                <div className="rounded-lg border bg-background p-3">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <RiBankCard2Line className="size-4" />
+                    <span className="text-xs font-semibold uppercase">
+                      Cartões
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-foreground">
+                    {formatCurrency(summary.paymentSplits.card)}
                   </p>
-                  <p>
-                    Pendentes:{" "}
-                    {formatCurrency(summary.boletoStats.pendingAmount)} (
-                    {summary.boletoStats.pendingCount})
+                </div>
+
+                {/* Boletos */}
+                <div className="rounded-lg border bg-background p-3">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <RiBillLine className="size-4" />
+                    <span className="text-xs font-semibold uppercase">
+                      Boletos
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-foreground">
+                    {formatCurrency(summary.paymentSplits.boleto)}
+                  </p>
+                </div>
+
+                {/* Instantâneo */}
+                <div className="rounded-lg border bg-background p-3">
+                  <div className="flex items-center gap-2 text-muted-foreground mb-2">
+                    <RiExchangeDollarLine className="size-4" />
+                    <span className="text-xs font-semibold uppercase">
+                      Pix/Débito
+                    </span>
+                  </div>
+                  <p className="text-lg font-bold text-foreground">
+                    {formatCurrency(summary.paymentSplits.instant)}
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Inclui {summary.lancamentoCount} lançamentos.</span>
-                <span>Último envio: {lastMailLabel}</span>
+              {/* Detalhes Adicionais */}
+              <div className="space-y-3">
+                {/* Cartões Utilizados */}
+                {summary.cardUsage.length > 0 && (
+                  <div className="rounded-lg border bg-muted/20 p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <RiBankCard2Line className="size-4 text-muted-foreground" />
+                      <span className="text-xs font-semibold uppercase text-muted-foreground">
+                        Cartões Utilizados
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      {summary.cardUsage.map((card, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between text-sm"
+                        >
+                          <span className="text-foreground">{card.name}</span>
+                          <span className="font-medium text-foreground">
+                            {formatCurrency(card.amount)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Status de Boletos */}
+                {(summary.boletoStats.paidCount > 0 ||
+                  summary.boletoStats.pendingCount > 0) && (
+                  <div className="rounded-lg border bg-muted/20 p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <RiBillLine className="size-4 text-muted-foreground" />
+                      <span className="text-xs font-semibold uppercase text-muted-foreground">
+                        Status de Boletos
+                      </span>
+                    </div>
+                    <div className="grid gap-2 sm:grid-cols-2">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Pagos</p>
+                        <p className="text-sm font-semibold text-green-600">
+                          {formatCurrency(summary.boletoStats.paidAmount)}{" "}
+                          <span className="text-xs font-normal">
+                            ({summary.boletoStats.paidCount})
+                          </span>
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">
+                          Pendentes
+                        </p>
+                        <p className="text-sm font-semibold text-amber-600">
+                          {formatCurrency(summary.boletoStats.pendingAmount)}{" "}
+                          <span className="text-xs font-normal">
+                            ({summary.boletoStats.pendingCount})
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

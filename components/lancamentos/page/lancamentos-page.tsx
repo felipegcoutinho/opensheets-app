@@ -69,6 +69,9 @@ export function LancamentosPage({
     useState<LancamentoItem | null>(null);
   const [editOpen, setEditOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
+  const [copyOpen, setCopyOpen] = useState(false);
+  const [lancamentoToCopy, setLancamentoToCopy] =
+    useState<LancamentoItem | null>(null);
   const [massAddOpen, setMassAddOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [lancamentoToDelete, setLancamentoToDelete] =
@@ -288,6 +291,11 @@ export function LancamentosPage({
     setEditOpen(true);
   }, []);
 
+  const handleCopy = useCallback((item: LancamentoItem) => {
+    setLancamentoToCopy(item);
+    setCopyOpen(true);
+  }, []);
+
   const handleConfirmDelete = useCallback((item: LancamentoItem) => {
     if (item.seriesId) {
       setPendingDeleteData(item);
@@ -323,6 +331,7 @@ export function LancamentosPage({
         onCreate={allowCreate ? handleCreate : undefined}
         onMassAdd={allowCreate ? handleMassAdd : undefined}
         onEdit={handleEdit}
+        onCopy={handleCopy}
         onConfirmDelete={handleConfirmDelete}
         onBulkDelete={handleMultipleBulkDelete}
         onViewDetails={handleViewDetails}
@@ -351,6 +360,26 @@ export function LancamentosPage({
           lockPaymentMethod={lockPaymentMethod}
         />
       ) : null}
+
+      <LancamentoDialog
+        mode="create"
+        open={copyOpen && !!lancamentoToCopy}
+        onOpenChange={(open) => {
+          setCopyOpen(open);
+          if (!open) {
+            setLancamentoToCopy(null);
+          }
+        }}
+        pagadorOptions={pagadorOptions}
+        splitPagadorOptions={splitPagadorOptions}
+        defaultPagadorId={defaultPagadorId}
+        contaOptions={contaOptions}
+        cartaoOptions={cartaoOptions}
+        categoriaOptions={categoriaOptions}
+        estabelecimentos={estabelecimentos}
+        lancamento={lancamentoToCopy ?? undefined}
+        defaultPeriod={selectedPeriod}
+      />
 
       <LancamentoDialog
         mode="update"

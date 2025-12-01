@@ -3,7 +3,6 @@
 
 -- Habilitar extensão pgcrypto (necessária para gen_random_bytes usado pelo Drizzle)
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
-
 -- Log de sucesso
 DO $$
 BEGIN

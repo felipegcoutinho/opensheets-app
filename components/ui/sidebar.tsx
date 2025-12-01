@@ -20,8 +20,8 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils/ui";
 import { Slot } from "@radix-ui/react-slot";
+import { RiLayoutLeft2Line } from "@remixicon/react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { PanelLeftIcon } from "lucide-react";
 import * as React from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -272,7 +272,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <RiLayoutLeft2Line />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

@@ -369,7 +369,7 @@ export function InvoicesWidget({ invoices }: InvoicesWidgetProps) {
                   </div>
 
                   <div className="flex shrink-0 flex-col items-end">
-                    <MoneyValues amount={invoice.totalAmount} />
+                    <MoneyValues amount={Math.abs(invoice.totalAmount)} />
                     <div className="flex items-center gap-2">
                       <Button
                         type="button"
@@ -504,7 +504,7 @@ export function InvoicesWidget({ invoices }: InvoicesWidgetProps) {
                         Valor da fatura
                       </span>
                       <MoneyValues
-                        amount={selectedInvoice.totalAmount}
+                        amount={Math.abs(selectedInvoice.totalAmount)}
                         className="text-lg"
                       />
                     </div>

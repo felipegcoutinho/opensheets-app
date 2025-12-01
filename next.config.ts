@@ -1,11 +1,10 @@
-import type { NextConfig } from "next";
 import dotenv from "dotenv";
+import type { NextConfig } from "next";
 
 // Carregar variáveis de ambiente explicitamente
 dotenv.config();
 
 const nextConfig: NextConfig = {
-  // Output standalone para Docker (gera build otimizado com apenas deps necessárias)
   output: "standalone",
   experimental: {
     turbopackFileSystemCacheForDev: true,

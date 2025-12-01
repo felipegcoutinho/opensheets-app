@@ -1,15 +1,5 @@
 "use client";
 
-import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  useTransition,
-  type ReactNode,
-} from "react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -39,15 +29,25 @@ import {
   LANCAMENTO_TRANSACTION_TYPES,
 } from "@/lib/lancamentos/constants";
 import { cn } from "@/lib/utils/ui";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
-  TransactionTypeSelectContent,
-  ConditionSelectContent,
-  PaymentMethodSelectContent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+  type ReactNode,
+} from "react";
+import {
   CategoriaSelectContent,
-  PagadorSelectContent,
+  ConditionSelectContent,
   ContaCartaoSelectContent,
+  PagadorSelectContent,
+  PaymentMethodSelectContent,
+  TransactionTypeSelectContent,
 } from "../select-items";
 
+import { RiCheckLine, RiExpandUpDownLine } from "@remixicon/react";
 import type { ContaCartaoFilterOption, LancamentoFilterOption } from "../types";
 
 const FILTER_EMPTY_VALUE = "__all";
@@ -337,7 +337,7 @@ export function LancamentosFilters({
                 "Categoria"
               )}
             </span>
-            <ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
+            <RiExpandUpDownLine className="ml-2 size-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-[220px] p-0">
@@ -355,7 +355,7 @@ export function LancamentosFilters({
                 >
                   Todas
                   {categoriaValue === FILTER_EMPTY_VALUE ? (
-                    <CheckIcon className="ml-auto size-4" />
+                    <RiCheckLine className="ml-auto size-4" />
                   ) : null}
                 </CommandItem>
                 {categoriaOptions.map((option) => (
@@ -372,7 +372,7 @@ export function LancamentosFilters({
                       icon={option.icon}
                     />
                     {categoriaValue === option.slug ? (
-                      <CheckIcon className="ml-auto size-4" />
+                      <RiCheckLine className="ml-auto size-4" />
                     ) : null}
                   </CommandItem>
                 ))}

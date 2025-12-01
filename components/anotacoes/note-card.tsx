@@ -2,10 +2,13 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { RiDeleteBin5Line, RiEyeLine, RiPencilLine } from "@remixicon/react";
-import { CheckIcon } from "lucide-react";
+import {
+  RiCheckLine,
+  RiDeleteBin5Line,
+  RiEyeLine,
+  RiPencilLine,
+} from "@remixicon/react";
 import { useMemo } from "react";
-
 import type { Note } from "./types";
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("pt-BR", {
@@ -88,7 +91,7 @@ export function NoteCard({ note, onEdit, onDetails, onRemove }: NoteCardProps) {
                   }`}
                 >
                   {task.completed && (
-                    <CheckIcon className="h-3 w-3 text-background" />
+                    <RiCheckLine className="h-3 w-3 text-background" />
                   )}
                 </div>
                 <span

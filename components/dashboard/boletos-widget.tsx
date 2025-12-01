@@ -1,6 +1,7 @@
 "use client";
 
 import { toggleLancamentoSettlementAction } from "@/app/(dashboard)/lancamentos/actions";
+import { EstabelecimentoLogo } from "@/components/lancamentos/shared/estabelecimento-logo";
 import MoneyValues from "@/components/money-values";
 import { Button } from "@/components/ui/button";
 import { CardContent } from "@/components/ui/card";
@@ -171,9 +172,7 @@ export function BoletosWidget({ boletos }: BoletosWidgetProps) {
                   className="flex items-center justify-between border-b border-dashed last:border-b-0 last:pb-0"
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-3 py-2">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                      <RiBarcodeFill className="size-5" />
-                    </div>
+                    <EstabelecimentoLogo name={boleto.name} size={38} />
 
                     <div className="min-w-0">
                       <span className="block truncate text-sm font-medium text-foreground">

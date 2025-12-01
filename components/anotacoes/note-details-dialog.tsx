@@ -11,9 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CheckIcon } from "lucide-react";
+import { RiCheckLine } from "@remixicon/react";
 import { useMemo } from "react";
-
 import type { Note } from "./types";
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("pt-BR", {
@@ -84,7 +83,7 @@ export function NoteDetailsDialog({
                   }`}
                 >
                   {task.completed && (
-                    <CheckIcon className="h-4 w-4 text-primary-foreground" />
+                    <RiCheckLine className="h-4 w-4 text-primary-foreground" />
                   )}
                 </div>
                 <span

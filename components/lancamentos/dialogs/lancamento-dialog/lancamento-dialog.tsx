@@ -306,10 +306,17 @@ export function LancamentoDialog({
     ]
   );
 
-  const title = mode === "create" ? "Novo lançamento" : "Editar lançamento";
+  const isCopyMode = mode === "create" && Boolean(lancamento);
+  const title = mode === "create"
+    ? isCopyMode
+      ? "Copiar lançamento"
+      : "Novo lançamento"
+    : "Editar lançamento";
   const description =
     mode === "create"
-      ? "Informe os dados abaixo para registrar um novo lançamento."
+      ? isCopyMode
+        ? "Os dados do lançamento foram copiados. Revise e ajuste conforme necessário antes de salvar."
+        : "Informe os dados abaixo para registrar um novo lançamento."
       : "Atualize as informações do lançamento selecionado.";
   const submitLabel = mode === "create" ? "Salvar lançamento" : "Atualizar";
 

@@ -20,7 +20,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useControlledState } from "@/hooks/use-controlled-state";
 import { useFormState } from "@/hooks/use-form-state";
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { RiAddLine, RiDeleteBinLine } from "@remixicon/react";
 import {
   type ReactNode,
   useCallback,
@@ -388,7 +388,7 @@ export function NoteDialog({
                     disabled={isPending || !normalize(newTaskText)}
                     className="shrink-0"
                   >
-                    <PlusIcon className="h-4 w-4" />
+                    <RiAddLine className="h-4 w-4" />
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -434,7 +434,7 @@ export function NoteDialog({
                           className="h-8 w-8 p-0 shrink-0 text-muted-foreground hover:text-destructive"
                           aria-label={`Remover tarefa "${task.text}"`}
                         >
-                          <Trash2Icon className="h-4 w-4" />
+                          <RiDeleteBinLine className="h-4 w-4" />
                         </Button>
                       </div>
                     ))}
