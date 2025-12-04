@@ -31,10 +31,16 @@ export async function validateApiToken(
   token: string
 ): Promise<TokenValidationResult> {
   try {
+    // Log para debug
+    console.log("[Token Validation] Validating token:", token.substring(0, 10) + "...");
+
     // 1. Validar formato
     if (!isValidTokenFormat(token)) {
+      console.log("[Token Validation] ❌ Invalid format");
       return { valid: false, reason: "invalid_format" };
     }
+
+    console.log("[Token Validation] ✓ Format valid");
 
     // 2. Hash do token para buscar no banco
     const tokenHash = hashToken(token);
@@ -47,20 +53,27 @@ export async function validateApiToken(
       .limit(1);
 
     if (tokenRecord.length === 0) {
+      console.log("[Token Validation] ❌ Token not found in database");
       return { valid: false, reason: "not_found" };
     }
+
+    console.log("[Token Validation] ✓ Token found");
 
     const record = tokenRecord[0];
 
     // 4. Verificar se foi revogado
     if (isTokenRevoked(record.revokedAt)) {
+      console.log("[Token Validation] ❌ Token revoked");
       return { valid: false, reason: "revoked" };
     }
 
     // 5. Verificar expiração
     if (isTokenExpired(record.expiresAt)) {
+      console.log("[Token Validation] ❌ Token expired");
       return { valid: false, reason: "expired" };
     }
+
+    console.log("[Token Validation] ✅ Token valid! User:", record.userId);
 
     // 6. Token válido! Atualizar lastUsedAt
     await db
@@ -74,7 +87,7 @@ export async function validateApiToken(
       tokenId: record.id,
     };
   } catch (error) {
-    console.error("Error validating API token:", error);
+    console.error("[Token Validation] ❌ Error:", error);
     return { valid: false, reason: "error" };
   }
 }

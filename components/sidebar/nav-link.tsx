@@ -4,7 +4,7 @@ import {
   RiBankLine,
   RiCalendarEventLine,
   RiDashboardLine,
-  RiFundsLine,
+  RiFundsBoxLine,
   RiGroupLine,
   RiInboxLine,
   RiLineChartLine,
@@ -118,7 +118,7 @@ export function createSidebarNavData(
           {
             title: "Orçamentos",
             url: "/orcamentos",
-            icon: RiFundsLine,
+            icon: RiFundsBoxLine,
           },
         ],
       },
