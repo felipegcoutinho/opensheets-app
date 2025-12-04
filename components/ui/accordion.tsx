@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/ui";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { RiArrowDownCircleFill } from "@remixicon/react";
 import * as React from "react";
