@@ -2,6 +2,7 @@ import { DeleteAccountForm } from "@/components/ajustes/delete-account-form";
 import { UpdateEmailForm } from "@/components/ajustes/update-email-form";
 import { UpdateNameForm } from "@/components/ajustes/update-name-form";
 import { UpdatePasswordForm } from "@/components/ajustes/update-password-form";
+import { ApiTokensManager } from "@/components/ajustes/api-tokens-manager";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { auth } from "@/lib/auth/config";
@@ -33,12 +34,13 @@ export default async function Page() {
   return (
     <div className="max-w-3xl">
       <Tabs defaultValue="nome" className="w-full">
-        <TabsList className="w-full grid grid-cols-4 mb-2">
-          <TabsTrigger value="nome">Altere seu nome</TabsTrigger>
-          <TabsTrigger value="senha">Alterar senha</TabsTrigger>
-          <TabsTrigger value="email">Alterar e-mail</TabsTrigger>
+        <TabsList className="w-full grid grid-cols-5 mb-2">
+          <TabsTrigger value="nome">Nome</TabsTrigger>
+          <TabsTrigger value="senha">Senha</TabsTrigger>
+          <TabsTrigger value="email">E-mail</TabsTrigger>
+          <TabsTrigger value="tokens">Tokens API</TabsTrigger>
           <TabsTrigger value="deletar" className="text-destructive">
-            Deletar conta
+            Deletar
           </TabsTrigger>
         </TabsList>
 
@@ -77,6 +79,17 @@ export default async function Page() {
               currentEmail={userEmail}
               authProvider={authProvider}
             />
+          </TabsContent>
+
+          <TabsContent value="tokens" className="space-y-4">
+            <div>
+              <h2 className="text-lg font-medium mb-1">Tokens de API</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Gerencie tokens para autenticar apps externos como o app Android.
+                Tokens são como senhas especiais para seus dispositivos.
+              </p>
+            </div>
+            <ApiTokensManager />
           </TabsContent>
 
           <TabsContent value="deletar" className="space-y-4">

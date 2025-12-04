@@ -15,6 +15,7 @@ import { fetchPaymentStatus } from "./payments/payment-status";
 import { fetchPurchasesByCategory } from "./purchases-by-category";
 import { fetchRecentTransactions } from "./recent-transactions";
 import { fetchTopEstablishments } from "./top-establishments";
+import { contarTransacoesPendentes } from "@/lib/transacoes-pendentes/fetch-data";
 
 export async function fetchDashboardData(userId: string, period: string) {
   const [
@@ -36,6 +37,7 @@ export async function fetchDashboardData(userId: string, period: string) {
     purchasesByCategoryData,
     incomeByCategoryData,
     expensesByCategoryData,
+    pendingTransactionsCount,
   ] = await Promise.all([
     fetchDashboardCardMetrics(userId, period),
     fetchDashboardAccounts(userId),
@@ -55,6 +57,7 @@ export async function fetchDashboardData(userId: string, period: string) {
     fetchPurchasesByCategory(userId, period),
     fetchIncomeByCategory(userId, period),
     fetchExpensesByCategory(userId, period),
+    contarTransacoesPendentes(userId),
   ]);
 
   return {
@@ -76,6 +79,7 @@ export async function fetchDashboardData(userId: string, period: string) {
     purchasesByCategoryData,
     incomeByCategoryData,
     expensesByCategoryData,
+    pendingTransactionsCount,
   };
 }
 

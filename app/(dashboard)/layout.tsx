@@ -6,6 +6,7 @@ import { getUserSession } from "@/lib/auth/server";
 import { fetchDashboardNotifications } from "@/lib/dashboard/notifications";
 import { fetchPagadoresWithAccess } from "@/lib/pagadores/access";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
+import { contarTransacoesPendentes } from "@/lib/transacoes-pendentes/fetch-data";
 import { parsePeriodParam } from "@/lib/utils/period";
 
 export default async function DashboardLayout({
@@ -35,10 +36,10 @@ export default async function DashboardLayout({
   const { period: currentPeriod } = parsePeriodParam(
     singlePeriodoParam ?? null
   );
-  const notificationsSnapshot = await fetchDashboardNotifications(
-    session.user.id,
-    currentPeriod
-  );
+  const [notificationsSnapshot, pendingCount] = await Promise.all([
+    fetchDashboardNotifications(session.user.id, currentPeriod),
+    contarTransacoesPendentes(session.user.id),
+  ]);
 
   return (
     <PrivacyProvider>
@@ -52,6 +53,7 @@ export default async function DashboardLayout({
             avatarUrl: item.avatarUrl,
             canEdit: item.canEdit,
           }))}
+          pendingCount={pendingCount}
           variant="inset"
         />
         <SidebarInset>

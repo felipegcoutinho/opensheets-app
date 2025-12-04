@@ -27,12 +27,14 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: AppUser;
   pagadorAvatarUrl: string | null;
   pagadores: PagadorLike[];
+  pendingCount?: number;
 }
 
 export function AppSidebar({
   user,
   pagadorAvatarUrl,
   pagadores,
+  pendingCount,
   ...props
 }: AppSidebarProps) {
   if (!user) {
@@ -40,8 +42,8 @@ export function AppSidebar({
   }
 
   const navigation = React.useMemo(
-    () => createSidebarNavData(pagadores),
-    [pagadores]
+    () => createSidebarNavData(pagadores, pendingCount),
+    [pagadores, pendingCount]
   );
 
   return (

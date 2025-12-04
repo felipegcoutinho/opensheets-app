@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   Collapsible,
   CollapsibleContent,
@@ -33,6 +34,7 @@ type NavItem = {
   url: string;
   icon: RemixiconComponentType;
   isActive?: boolean;
+  badge?: number;
   items?: {
     title: string;
     url: string;
@@ -121,7 +123,12 @@ export function NavMain({ sections }: { sections: NavSection[] }) {
                       >
                         <Link prefetch href={buildHrefWithPeriod(item.url)}>
                           <item.icon className={"h-4 w-4"} />
-                          {item.title}
+                          <span>{item.title}</span>
+                          {item.badge && item.badge > 0 && (
+                            <Badge variant="destructive" className="ml-auto h-5 px-1.5 text-xs">
+                              {item.badge}
+                            </Badge>
+                          )}
                         </Link>
                       </SidebarMenuButton>
                       {item.items?.length ? (

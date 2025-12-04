@@ -1,6 +1,7 @@
 import { DashboardGrid } from "@/components/dashboard/dashboard-grid";
 import { DashboardWelcome } from "@/components/dashboard/dashboard-welcome";
 import { SectionCards } from "@/components/dashboard/section-cards";
+import { PendingTransactionsWidget } from "@/components/dashboard/pending-transactions-widget";
 import MonthPicker from "@/components/month-picker/month-picker";
 import { getUser } from "@/lib/auth/server";
 import { fetchDashboardData } from "@/lib/dashboard/fetch-dashboard-data";
@@ -34,6 +35,9 @@ export default async function Page({ searchParams }: PageProps) {
       <DashboardWelcome name={user.name} />
       <MonthPicker />
       <SectionCards metrics={data.metrics} />
+      {data.pendingTransactionsCount > 0 && (
+        <PendingTransactionsWidget count={data.pendingTransactionsCount} />
+      )}
       <DashboardGrid data={data} period={selectedPeriod} />
     </main>
   );

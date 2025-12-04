@@ -432,6 +432,62 @@ export const lancamentos = pgTable("lancamentos", {
   transferId: uuid("transfer_id"),
 });
 
+export const transacoesPendentes = pgTable(
+  "transacoes_pendentes",
+  {
+    // IDs e chaves
+    id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    // Dados brutos da notificação
+    appPackageName: text("app_package_name").notNull(),
+    appName: text("app_name").notNull(),
+    notificationText: text("notification_text").notNull(),
+    notificationTitle: text("notification_title"),
+
+    // Dados parseados
+    valor: numeric("valor", { precision: 12, scale: 2 }),
+    estabelecimento: text("estabelecimento"),
+    dataHoraTransacao: timestamp("data_hora_transacao", { mode: "date" }),
+    tipoTransacao: text("tipo_transacao"), // debito, credito, pix, transferencia
+
+    // Campos de conversão
+    categoriaId: uuid("categoria_id").references(() => categorias.id, {
+      onDelete: "set null",
+    }),
+    contaId: uuid("conta_id").references(() => contas.id, {
+      onDelete: "set null",
+    }),
+    cartaoId: uuid("cartao_id").references(() => cartoes.id, {
+      onDelete: "set null",
+    }),
+    pagadorId: uuid("pagador_id").references(() => pagadores.id, {
+      onDelete: "set null",
+    }),
+    descricaoEditada: text("descricao_editada"),
+    observacoes: text("observacoes"),
+
+    // Metadados
+    status: text("status").notNull().default("pendente"), // pendente, processado, ignorado
+    processadoEm: timestamp("processado_em", { mode: "date" }),
+    lancamentoId: uuid("lancamento_id").references(() => lancamentos.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { mode: "date" })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { mode: "date" })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    userIdIdx: index("transacoes_pendentes_user_id_idx").on(table.userId),
+    statusIdx: index("transacoes_pendentes_status_idx").on(table.status),
+  })
+);
+
 export const userRelations = relations(user, ({ many, one }) => ({
   accounts: many(account),
   sessions: many(session),
@@ -444,6 +500,7 @@ export const userRelations = relations(user, ({ many, one }) => ({
   orcamentos: many(orcamentos),
   pagadores: many(pagadores),
   installmentAnticipations: many(installmentAnticipations),
+  transacoesPendentes: many(transacoesPendentes),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -600,6 +657,61 @@ export const installmentAnticipationsRelations = relations(
   })
 );
 
+/**
+ * API Tokens para autenticação de apps externos (ex: Android app)
+ */
+export const apiTokens = pgTable("api_tokens", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  name: text("name").notNull(), // Nome descritivo (ex: "Meu Celular")
+  token: text("token").notNull().unique(), // Token gerado (hash)
+  lastUsedAt: timestamp("last_used_at", { withTimezone: true }), // Último uso
+  expiresAt: timestamp("expires_at", { withTimezone: true }), // Expiração (opcional)
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }), // Token revogado?
+});
+
+export const apiTokensRelations = relations(apiTokens, ({ one }) => ({
+  user: one(user, {
+    fields: [apiTokens.userId],
+    references: [user.id],
+  }),
+}));
+
+export const transacoesPendentesRelations = relations(
+  transacoesPendentes,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [transacoesPendentes.userId],
+      references: [user.id],
+    }),
+    categoria: one(categorias, {
+      fields: [transacoesPendentes.categoriaId],
+      references: [categorias.id],
+    }),
+    conta: one(contas, {
+      fields: [transacoesPendentes.contaId],
+      references: [contas.id],
+    }),
+    cartao: one(cartoes, {
+      fields: [transacoesPendentes.cartaoId],
+      references: [cartoes.id],
+    }),
+    pagador: one(pagadores, {
+      fields: [transacoesPendentes.pagadorId],
+      references: [pagadores.id],
+    }),
+    lancamento: one(lancamentos, {
+      fields: [transacoesPendentes.lancamentoId],
+      references: [lancamentos.id],
+    }),
+  })
+);
+
 export type User = typeof user.$inferSelect;
 export type NewUser = typeof user.$inferInsert;
 export type Account = typeof account.$inferSelect;
@@ -616,3 +728,7 @@ export type SavedInsight = typeof savedInsights.$inferSelect;
 export type Lancamento = typeof lancamentos.$inferSelect;
 export type InstallmentAnticipation =
   typeof installmentAnticipations.$inferSelect;
+export type TransacaoPendente = typeof transacoesPendentes.$inferSelect;
+export type NewTransacaoPendente = typeof transacoesPendentes.$inferInsert;
+export type ApiToken = typeof apiTokens.$inferSelect;
+export type NewApiToken = typeof apiTokens.$inferInsert;

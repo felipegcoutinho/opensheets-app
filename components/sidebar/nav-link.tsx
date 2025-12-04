@@ -6,6 +6,7 @@ import {
   RiDashboardLine,
   RiFundsLine,
   RiGroupLine,
+  RiInboxLine,
   RiLineChartLine,
   RiPriceTag3Line,
   RiSettingsLine,
@@ -28,6 +29,7 @@ export type SidebarItem = {
   url: string;
   icon: RemixiconComponentType;
   isActive?: boolean;
+  badge?: number;
   items?: SidebarSubItem[];
 };
 
@@ -52,7 +54,10 @@ export interface PagadorLike {
   canEdit?: boolean;
 }
 
-export function createSidebarNavData(pagadores: PagadorLike[]): SidebarNavData {
+export function createSidebarNavData(
+  pagadores: PagadorLike[],
+  pendingCount?: number
+): SidebarNavData {
   const pagadorItems = pagadores
     .map((pagador) => ({
       title: pagador.name?.trim().length
@@ -88,6 +93,12 @@ export function createSidebarNavData(pagadores: PagadorLike[]): SidebarNavData {
             title: "Lançamentos",
             url: "/lancamentos",
             icon: RiArrowLeftRightLine,
+          },
+          {
+            title: "Transações Pendentes",
+            url: "/transacoes-pendentes",
+            icon: RiInboxLine,
+            badge: pendingCount && pendingCount > 0 ? pendingCount : undefined,
           },
           {
             title: "Calendário",
