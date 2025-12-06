@@ -194,7 +194,11 @@ export function AccountsPage({ accounts, logoOptions }: AccountsPageProps) {
 
       {transferFromAccount && (
         <TransferDialog
-          accounts={accounts}
+          accounts={accounts.map((a) => ({
+            ...a,
+            balance: a.balance ?? a.initialBalance ?? 0,
+            excludeFromBalance: a.excludeFromBalance ?? false,
+          }))}
           fromAccountId={transferFromAccount.id}
           currentPeriod={getCurrentPeriod()}
           open={transferOpen}

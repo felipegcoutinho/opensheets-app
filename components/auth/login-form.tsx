@@ -55,6 +55,10 @@ export function LoginForm({ className, ...props }: DivProps) {
           router.replace("/dashboard");
         },
         onError: (ctx) => {
+          if (ctx.error.status === 500 && ctx.error.statusText === "Internal Server Error") {
+            toast.error("Ocorreu uma falha na requisição. Tente novamente mais tarde.");
+          }
+
           setError(ctx.error.message);
           setLoadingEmail(false);
         },
