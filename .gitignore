@@ -106,6 +106,7 @@ docker-compose.override.yml
 .cursor/
 CLAUDE.md
 AGENTS.md
+QWEN.md
 claude.md
 agents.md
 

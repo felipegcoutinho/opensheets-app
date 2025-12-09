@@ -10,8 +10,9 @@ import { DEFAULT_MODEL } from "@/app/(dashboard)/insights/data";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { InsightsResponse } from "@/lib/schemas/insights";
-import { RiDeleteBinLine, RiSaveLine, RiSparklingLine } from "@remixicon/react";
+import { RiDeleteBinLine, RiSaveLine, RiSparklingLine, RiAlertLine } from "@remixicon/react";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "../empty-state";
@@ -127,6 +128,15 @@ export function InsightsPage({ period, onAnalyze }: InsightsPageProps) {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Privacy Warning */}
+      <Alert>
+        <RiAlertLine className="size-4" />
+        <AlertDescription className="text-sm">
+          <strong>Aviso de privacidade:</strong> Ao gerar insights, seus dados financeiros serão enviados para o provedor de IA selecionado
+          (Anthropic, OpenAI, Google ou OpenRouter) para processamento. Certifique-se de que você confia no provedor escolhido antes de prosseguir.
+        </AlertDescription>
+      </Alert>
+
       {/* Model Selector */}
       <ModelSelector
         value={selectedModel}

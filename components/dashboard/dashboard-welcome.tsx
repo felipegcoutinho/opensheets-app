@@ -51,7 +51,7 @@ export function DashboardWelcome({ name }: DashboardWelcomeProps) {
 
   return (
     <Card
-      className={`${main_font.className} relative px-6 py-12 bg-welcome-banner border-none shadow-lg overflow-hidden`}
+      className={`${main_font.className} relative px-6 py-12 bg-welcome-banner border-none shadow-none overflow-hidden`}
     >
       <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
         <MagnetLines

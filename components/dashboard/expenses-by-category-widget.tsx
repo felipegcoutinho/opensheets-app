@@ -127,9 +127,9 @@ export function ExpensesByCategoryWidget({
                   <span
                     className={`flex items-center gap-0.5 text-xs ${
                       hasIncrease
-                        ? "text-red-600"
+                        ? "text-red-600 dark:text-red-500"
                         : hasDecrease
-                        ? "text-green-600"
+                        ? "text-green-600 dark:text-green-500"
                         : "text-muted-foreground"
                     }`}
                   >
