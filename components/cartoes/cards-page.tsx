@@ -4,12 +4,13 @@ import { deleteCardAction } from "@/app/(dashboard)/cartoes/actions";
 import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card as CardComponent } from "@/components/ui/card";
 import { RiAddCircleLine, RiBankCardLine } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CardDialog } from "./card-dialog";
+import type { Card } from "./types";
 import { CardItem } from "./card-item";
 
 type AccountOption = {
@@ -139,13 +140,13 @@ export function CardsPage({ cards, accounts, logoOptions }: CardsPageProps) {
             ))}
           </div>
         ) : (
-          <Card className="flex w-full items-center justify-center py-12">
+          <CardComponent className="flex w-full items-center justify-center py-12">
             <EmptyState
               media={<RiBankCardLine className="size-6 text-primary" />}
               title="Nenhum cartão cadastrado"
               description="Adicione seu primeiro cartão para acompanhar limites e faturas com mais controle."
             />
-          </Card>
+          </CardComponent>
         )}
       </div>
 
