@@ -247,8 +247,9 @@ export const cartoes = pgTable(
       .primaryKey()
       .default(sql`gen_random_uuid()`),
     name: text("nome").notNull(),
-    closingDay: text("dt_fechamento").notNull(),
-    dueDay: text("dt_vencimento").notNull(),
+    isPrePaid: boolean("is_pre_pago").notNull().default(false),
+    closingDay: text("dt_fechamento"),
+    dueDay: text("dt_vencimento"),
     note: text("anotacao"),
     limit: numeric("limite", { precision: 10, scale: 2 }),
     brand: text("bandeira"),

@@ -31,13 +31,7 @@ import { toast } from "sonner";
 
 import { DEFAULT_CARD_BRANDS, DEFAULT_CARD_STATUS } from "./constants";
 import { CardFormFields } from "./card-form-fields";
-import type { Card, CardFormValues } from "./types";
-
-type AccountOption = {
-  id: string;
-  name: string;
-  logo: string | null;
-};
+import type { Card, CardFormValues, AccountOption } from "./types";
 
 interface CardDialogProps {
   mode: "create" | "update";
@@ -72,6 +66,7 @@ const buildInitialValues = ({
     note: card?.note ?? "",
     logo: selectedLogo,
     contaId: card?.contaId ?? accounts[0]?.id ?? "",
+    isPrePaid: card?.isPrePaid ? "true" : "false",
   };
 };
 

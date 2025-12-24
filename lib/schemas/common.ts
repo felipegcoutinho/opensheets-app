@@ -51,6 +51,17 @@ export const dayOfMonthSchema = z
     return !Number.isNaN(parsed) && parsed >= 1 && parsed <= 31;
   }, "Informe um dia entre 1 e 31.");
 
+  
+export const optionalDayOfMonthSchema = z
+  .string()
+  .trim()
+  .optional()
+  .refine((value) => {
+    if (!value) return true;
+    const parsed = Number.parseInt(value, 10);
+    return !Number.isNaN(parsed) && parsed >= 1 && parsed <= 31;
+  }, "Informe um dia entre 1 e 31.");
+
 /**
  * Period schema (YYYY-MM format)
  */

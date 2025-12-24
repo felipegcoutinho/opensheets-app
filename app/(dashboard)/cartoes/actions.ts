@@ -1,10 +1,11 @@
 "use server";
 
 import { cartoes, contas } from "@/db/schema";
-import { type ActionResult, handleActionError } from "@/lib/actions/helpers";
+import { type ActionResult } from "@/lib/actions/types";
+import { handleActionError } from "@/lib/actions/helpers";
 import { revalidateForEntity } from "@/lib/actions/helpers";
 import {
-  dayOfMonthSchema,
+  optionalDayOfMonthSchema,
   noteSchema,
   optionalDecimalSchema,
   uuidSchema,
@@ -13,10 +14,10 @@ import { formatDecimalForDb } from "@/lib/utils/currency";
 import { normalizeFilePath } from "@/lib/utils/string";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/auth/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, is } from "drizzle-orm";
 import { z } from "zod";
 
-const cardBaseSchema = z.object({
+const cardBaseObject = z.object({
   name: z
     .string({ message: "Informe o nome do cartão." })
     .trim()
@@ -29,8 +30,11 @@ const cardBaseSchema = z.object({
     .string({ message: "Informe o status do cartão." })
     .trim()
     .min(1, "Informe o status do cartão."),
-  closingDay: dayOfMonthSchema,
-  dueDay: dayOfMonthSchema,
+  isPrePaid: z
+    .string({ message: "Informe se o cartão é pré pago." })
+    .transform((val) => val === "true"),
+  closingDay: optionalDayOfMonthSchema,
+  dueDay: optionalDayOfMonthSchema,
   note: noteSchema,
   limit: optionalDecimalSchema,
   logo: z
@@ -40,9 +44,27 @@ const cardBaseSchema = z.object({
   contaId: uuidSchema("Conta"),
 });
 
+const cardBaseSchema = cardBaseObject.refine((data) => {
+  if (!data.isPrePaid) {
+    return data.closingDay && data.dueDay;
+  }
+  return true;
+}, {
+  message: "Para cartões não pré-pagos, informe o dia de fechamento e vencimento.",
+  path: ["closingDay"],
+});
+
 const createCardSchema = cardBaseSchema;
-const updateCardSchema = cardBaseSchema.extend({
+const updateCardSchema = cardBaseObject.extend({
   id: uuidSchema("Cartão"),
+}).refine((data) => {
+  if (!data.isPrePaid) {
+    return data.closingDay && data.dueDay;
+  }
+  return true;
+}, {
+  message: "Para cartões não pré-pagos, informe o dia de fechamento e vencimento.",
+  path: ["closingDay"],
 });
 const deleteCardSchema = z.object({
   id: uuidSchema("Cartão"),
@@ -78,13 +100,14 @@ export async function createCardAction(
       name: data.name,
       brand: data.brand,
       status: data.status,
-      closingDay: data.closingDay,
-      dueDay: data.dueDay,
+      closingDay: data.isPrePaid ? null : data.closingDay,
+      dueDay: data.isPrePaid ? null : data.dueDay,
       note: data.note ?? null,
-      limit: formatDecimalForDb(data.limit),
+      limit: data.isPrePaid ? null : formatDecimalForDb(data.limit),
       logo: logoFile,
       contaId: data.contaId,
       userId: user.id,
+      isPrePaid: data.isPrePaid,
     });
 
     revalidateForEntity("cartoes");
@@ -112,10 +135,10 @@ export async function updateCardAction(
         name: data.name,
         brand: data.brand,
         status: data.status,
-        closingDay: data.closingDay,
-        dueDay: data.dueDay,
+        closingDay: data.isPrePaid ? null : data.closingDay,
+        dueDay: data.isPrePaid ? null : data.dueDay,
         note: data.note ?? null,
-        limit: formatDecimalForDb(data.limit),
+        limit: data.isPrePaid ? null : formatDecimalForDb(data.limit),
         logo: logoFile,
         contaId: data.contaId,
       })

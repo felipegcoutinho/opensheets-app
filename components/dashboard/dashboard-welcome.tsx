@@ -53,18 +53,6 @@ export function DashboardWelcome({ name }: DashboardWelcomeProps) {
     <Card
       className={`${main_font.className} relative px-6 py-12 bg-welcome-banner border-none shadow-none overflow-hidden`}
     >
-      <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none">
-        <MagnetLines
-          rows={8}
-          columns={16}
-          containerSize="100%"
-          lineColor="currentColor"
-          lineWidth="0.4vmin"
-          lineHeight="5vmin"
-          baseAngle={0}
-          className="text-welcome-banner-foreground"
-        />
-      </div>
       <div className="relative tracking-tight text-welcome-banner-foreground">
         <h1 className="text-xl font-medium">
           {greeting}, {displayName}! <span aria-hidden="true">👋</span>

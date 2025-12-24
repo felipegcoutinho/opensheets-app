@@ -3,25 +3,33 @@ export type Card = {
   name: string;
   brand: string;
   status: string;
-  closingDay: string;
-  dueDay: string;
+  closingDay?: string;
+  dueDay?: string;
   note: string | null;
   logo: string | null;
-  limit: number | null;
+  limit?: number | null;
   contaId: string;
   contaName: string;
   limitInUse?: number | null;
   limitAvailable?: number | null;
+  isPrePaid: boolean;
 };
 
 export type CardFormValues = {
   name: string;
   brand: string;
   status: string;
-  closingDay: string;
-  dueDay: string;
-  limit: string;
+  closingDay?: string;
+  dueDay?: string;
+  limit?: string;
   note: string;
   logo: string;
   contaId: string;
+  isPrePaid: string;
+};
+
+export type AccountOption = {
+  id: string;
+  name: string;
+  logo: string | null;
 };

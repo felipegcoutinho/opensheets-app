@@ -11,6 +11,14 @@ Opensheets is a self-hosted personal finance management application built with N
 - **Database**: PostgreSQL with Drizzle ORM, schema in `db/schema.ts`
 - **Auth**: Better Auth (OAuth + email magic links)
 - **Deployment**: Docker multi-stage build, health checks
+- **AI Features**: AI-powered financial insights using @ai-sdk/* providers
+
+## Database Setup
+
+- **Connection**: Lazy-loaded proxy pattern in `lib/db.ts` for development hot-reload support
+- **Extensions**: Requires `pgcrypto` extension for UUID generation (`gen_random_uuid()`)
+- **Migrations**: Use `pnpm db:push` for schema sync, `pnpm db:migrate` for production
+- **Studio**: Visual editor at `pnpm db:studio`
 
 ## Key Patterns
 
@@ -20,11 +28,14 @@ Opensheets is a self-hosted personal finance management application built with N
 - **Revalidation**: Call `revalidateForEntity("lancamentos")` after mutations
 - **Portuguese Naming**: DB fields like `nome`, `tipo_conta`, `pagador` (payer), `lancamento` (transaction)
 - **Component Structure**: Feature-based folders in `components/`, shared UI in `components/ui/`
+- **Currency Handling**: Store as decimal strings (e.g., "123.45"), convert to cents for calculations using `formatDecimalForDbRequired`
+- **Period Formatting**: Use "YYYY-MM" format, parse with `parsePeriodParam()`
 
 ## Development Workflow
 
 - **Start Dev**: `pnpm dev` (Turbopack), `docker compose up db -d` for DB
-- **Database**: `pnpm db:push` to sync schema, `pnpm db:studio` for visual editor
+- **Database**: `pnpm db:push` to sync schema, `pnpm db:studio` for visual editor, `pnpm db:enableExtensions` to enable PostgreSQL extensions
+- **Environment**: `pnpm env:setup` to initialize .env from .env.example
 - **Build**: `pnpm build`, `pnpm start` for production
 - **Docker**: `pnpm docker:up` for full stack, `pnpm docker:logs` for monitoring
 
@@ -34,14 +45,15 @@ Opensheets is a self-hosted personal finance management application built with N
 - **New Entity**: Add to `db/schema.ts`, define relations, create CRUD actions in `lib/[entity]/actions.ts`
 - **UI Component**: Use shadcn/ui, place in `components/[feature]/`, export from `components/ui/`
 - **API Route**: Add to `app/api/`, use `getUserSession()` for auth
+- **AI Insights**: Use `generateObject` from `ai` SDK in server actions, store results in `savedInsights` table
 
 ## Conventions
 
 - **Imports**: Absolute paths with `@/`, group by external/internal
 - **Error Handling**: Return `{ success: false, error: string }` from actions
-- **Currency**: Store as decimal strings (e.g., "123.45"), convert to cents for calculations
-- **Periods**: Format as "YYYY-MM", use `parsePeriodParam()` for URL params
 - **Notifications**: Send emails via `sendPagadorAutoEmails()` for payer updates
+- **Default Data**: Seed default categories and payers on user creation
+- **Installments**: Handle recurring transactions with `seriesId`, anticipations with `installmentAnticipations`
 
 ## External Integrations
 
@@ -56,3 +68,4 @@ Opensheets is a self-hosted personal finance management application built with N
 - Actions: `app/(dashboard)/lancamentos/actions.ts` (CRUD with validation)
 - Components: `components/lancamentos/page/lancamentos-page.tsx` (client component)
 - Utils: `lib/lancamentos/page-helpers.ts` (data transformation)
+- Auth: `lib/auth/server.ts` (user session helpers)

@@ -17,6 +17,7 @@ export type CardData = {
   limitAvailable: number | null;
   contaId: string;
   contaName: string;
+  isPrePaid: boolean;
 };
 
 export type AccountSimple = {
@@ -98,6 +99,7 @@ export async function fetchCardsForUser(userId: string): Promise<{
     })(),
     contaId: card.contaId,
     contaName: card.conta?.name ?? "Conta não encontrada",
+    isPrePaid: card.isPrePaid,
   }));
 
   const accounts = accountRows.map((account) => ({
