@@ -1,7 +1,23 @@
 {
   "version": "1.0.0",
-  "generatedAt": "2025-12-13T13:52:07.921Z",
+  "generatedAt": "2025-12-24T12:23:57.952Z",
   "entries": [
+    {
+      "id": "079d39253da59190bf9158189949faf66cedd1e6",
+      "type": "fix",
+      "title": "remove background que estava travando o projeto",
+      "date": "2025-12-24 09:09:51 -0300",
+      "icon": "🐛",
+      "category": "bugfix"
+    },
+    {
+      "id": "e7cb9c9db1b5175695b135b1ff4b084f5c70d36e",
+      "type": "chore",
+      "title": "remover seções vazias de mudanças de código",
+      "date": "2025-12-16 23:20:47 +0000",
+      "icon": "🔧",
+      "category": "chore"
+    },
     {
       "id": "0767636eed5085a211e08de52577beed658f05cf",
       "type": "feat",
@@ -137,30 +153,6 @@
       "date": "2025-11-25 14:17:58 +0000",
       "icon": "🐛",
       "category": "bugfix"
-    },
-    {
-      "id": "a34d92f3bd7ceb96285bc32f1f2ff2eb79052170",
-      "type": "feat",
-      "title": "aprimora a exibição do cartão de parcelas e ajusta a lógica de busca",
-      "date": "2025-11-23 14:52:22 -0300",
-      "icon": "✨",
-      "category": "feature"
-    },
-    {
-      "id": "e8a343a6dd1f2426d484afe2902b05cfc65ea32d",
-      "type": "feat",
-      "title": "adiciona integração com Speed Insights",
-      "date": "2025-11-23 12:32:38 -0300",
-      "icon": "✨",
-      "category": "feature"
-    },
-    {
-      "id": "9fbe722d00aa0105fc3a37e0d19555e1aaf27928",
-      "type": "feat",
-      "title": "adicionar estrutura para gerenciamento de mudanças de código",
-      "date": "2025-11-23 12:26:05 -0300",
-      "icon": "✨",
-      "category": "feature"
     }
   ]
 }

@@ -10,14 +10,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { CardDialog } from "./card-dialog";
-import type { Card } from "./types";
+import type { Card, AccountOption } from "./types";
 import { CardItem } from "./card-item";
-
-type AccountOption = {
-  id: string;
-  name: string;
-  logo: string | null;
-};
 
 interface CardsPageProps {
   cards: Card[];
@@ -134,6 +128,7 @@ export function CardsPage({ cards, accounts, logoOptions }: CardsPageProps) {
                 contaName={card.contaName}
                 logo={card.logo}
                 note={card.note}
+                isPrePaid={card.isPrePaid}
                 onEdit={() => handleEdit(card)}
                 onInvoice={() => handleInvoice(card)}
                 onRemove={() => handleRemoveRequest(card)}

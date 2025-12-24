@@ -1,0 +1,1 @@
+ALTER TABLE "cartoes" ADD COLUMN "is_pre_pago" boolean DEFAULT false NOT NULL;

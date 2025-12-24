@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { CurrencyInput } from "@/components/ui/currency-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +56,14 @@ export function CardFormFields({
     DEFAULT_CARD_STATUS as unknown as string[],
     values.status
   );
+
+  useEffect(() => {
+    if (values.isPrePaid === "true") {
+      onChange("closingDay", "");
+      onChange("dueDay", "");
+      onChange("limit", "");
+    }
+  }, [values.isPrePaid, onChange]);
 
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -112,12 +121,30 @@ export function CardFormFields({
       </div>
 
       <div className="flex flex-col gap-2">
+        <Label htmlFor="card-is-prepaid">Pré pago?</Label>
+        <Select
+          value={values.isPrePaid}
+          onValueChange={(value) => onChange("isPrePaid", value)}
+          defaultValue="false"
+        >
+          <SelectTrigger id="card-is-prepaid" className="w-full">
+            <SelectValue placeholder="Pré pago?" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="false">Não</SelectItem>
+            <SelectItem value="true">Sim</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="flex flex-col gap-2">
         <Label htmlFor="card-limit">Limite (R$)</Label>
         <CurrencyInput
           id="card-limit"
-          value={values.limit}
+          value={values.limit ?? ""}
           onValueChange={(value) => onChange("limit", value)}
           placeholder="R$ 0,00"
+          disabled={values.isPrePaid === "true"}
         />
       </div>
 
@@ -126,6 +153,7 @@ export function CardFormFields({
         <Select
           value={values.closingDay}
           onValueChange={(value) => onChange("closingDay", value)}
+          disabled={values.isPrePaid === "true"}
         >
           <SelectTrigger id="card-closing-day" className="w-full">
             <SelectValue placeholder="Dia de fechamento" />
@@ -145,6 +173,7 @@ export function CardFormFields({
         <Select
           value={values.dueDay}
           onValueChange={(value) => onChange("dueDay", value)}
+          disabled={values.isPrePaid === "true"}
         >
           <SelectTrigger id="card-due-day" className="w-full">
             <SelectValue placeholder="Dia de vencimento" />

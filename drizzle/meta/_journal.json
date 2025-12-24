@@ -22,6 +22,20 @@
       "when": 1765200545692,
       "tag": "0002_slimy_flatman",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766580665105,
+      "tag": "0003_unique_amphibian",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1766580994768,
+      "tag": "0004_round_thunderball",
+      "breakpoints": true
     }
   ]
 }
