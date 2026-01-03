@@ -1,16 +1,16 @@
 "use client";
-
 import { cn } from "@/lib/utils/ui";
 import {
   RiArrowLeftRightLine,
   RiDeleteBin5Line,
-  RiEyeOffLine,
   RiFileList2Line,
   RiPencilLine,
+  RiInformationLine,
 } from "@remixicon/react";
 import type React from "react";
 import MoneyValues from "../money-values";
 import { Card, CardContent, CardFooter } from "../ui/card";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface AccountCardProps {
   accountName: string;
@@ -19,6 +19,7 @@ interface AccountCardProps {
   status?: string;
   icon?: React.ReactNode;
   excludeFromBalance?: boolean;
+  excludeInitialBalanceFromIncome?: boolean;
   onViewStatement?: () => void;
   onEdit?: () => void;
   onRemove?: () => void;
@@ -33,6 +34,7 @@ export function AccountCard({
   status,
   icon,
   excludeFromBalance,
+  excludeInitialBalanceFromIncome,
   onViewStatement,
   onEdit,
   onRemove,
@@ -85,21 +87,39 @@ export function AccountCard({
           <h2 className="text-lg font-semibold text-foreground">
             {accountName}
           </h2>
-          {excludeFromBalance ? (
-            <div
-              className="flex items-center gap-1 text-muted-foreground"
-              title="Excluída do saldo geral"
-            >
-              <RiEyeOffLine className="size-4" aria-hidden />
-            </div>
-          ) : null}
+
+          {(excludeFromBalance || excludeInitialBalanceFromIncome) && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center">
+                  <RiInformationLine className="size-5 text-muted-foreground hover:text-foreground transition-colors cursor-help" />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="max-w-xs">
+                <div className="space-y-1">
+                  {excludeFromBalance && (
+                    <p className="text-xs">
+                      <strong>Desconsiderado do saldo total:</strong> Esta conta
+                      não é incluída no cálculo do saldo total geral.
+                    </p>
+                  )}
+                  {excludeInitialBalanceFromIncome && (
+                    <p className="text-xs">
+                      <strong>
+                        Saldo inicial desconsiderado das receitas:
+                      </strong>{" "}
+                      O saldo inicial desta conta não é contabilizado como
+                      receita nas métricas.
+                    </p>
+                  )}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          )}
         </div>
 
-        <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">Saldo</p>
-          <p className="text-3xl text-foreground">
-            <MoneyValues amount={balance} className="text-3xl" />
-          </p>
+        <div className="space-y-2">
+          <MoneyValues amount={balance} className="text-3xl" />
           <p className="text-sm text-muted-foreground">{accountType}</p>
         </div>
       </CardContent>

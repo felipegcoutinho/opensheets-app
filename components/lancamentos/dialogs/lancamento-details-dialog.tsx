@@ -110,10 +110,14 @@ export function LancamentoDetailsDialog({
                   <span className="capitalize">
                     <Badge
                       variant={getTransactionBadgeVariant(
-                        lancamento.transactionType
+                        lancamento.categoriaName === "Saldo inicial"
+                          ? "Saldo inicial"
+                          : lancamento.transactionType
                       )}
                     >
-                      {lancamento.transactionType}
+                      {lancamento.categoriaName === "Saldo inicial"
+                        ? "Saldo Inicial"
+                        : lancamento.transactionType}
                     </Badge>
                   </span>
                 </li>

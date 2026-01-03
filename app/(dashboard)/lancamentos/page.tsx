@@ -12,6 +12,7 @@ import {
   mapLancamentosData,
   type ResolvedSearchParams,
 } from "@/lib/lancamentos/page-helpers";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
 import { parsePeriodParam } from "@/lib/utils/period";
 import { fetchLancamentos } from "./data";
 import { getRecentEstablishmentsAction } from "./actions";
@@ -31,7 +32,11 @@ export default async function Page({ searchParams }: PageProps) {
 
   const searchFilters = extractLancamentoSearchFilters(resolvedSearchParams);
 
-  const filterSources = await fetchLancamentoFilterSources(userId);
+  const [filterSources, periodPreferences] = await Promise.all([
+    fetchLancamentoFilterSources(userId),
+    fetchUserPeriodPreferences(userId),
+  ]);
+
   const sluggedFilters = buildSluggedFilters(filterSources);
   const slugMaps = buildSlugMaps(sluggedFilters);
 
@@ -78,6 +83,7 @@ export default async function Page({ searchParams }: PageProps) {
         contaCartaoFilterOptions={contaCartaoFilterOptions}
         selectedPeriod={selectedPeriod}
         estabelecimentos={estabelecimentos}
+        periodPreferences={periodPreferences}
       />
     </main>
   );

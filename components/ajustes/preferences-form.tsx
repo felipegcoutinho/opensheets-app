@@ -1,0 +1,138 @@
+"use client";
+
+import { updatePreferencesAction } from "@/app/(dashboard)/ajustes/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { toast } from "sonner";
+
+interface PreferencesFormProps {
+  disableMagnetlines: boolean;
+  periodMonthsBefore: number;
+  periodMonthsAfter: number;
+}
+
+export function PreferencesForm({
+  disableMagnetlines,
+  periodMonthsBefore,
+  periodMonthsAfter,
+}: PreferencesFormProps) {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [magnetlinesDisabled, setMagnetlinesDisabled] =
+    useState(disableMagnetlines);
+  const [monthsBefore, setMonthsBefore] = useState(periodMonthsBefore);
+  const [monthsAfter, setMonthsAfter] = useState(periodMonthsAfter);
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    startTransition(async () => {
+      const result = await updatePreferencesAction({
+        disableMagnetlines: magnetlinesDisabled,
+        periodMonthsBefore: monthsBefore,
+        periodMonthsAfter: monthsAfter,
+      });
+
+      if (result.success) {
+        toast.success(result.message);
+        // Recarregar a página para aplicar as mudanças nos componentes
+        router.refresh();
+        // Forçar reload completo para garantir que os hooks re-executem
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      } else {
+        toast.error(result.error);
+      }
+    });
+  };
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col space-y-6"
+    >
+      <div className="space-y-4 max-w-md">
+        <div className="flex items-center justify-between rounded-lg border border-dashed p-4">
+          <div className="space-y-0.5">
+            <Label htmlFor="magnetlines" className="text-base">
+              Desabilitar Magnetlines
+            </Label>
+            <p className="text-sm text-muted-foreground">
+              Remove o recurso de linhas magnéticas do sistema. Essa mudança
+              afeta a interface e interações visuais.
+            </p>
+          </div>
+          <Switch
+            id="magnetlines"
+            checked={magnetlinesDisabled}
+            onCheckedChange={setMagnetlinesDisabled}
+            disabled={isPending}
+          />
+        </div>
+
+        <div className="space-y-4 rounded-lg border border-dashed p-4">
+          <div>
+            <h3 className="text-base font-medium mb-2">
+              Seleção de Período
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Configure quantos meses antes e depois do mês atual serão exibidos
+              nos seletores de período.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="monthsBefore" className="text-sm">
+                Meses anteriores
+              </Label>
+              <Input
+                id="monthsBefore"
+                type="number"
+                min={1}
+                max={24}
+                value={monthsBefore}
+                onChange={(e) => setMonthsBefore(Number(e.target.value))}
+                disabled={isPending}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                1 a 24 meses
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="monthsAfter" className="text-sm">
+                Meses posteriores
+              </Label>
+              <Input
+                id="monthsAfter"
+                type="number"
+                min={1}
+                max={24}
+                value={monthsAfter}
+                onChange={(e) => setMonthsAfter(Number(e.target.value))}
+                disabled={isPending}
+                className="w-full"
+              />
+              <p className="text-xs text-muted-foreground">
+                1 a 24 meses
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button type="submit" disabled={isPending} className="w-fit">
+          {isPending ? "Salvando..." : "Salvar preferências"}
+        </Button>
+      </div>
+    </form>
+  );
+}

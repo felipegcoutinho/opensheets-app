@@ -80,7 +80,10 @@ export function formatCondition(value?: string | null): string {
  */
 export function getTransactionBadgeVariant(type?: string | null): "default" | "destructive" | "secondary" {
   if (!type) return "secondary";
-  return type.toLowerCase() === "receita" ? "default" : "destructive";
+  const normalized = type.toLowerCase();
+  return normalized === "receita" || normalized === "saldo inicial"
+    ? "default"
+    : "destructive";
 }
 
 /**

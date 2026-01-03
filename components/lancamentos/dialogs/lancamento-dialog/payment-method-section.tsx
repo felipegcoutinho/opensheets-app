@@ -31,7 +31,17 @@ export function PaymentMethodSection({
     "Dinheiro",
     "Boleto",
     "Cartão de débito",
+    "Pré-Pago | VR/VA",
+    "Transferência bancária",
   ].includes(formState.paymentMethod);
+
+  // Filtrar contas apenas do tipo "Pré-Pago | VR/VA" quando forma de pagamento for "Pré-Pago | VR/VA"
+  const filteredContaOptions =
+    formState.paymentMethod === "Pré-Pago | VR/VA"
+      ? contaOptions.filter(
+          (option) => option.accountType === "Pré-Pago | VR/VA"
+        )
+      : contaOptions;
 
   return (
     <>
@@ -56,7 +66,9 @@ export function PaymentMethodSection({
               >
                 <SelectValue placeholder="Selecione" className="w-full">
                   {formState.paymentMethod && (
-                    <PaymentMethodSelectContent label={formState.paymentMethod} />
+                    <PaymentMethodSelectContent
+                      label={formState.paymentMethod}
+                    />
                   )}
                 </SelectValue>
               </SelectTrigger>
@@ -138,7 +150,7 @@ export function PaymentMethodSection({
                   <SelectValue placeholder="Selecione">
                     {formState.contaId &&
                       (() => {
-                        const selectedOption = contaOptions.find(
+                        const selectedOption = filteredContaOptions.find(
                           (opt) => opt.value === formState.contaId
                         );
                         return selectedOption ? (
@@ -152,14 +164,14 @@ export function PaymentMethodSection({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {contaOptions.length === 0 ? (
+                  {filteredContaOptions.length === 0 ? (
                     <div className="px-2 py-6 text-center">
                       <p className="text-sm text-muted-foreground">
                         Nenhuma conta cadastrada
                       </p>
                     </div>
                   ) : (
-                    contaOptions.map((option) => (
+                    filteredContaOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         <ContaCartaoSelectContent
                           label={option.label}
@@ -246,7 +258,7 @@ export function PaymentMethodSection({
                   <SelectValue placeholder="Selecione">
                     {formState.contaId &&
                       (() => {
-                        const selectedOption = contaOptions.find(
+                        const selectedOption = filteredContaOptions.find(
                           (opt) => opt.value === formState.contaId
                         );
                         return selectedOption ? (
@@ -260,14 +272,14 @@ export function PaymentMethodSection({
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {contaOptions.length === 0 ? (
+                  {filteredContaOptions.length === 0 ? (
                     <div className="px-2 py-6 text-center">
                       <p className="text-sm text-muted-foreground">
                         Nenhuma conta cadastrada
                       </p>
                     </div>
                   ) : (
-                    contaOptions.map((option) => (
+                    filteredContaOptions.map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         <ContaCartaoSelectContent
                           label={option.label}

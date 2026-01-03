@@ -55,6 +55,7 @@ type CategoriaSluggedOption = BaseSluggedOption & {
 type ContaSluggedOption = BaseSluggedOption & {
   kind: "conta";
   logo: string | null;
+  accountType: string | null;
 };
 
 type CartaoSluggedOption = BaseSluggedOption & {
@@ -154,7 +155,8 @@ export const toOption = (
   slug?: string | null,
   avatarUrl?: string | null,
   logo?: string | null,
-  icon?: string | null
+  icon?: string | null,
+  accountType?: string | null
 ): SelectOption => ({
   value,
   label: normalizeLabel(label),
@@ -164,6 +166,7 @@ export const toOption = (
   avatarUrl: avatarUrl ?? null,
   logo: logo ?? null,
   icon: icon ?? null,
+  accountType: accountType ?? null,
 });
 
 export const fetchLancamentoFilterSources = async (userId: string) => {
@@ -234,6 +237,7 @@ export const buildSluggedFilters = ({
       slug: contaCartaoSlugger(label),
       kind: "conta" as const,
       logo: conta.logo ?? null,
+      accountType: conta.accountType ?? null,
     };
   });
 
@@ -468,8 +472,8 @@ export const buildOptionSets = ({
     : contaFiltersRaw;
 
   const contaOptions = sortByLabel(
-    contaOptionsSource.map(({ id, label, slug, logo }) =>
-      toOption(id, label, undefined, undefined, slug, undefined, logo)
+    contaOptionsSource.map(({ id, label, slug, logo, accountType }) =>
+      toOption(id, label, undefined, undefined, slug, undefined, logo, undefined, accountType)
     )
   );
 

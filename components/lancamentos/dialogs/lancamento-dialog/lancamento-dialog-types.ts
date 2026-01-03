@@ -1,4 +1,5 @@
 import type { LancamentoFormState } from "@/lib/lancamentos/form-helpers";
+import type { PeriodPreferences } from "@/lib/user-preferences/period";
 import type { LancamentoItem, SelectOption } from "../../types";
 
 export type FormState = LancamentoFormState;
@@ -17,6 +18,7 @@ export interface LancamentoDialogProps {
   estabelecimentos: string[];
   lancamento?: LancamentoItem;
   defaultPeriod?: string;
+  periodPreferences: PeriodPreferences;
   defaultCartaoId?: string | null;
   defaultPaymentMethod?: string | null;
   defaultPurchaseDate?: string | null;

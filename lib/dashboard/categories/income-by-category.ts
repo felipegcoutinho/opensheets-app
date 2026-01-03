@@ -1,11 +1,11 @@
-import { categorias, lancamentos, orcamentos, pagadores } from "@/db/schema";
-import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX } from "@/lib/accounts/constants";
+import { categorias, lancamentos, orcamentos, pagadores, contas } from "@/db/schema";
+import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX, INITIAL_BALANCE_NOTE } from "@/lib/accounts/constants";
 import { db } from "@/lib/db";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
 import { getPreviousPeriod } from "@/lib/utils/period";
 import { calculatePercentageChange } from "@/lib/utils/math";
 import { safeToNumber } from "@/lib/utils/number";
-import { and, eq, isNull, or, sql } from "drizzle-orm";
+import { and, eq, isNull, or, sql, ne } from "drizzle-orm";
 
 export type CategoryIncomeItem = {
   categoryId: string;
@@ -43,6 +43,7 @@ export async function fetchIncomeByCategory(
     .from(lancamentos)
     .innerJoin(pagadores, eq(lancamentos.pagadorId, pagadores.id))
     .innerJoin(categorias, eq(lancamentos.categoriaId, categorias.id))
+    .leftJoin(contas, eq(lancamentos.contaId, contas.id))
     .leftJoin(
       orcamentos,
       and(
@@ -61,6 +62,12 @@ export async function fetchIncomeByCategory(
         or(
           isNull(lancamentos.note),
           sql`${lancamentos.note} NOT LIKE ${`${ACCOUNT_AUTO_INVOICE_NOTE_PREFIX}%`}`
+        ),
+        // Excluir saldos iniciais se a conta tiver o flag ativo
+        or(
+          ne(lancamentos.note, INITIAL_BALANCE_NOTE),
+          isNull(contas.excludeInitialBalanceFromIncome),
+          eq(contas.excludeInitialBalanceFromIncome, false)
         )
       )
     )
@@ -75,6 +82,7 @@ export async function fetchIncomeByCategory(
     .from(lancamentos)
     .innerJoin(pagadores, eq(lancamentos.pagadorId, pagadores.id))
     .innerJoin(categorias, eq(lancamentos.categoriaId, categorias.id))
+    .leftJoin(contas, eq(lancamentos.contaId, contas.id))
     .where(
       and(
         eq(lancamentos.userId, userId),
@@ -85,6 +93,12 @@ export async function fetchIncomeByCategory(
         or(
           isNull(lancamentos.note),
           sql`${lancamentos.note} NOT LIKE ${`${ACCOUNT_AUTO_INVOICE_NOTE_PREFIX}%`}`
+        ),
+        // Excluir saldos iniciais se a conta tiver o flag ativo
+        or(
+          ne(lancamentos.note, INITIAL_BALANCE_NOTE),
+          isNull(contas.excludeInitialBalanceFromIncome),
+          eq(contas.excludeInitialBalanceFromIncome, false)
         )
       )
     )

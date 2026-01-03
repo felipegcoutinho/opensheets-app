@@ -1,12 +1,12 @@
-import { categorias, lancamentos, pagadores } from "@/db/schema";
-import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX } from "@/lib/accounts/constants";
+import { categorias, lancamentos, pagadores, contas } from "@/db/schema";
+import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX, INITIAL_BALANCE_NOTE } from "@/lib/accounts/constants";
 import type { CategoryType } from "@/lib/categorias/constants";
 import { toNumber } from "@/lib/dashboard/common";
 import { db } from "@/lib/db";
 import { mapLancamentosData } from "@/lib/lancamentos/page-helpers";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
 import { getPreviousPeriod } from "@/lib/utils/period";
-import { and, desc, eq, isNull, or, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, or, sql, ne } from "drizzle-orm";
 
 type MappedLancamentos = ReturnType<typeof mapLancamentosData>;
 
@@ -81,7 +81,17 @@ export async function fetchCategoryDetails(
   });
 
   const filteredRows = currentRows.filter(
-    (row) => row.pagador?.role === PAGADOR_ROLE_ADMIN
+    (row) => {
+      // Filtrar apenas pagadores admin
+      if (row.pagador?.role !== PAGADOR_ROLE_ADMIN) return false;
+
+      // Excluir saldos iniciais se a conta tiver o flag ativo
+      if (row.note === INITIAL_BALANCE_NOTE && row.conta?.excludeInitialBalanceFromIncome) {
+        return false;
+      }
+
+      return true;
+    }
   );
 
   const transactions = mapLancamentosData(filteredRows);
@@ -97,6 +107,7 @@ export async function fetchCategoryDetails(
     })
     .from(lancamentos)
     .innerJoin(pagadores, eq(lancamentos.pagadorId, pagadores.id))
+    .leftJoin(contas, eq(lancamentos.contaId, contas.id))
     .where(
       and(
         eq(lancamentos.userId, userId),
@@ -104,7 +115,13 @@ export async function fetchCategoryDetails(
         eq(lancamentos.transactionType, transactionType),
         eq(pagadores.role, PAGADOR_ROLE_ADMIN),
         sanitizedNote,
-        eq(lancamentos.period, previousPeriod)
+        eq(lancamentos.period, previousPeriod),
+        // Excluir saldos iniciais se a conta tiver o flag ativo
+        or(
+          ne(lancamentos.note, INITIAL_BALANCE_NOTE),
+          isNull(contas.excludeInitialBalanceFromIncome),
+          eq(contas.excludeInitialBalanceFromIncome, false)
+        )
       )
     );
 

@@ -15,6 +15,7 @@ export type AccountData = {
   initialBalance: number;
   balance: number;
   excludeFromBalance: boolean;
+  excludeInitialBalanceFromIncome: boolean;
 };
 
 export async function fetchAccountsForUser(
@@ -31,6 +32,7 @@ export async function fetchAccountsForUser(
         logo: contas.logo,
         initialBalance: contas.initialBalance,
         excludeFromBalance: contas.excludeFromBalance,
+        excludeInitialBalanceFromIncome: contas.excludeInitialBalanceFromIncome,
         balanceMovements: sql<number>`
           coalesce(
             sum(
@@ -67,7 +69,8 @@ export async function fetchAccountsForUser(
         contas.note,
         contas.logo,
         contas.initialBalance,
-        contas.excludeFromBalance
+        contas.excludeFromBalance,
+        contas.excludeInitialBalanceFromIncome
       ),
     loadLogoOptions(),
   ]);
@@ -84,6 +87,7 @@ export async function fetchAccountsForUser(
       Number(account.initialBalance ?? 0) +
       Number(account.balanceMovements ?? 0),
     excludeFromBalance: account.excludeFromBalance,
+    excludeInitialBalanceFromIncome: account.excludeInitialBalanceFromIncome,
   }));
 
   return { accounts, logoOptions };

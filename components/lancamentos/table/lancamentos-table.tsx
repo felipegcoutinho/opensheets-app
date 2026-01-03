@@ -288,16 +288,20 @@ const buildColumns = ({
     {
       accessorKey: "transactionType",
       header: "Transação",
-      cell: ({ row }) => (
-        <TypeBadge
-          type={
-            row.original.transactionType as
-              | "Despesa"
-              | "Receita"
-              | "Transferência"
-          }
-        />
-      ),
+      cell: ({ row }) => {
+        const type =
+          row.original.categoriaName === "Saldo inicial"
+            ? "Saldo inicial"
+            : row.original.transactionType;
+
+        return (
+          <TypeBadge
+            type={
+              type as "Despesa" | "Receita" | "Transferência" | "Saldo inicial"
+            }
+          />
+        );
+      },
     },
     {
       accessorKey: "amount",

@@ -1,0 +1,1 @@
+ALTER TABLE "contas" ADD COLUMN "excluir_saldo_inicial_receitas" boolean DEFAULT false NOT NULL;

@@ -58,6 +58,7 @@ export function LancamentoDialog({
   estabelecimentos,
   lancamento,
   defaultPeriod,
+  periodPreferences,
   defaultCartaoId,
   defaultPaymentMethod,
   defaultPurchaseDate,
@@ -125,8 +126,13 @@ export function LancamentoDialog({
   }, [categoriaOptions, formState.transactionType]);
 
   const monthOptions = useMemo(
-    () => createMonthOptions(formState.period),
-    [formState.period]
+    () =>
+      createMonthOptions(
+        formState.period,
+        periodPreferences.monthsBefore,
+        periodPreferences.monthsAfter
+      ),
+    [formState.period, periodPreferences.monthsBefore, periodPreferences.monthsAfter]
   );
 
   const handleFieldChange = useCallback(

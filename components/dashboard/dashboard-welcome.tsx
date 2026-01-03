@@ -6,6 +6,7 @@ import { Card } from "../ui/card";
 
 type DashboardWelcomeProps = {
   name?: string | null;
+  disableMagnetlines?: boolean;
 };
 
 const capitalizeFirstLetter = (value: string) =>
@@ -44,7 +45,7 @@ const getGreeting = () => {
   }
 };
 
-export function DashboardWelcome({ name }: DashboardWelcomeProps) {
+export function DashboardWelcome({ name, disableMagnetlines = false }: DashboardWelcomeProps) {
   const displayName = name && name.trim().length > 0 ? name : "Administrador";
   const formattedDate = formatCurrentDate();
   const greeting = getGreeting();
@@ -63,6 +64,7 @@ export function DashboardWelcome({ name }: DashboardWelcomeProps) {
           lineHeight="5vmin"
           baseAngle={0}
           className="text-welcome-banner-foreground"
+          disabled={disableMagnetlines}
         />
       </div>
       <div className="relative tracking-tight text-welcome-banner-foreground">

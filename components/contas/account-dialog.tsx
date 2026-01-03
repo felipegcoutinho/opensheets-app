@@ -38,7 +38,7 @@ const DEFAULT_ACCOUNT_TYPES = [
   "Conta Poupança",
   "Carteira Digital",
   "Conta Investimento",
-  "Cartão Pré-pago",
+  "Pré-Pago | VR/VA",
 ] as const;
 
 const DEFAULT_ACCOUNT_STATUS = ["Ativa", "Inativa"] as const;
@@ -75,6 +75,8 @@ const buildInitialValues = ({
     logo: selectedLogo,
     initialBalance: formatInitialBalanceInput(account?.initialBalance ?? 0),
     excludeFromBalance: account?.excludeFromBalance ?? false,
+    excludeInitialBalanceFromIncome:
+      account?.excludeInitialBalanceFromIncome ?? false,
   };
 };
 

@@ -40,32 +40,36 @@ export function UpdateNameForm({ currentName }: UpdateNameFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="firstName">Primeiro nome</Label>
-        <Input
-          id="firstName"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-          disabled={isPending}
-          required
-        />
+    <form onSubmit={handleSubmit} className="flex flex-col space-y-6">
+      <div className="space-y-4 max-w-md">
+        <div className="space-y-2">
+          <Label htmlFor="firstName">Primeiro nome</Label>
+          <Input
+            id="firstName"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            disabled={isPending}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="lastName">Sobrenome</Label>
+          <Input
+            id="lastName"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            disabled={isPending}
+            required
+          />
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="lastName">Sobrenome</Label>
-        <Input
-          id="lastName"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-          disabled={isPending}
-          required
-        />
+      <div className="flex justify-end">
+        <Button type="submit" disabled={isPending} className="w-fit">
+          {isPending ? "Atualizando..." : "Atualizar nome"}
+        </Button>
       </div>
-
-      <Button type="submit" disabled={isPending}>
-        {isPending ? "Atualizando..." : "Atualizar nome"}
-      </Button>
     </form>
   );
 }

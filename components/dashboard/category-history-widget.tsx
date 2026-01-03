@@ -343,7 +343,7 @@ export function CategoryHistoryWidget({ data }: CategoryHistoryWidgetProps) {
                 <RiBarChartBoxLine className="size-6 text-muted-foreground" />
               }
               title="Selecione categorias para visualizar"
-              description="Escolha até 5 categorias para acompanhar o histórico nos últimos 6 meses."
+              description="Escolha até 5 categorias para acompanhar o histórico dos últimos 8 meses, mês atual e próximo mês."
             />
           </div>
         ) : (

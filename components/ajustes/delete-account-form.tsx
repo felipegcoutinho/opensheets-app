@@ -1,5 +1,4 @@
 "use client";
-
 import { deleteAccountAction } from "@/app/(dashboard)/ajustes/actions";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth/client";
-import { RiAlertLine } from "@remixicon/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -54,34 +52,29 @@ export function DeleteAccountForm() {
 
   return (
     <>
-      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 space-y-4">
-        <div className="flex items-start gap-3">
-          <RiAlertLine className="size-5 text-destructive mt-0.5" />
-          <div className="flex-1 space-y-1">
-            <h3 className="font-medium text-destructive">
-              Remoção definitiva de conta
-            </h3>
-            <p className="text-sm text-foreground">
-              Ao prosseguir, sua conta e todos os dados associados serão
-              excluídos de forma irreversível.
-            </p>
-          </div>
+      <div className="flex flex-col space-y-6">
+        <div className="space-y-4 max-w-md">
+          <ul className="list-disc list-inside text-sm text-destructive space-y-1">
+            <li>Lançamentos, orçamentos e anotações</li>
+            <li>Contas, cartões e categorias</li>
+            <li>Pagadores (incluindo o pagador padrão)</li>
+            <li>Preferências e configurações</li>
+            <li className="font-bold">
+              Resumindo tudo, sua conta será permanentemente removida
+            </li>
+          </ul>
         </div>
 
-        <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 pl-8">
-          <li>Lançamentos, anexos e notas</li>
-          <li>Contas, cartões, orçamentos e categorias</li>
-          <li>Pagadores (incluindo o pagador padrão)</li>
-          <li>Preferências e configurações</li>
-        </ul>
-
-        <Button
-          variant="destructive"
-          onClick={handleOpenModal}
-          disabled={isPending}
-        >
-          Deletar conta
-        </Button>
+        <div className="flex justify-end">
+          <Button
+            variant="destructive"
+            onClick={handleOpenModal}
+            disabled={isPending}
+            className="w-fit"
+          >
+            Deletar conta
+          </Button>
+        </div>
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

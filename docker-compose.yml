@@ -3,12 +3,11 @@ name: opensheets
 
 # MODOS DE USO:
 # 1. Banco LOCAL (PostgreSQL em container):
-#    - Configure DB_PROVIDER=local no .env
+#    - Configure DATABASE_URL com host "db" no .env
 #    - Execute: docker compose up --build
 #
 # 2. Banco REMOTO (ex: Supabase):
-#    - Configure DB_PROVIDER=remote no .env
-#    - Configure DATABASE_URL com a URL do banco remoto
+#    - Configure DATABASE_URL com a URL do banco remoto no .env
 #    - Execute: docker compose up app --build (apenas o serviço app)
 #
 # 3. Para parar todos os serviços:
@@ -81,9 +80,9 @@ services:
       # Variáveis de ambiente da aplicação
       NODE_ENV: production
 
-      # DATABASE_URL será definida dinamicamente baseada em DB_PROVIDER
-      # Se DB_PROVIDER=local, usa o serviço 'db'
-      # Se DB_PROVIDER=remote, usa a DATABASE_URL do .env
+      # DATABASE_URL do .env
+      # Banco local: use host "db" (serviço Docker)
+      # Banco remoto: use a URL completa do provider
       DATABASE_URL: ${DATABASE_URL}
 
       # Outras variáveis de ambiente necessárias

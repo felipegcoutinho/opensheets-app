@@ -367,17 +367,24 @@ export type SelectOption = {
 /**
  * Creates month options for a select dropdown, centered around current month
  * @param currentValue - Current period value to ensure it's included in options
- * @param offsetRange - Number of months before/after current month (default: 3)
+ * @param monthsBefore - Number of months before current month (default: 3)
+ * @param monthsAfter - Number of months after current month (default: same as monthsBefore)
  * @returns Array of select options with formatted labels
+ * @example
+ * createMonthOptions() // -3 to +3
+ * createMonthOptions(undefined, 3) // -3 to +3
+ * createMonthOptions(undefined, 3, 6) // -3 to +6
  */
 export function createMonthOptions(
   currentValue?: string,
-  offsetRange: number = 3
+  monthsBefore: number = 3,
+  monthsAfter?: number
 ): SelectOption[] {
   const now = new Date();
   const options: SelectOption[] = [];
+  const after = monthsAfter ?? monthsBefore; // If not specified, use same as before
 
-  for (let offset = -offsetRange; offset <= offsetRange; offset += 1) {
+  for (let offset = -monthsBefore; offset <= after; offset += 1) {
     const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
     const value = formatPeriod(date.getFullYear(), date.getMonth() + 1);
     options.push({ value, label: displayPeriod(value) });

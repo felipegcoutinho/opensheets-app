@@ -1,3 +1,4 @@
+import { getRecentEstablishmentsAction } from "@/app/(dashboard)/lancamentos/actions";
 import { AccountDialog } from "@/components/contas/account-dialog";
 import { AccountStatementCard } from "@/components/contas/account-statement-card";
 import type { Account } from "@/components/contas/types";
@@ -19,6 +20,7 @@ import {
   type ResolvedSearchParams,
 } from "@/lib/lancamentos/page-helpers";
 import { loadLogoOptions } from "@/lib/logo/options";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
 import { parsePeriodParam } from "@/lib/utils/period";
 import { RiPencilLine } from "@remixicon/react";
 import { and, desc, eq } from "drizzle-orm";
@@ -55,10 +57,18 @@ export default async function Page({ params, searchParams }: PageProps) {
     notFound();
   }
 
-  const [filterSources, logoOptions, accountSummary] = await Promise.all([
+  const [
+    filterSources,
+    logoOptions,
+    accountSummary,
+    estabelecimentos,
+    periodPreferences,
+  ] = await Promise.all([
     fetchLancamentoFilterSources(userId),
     loadLogoOptions(),
     fetchAccountSummary(userId, contaId, selectedPeriod),
+    getRecentEstablishmentsAction(),
+    fetchUserPeriodPreferences(userId),
   ]);
   const sluggedFilters = buildSluggedFilters(filterSources);
   const slugMaps = buildSlugMaps(sluggedFilters);
@@ -165,6 +175,8 @@ export default async function Page({ params, searchParams }: PageProps) {
           categoriaFilterOptions={categoriaFilterOptions}
           contaCartaoFilterOptions={contaCartaoFilterOptions}
           selectedPeriod={selectedPeriod}
+          estabelecimentos={estabelecimentos}
+          periodPreferences={periodPreferences}
           allowCreate={false}
         />
       </section>

@@ -7,6 +7,7 @@ import {
   fetchLancamentoFilterSources,
   mapLancamentosData,
 } from "@/lib/lancamentos/page-helpers";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
 import { and, eq, gte, lte, ne, or } from "drizzle-orm";
 
@@ -59,42 +60,44 @@ export const fetchCalendarData = async ({
   const rangeStartKey = toDateKey(rangeStart);
   const rangeEndKey = toDateKey(rangeEnd);
 
-  const [lancamentoRows, cardRows, filterSources] = await Promise.all([
-    db.query.lancamentos.findMany({
-      where: and(
-        eq(lancamentos.userId, userId),
-        ne(lancamentos.transactionType, TRANSACTION_TYPE_TRANSFERENCIA),
-        or(
-          // Lançamentos cuja data de compra esteja no período do calendário
-          and(
-            gte(lancamentos.purchaseDate, rangeStart),
-            lte(lancamentos.purchaseDate, rangeEnd)
-          ),
-          // Boletos cuja data de vencimento esteja no período do calendário
-          and(
-            eq(lancamentos.paymentMethod, PAYMENT_METHOD_BOLETO),
-            gte(lancamentos.dueDate, rangeStart),
-            lte(lancamentos.dueDate, rangeEnd)
-          ),
-          // Lançamentos de cartão do período (para calcular totais de vencimento)
-          and(
-            eq(lancamentos.period, period),
-            ne(lancamentos.paymentMethod, PAYMENT_METHOD_BOLETO)
+  const [lancamentoRows, cardRows, filterSources, periodPreferences] =
+    await Promise.all([
+      db.query.lancamentos.findMany({
+        where: and(
+          eq(lancamentos.userId, userId),
+          ne(lancamentos.transactionType, TRANSACTION_TYPE_TRANSFERENCIA),
+          or(
+            // Lançamentos cuja data de compra esteja no período do calendário
+            and(
+              gte(lancamentos.purchaseDate, rangeStart),
+              lte(lancamentos.purchaseDate, rangeEnd)
+            ),
+            // Boletos cuja data de vencimento esteja no período do calendário
+            and(
+              eq(lancamentos.paymentMethod, PAYMENT_METHOD_BOLETO),
+              gte(lancamentos.dueDate, rangeStart),
+              lte(lancamentos.dueDate, rangeEnd)
+            ),
+            // Lançamentos de cartão do período (para calcular totais de vencimento)
+            and(
+              eq(lancamentos.period, period),
+              ne(lancamentos.paymentMethod, PAYMENT_METHOD_BOLETO)
+            )
           )
-        )
-      ),
-      with: {
-        pagador: true,
-        conta: true,
-        cartao: true,
-        categoria: true,
-      },
-    }),
-    db.query.cartoes.findMany({
-      where: eq(cartoes.userId, userId),
-    }),
-    fetchLancamentoFilterSources(userId),
-  ]);
+        ),
+        with: {
+          pagador: true,
+          conta: true,
+          cartao: true,
+          categoria: true,
+        },
+      }),
+      db.query.cartoes.findMany({
+        where: eq(cartoes.userId, userId),
+      }),
+      fetchLancamentoFilterSources(userId),
+      fetchUserPeriodPreferences(userId),
+    ]);
 
   const lancamentosData = mapLancamentosData(lancamentoRows);
   const events: CalendarEvent[] = [];
@@ -214,6 +217,7 @@ export const fetchCalendarData = async ({
       cartaoOptions: optionSets.cartaoOptions,
       categoriaOptions: optionSets.categoriaOptions,
       estabelecimentos,
+      periodPreferences,
     },
   };
 };

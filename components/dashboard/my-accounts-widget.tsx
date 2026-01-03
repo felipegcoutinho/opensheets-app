@@ -76,7 +76,7 @@ export function MyAccountsWidget({
               return (
                 <li
                   key={account.id}
-                  className="flex items-center justify-between gap-2 border-b border-dashed py-1"
+                  className="flex items-center justify-between gap-2 border-b border-dashed py-2 last:border-0"
                 >
                   <div className="flex min-w-0 flex-1 items-center gap-3">
                     {logoSrc ? (

@@ -1,5 +1,5 @@
-import { lancamentos, pagadores } from "@/db/schema";
-import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX } from "@/lib/accounts/constants";
+import { lancamentos, pagadores, contas } from "@/db/schema";
+import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX, INITIAL_BALANCE_NOTE } from "@/lib/accounts/constants";
 import { db } from "@/lib/db";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
 import {
@@ -74,6 +74,7 @@ export async function fetchDashboardCardMetrics(
     })
     .from(lancamentos)
     .innerJoin(pagadores, eq(lancamentos.pagadorId, pagadores.id))
+    .leftJoin(contas, eq(lancamentos.contaId, contas.id))
     .where(
       and(
         eq(lancamentos.userId, userId),
@@ -88,6 +89,12 @@ export async function fetchDashboardCardMetrics(
               `${ACCOUNT_AUTO_INVOICE_NOTE_PREFIX}%`
             )
           )
+        ),
+        // Excluir saldos iniciais se a conta tiver o flag ativo
+        or(
+          ne(lancamentos.note, INITIAL_BALANCE_NOTE),
+          isNull(contas.excludeInitialBalanceFromIncome),
+          eq(contas.excludeInitialBalanceFromIncome, false)
         )
       )
     )

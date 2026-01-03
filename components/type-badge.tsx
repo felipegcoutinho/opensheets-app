@@ -8,10 +8,12 @@ type TypeBadgeType =
   | "Receita"
   | "Despesa"
   | "Transferência"
-  | "transferência";
+  | "transferência"
+  | "Saldo inicial"
+  | "Saldo Inicial";
 
 interface TypeBadgeProps {
-  type: TypeBadgeType;
+  type: TypeBadgeType | string;
   className?: string;
 }
 
@@ -22,23 +24,26 @@ const TYPE_LABELS: Record<string, string> = {
   Despesa: "Despesa",
   Transferência: "Transferência",
   transferência: "Transferência",
+  "Saldo inicial": "Saldo Inicial",
+  "Saldo Inicial": "Saldo Inicial",
 };
 
 export function TypeBadge({ type, className }: TypeBadgeProps) {
   const normalizedType = type.toLowerCase();
   const isReceita = normalizedType === "receita";
   const isTransferencia = normalizedType === "transferência";
+  const isSaldoInicial = normalizedType === "saldo inicial";
   const label = TYPE_LABELS[type] || type;
 
   const colorClass = isTransferencia
     ? "text-blue-700 dark:text-blue-400"
-    : isReceita
+    : (isReceita || isSaldoInicial)
     ? "text-green-700  dark:text-green-400"
     : "text-red-700 dark:text-red-400";
 
   const dotColor = isTransferencia
     ? "bg-blue-700 dark:bg-blue-400"
-    : isReceita
+    : (isReceita || isSaldoInicial)
     ? "bg-green-600 dark:bg-green-400"
     : "bg-red-600 dark:bg-red-400";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { CSSProperties, useEffect, useRef } from "react";
 
 interface MagnetLinesProps {
@@ -10,6 +12,7 @@ interface MagnetLinesProps {
   baseAngle?: number;
   className?: string;
   style?: CSSProperties;
+  disabled?: boolean;
 }
 
 const MagnetLines: React.FC<MagnetLinesProps> = ({
@@ -22,8 +25,14 @@ const MagnetLines: React.FC<MagnetLinesProps> = ({
   baseAngle = -10,
   className = "",
   style = {},
+  disabled = false,
 }) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  // Se magnetlines estiver desabilitado, não renderiza nada
+  if (disabled) {
+    return null;
+  }
 
   useEffect(() => {
     const container = containerRef.current;

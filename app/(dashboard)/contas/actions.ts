@@ -56,6 +56,9 @@ const accountBaseSchema = z.object({
   excludeFromBalance: z
     .union([z.boolean(), z.string()])
     .transform((value) => value === true || value === "true"),
+  excludeInitialBalanceFromIncome: z
+    .union([z.boolean(), z.string()])
+    .transform((value) => value === true || value === "true"),
 });
 
 const createAccountSchema = accountBaseSchema;
@@ -93,6 +96,7 @@ export async function createAccountAction(
           logo: logoFile,
           initialBalance: formatDecimalForDbRequired(data.initialBalance),
           excludeFromBalance: data.excludeFromBalance,
+          excludeInitialBalanceFromIncome: data.excludeInitialBalanceFromIncome,
           userId: user.id,
         })
         .returning({ id: contas.id, name: contas.name });
@@ -183,6 +187,7 @@ export async function updateAccountAction(
         logo: logoFile,
         initialBalance: formatDecimalForDbRequired(data.initialBalance),
         excludeFromBalance: data.excludeFromBalance,
+        excludeInitialBalanceFromIncome: data.excludeInitialBalanceFromIncome,
       })
       .where(and(eq(contas.id, data.id), eq(contas.userId, user.id)))
       .returning();

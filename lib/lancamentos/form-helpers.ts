@@ -110,7 +110,7 @@ export function buildLancamentoInitialState(
     isSettled:
       paymentMethod === "Cartão de crédito"
         ? null
-        : lancamento?.isSettled ?? false,
+        : lancamento?.isSettled ?? true,
   };
 }
 
@@ -150,7 +150,7 @@ export function applyFieldDependencies(
       updates.isSettled = null;
     } else {
       updates.cartaoId = undefined;
-      updates.isSettled = currentState.isSettled ?? false;
+      updates.isSettled = currentState.isSettled ?? true;
     }
 
     // Clear boleto-specific fields if not boleto

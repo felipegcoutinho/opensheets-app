@@ -35,6 +35,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useControlledState } from "@/hooks/use-controlled-state";
 import { useFormState } from "@/hooks/use-form-state";
 import type { EligibleInstallment } from "@/lib/installments/anticipation-types";
+import type { PeriodPreferences } from "@/lib/user-preferences/period";
+import { createMonthOptions } from "@/lib/utils/period";
 import { RiLoader4Line } from "@remixicon/react";
 import {
   useCallback,
@@ -53,6 +55,7 @@ interface AnticipateInstallmentsDialogProps {
   categorias: Array<{ id: string; name: string; icon: string | null }>;
   pagadores: Array<{ id: string; name: string }>;
   defaultPeriod: string;
+  periodPreferences: PeriodPreferences;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -65,57 +68,6 @@ type AnticipationFormValues = {
   note: string;
 };
 
-type SelectOption = {
-  value: string;
-  label: string;
-};
-
-const monthFormatter = new Intl.DateTimeFormat("pt-BR", {
-  month: "long",
-  year: "numeric",
-});
-
-const formatPeriodLabel = (period: string) => {
-  const [year, month] = period.split("-").map(Number);
-  if (!year || !month) {
-    return period;
-  }
-  const date = new Date(year, month - 1, 1);
-  if (Number.isNaN(date.getTime())) {
-    return period;
-  }
-  const label = monthFormatter.format(date);
-  return label.charAt(0).toUpperCase() + label.slice(1);
-};
-
-const buildPeriodOptions = (currentValue?: string): SelectOption[] => {
-  const now = new Date();
-  const options: SelectOption[] = [];
-
-  // Adiciona opções de 3 meses no passado até 6 meses no futuro
-  for (let offset = -3; offset <= 6; offset += 1) {
-    const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
-    const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}`;
-    options.push({ value, label: formatPeriodLabel(value) });
-  }
-
-  // Adiciona o valor atual se não estiver na lista
-  if (
-    currentValue &&
-    !options.some((option) => option.value === currentValue)
-  ) {
-    options.push({
-      value: currentValue,
-      label: formatPeriodLabel(currentValue),
-    });
-  }
-
-  return options.sort((a, b) => a.value.localeCompare(b.value));
-};
-
 export function AnticipateInstallmentsDialog({
   trigger,
   seriesId,
@@ -123,6 +75,7 @@ export function AnticipateInstallmentsDialog({
   categorias,
   pagadores,
   defaultPeriod,
+  periodPreferences,
   open,
   onOpenChange,
 }: AnticipateInstallmentsDialogProps) {
@@ -152,8 +105,13 @@ export function AnticipateInstallmentsDialog({
     });
 
   const periodOptions = useMemo(
-    () => buildPeriodOptions(formState.anticipationPeriod),
-    [formState.anticipationPeriod]
+    () =>
+      createMonthOptions(
+        formState.anticipationPeriod,
+        periodPreferences.monthsBefore,
+        periodPreferences.monthsAfter
+      ),
+    [formState.anticipationPeriod, periodPreferences.monthsBefore, periodPreferences.monthsAfter]
   );
 
   // Buscar parcelas elegíveis ao abrir o dialog

@@ -1,6 +1,7 @@
 import MonthPicker from "@/components/month-picker/month-picker";
 import { BudgetsPage } from "@/components/orcamentos/budgets-page";
 import { getUserId } from "@/lib/auth/server";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
 import { parsePeriodParam } from "@/lib/utils/period";
 import { fetchBudgetsForUser } from "./data";
 
@@ -35,10 +36,10 @@ export default async function Page({ searchParams }: PageProps) {
 
   const periodLabel = `${capitalize(rawMonthName)} ${year}`;
 
-  const { budgets, categoriesOptions } = await fetchBudgetsForUser(
-    userId,
-    selectedPeriod
-  );
+  const [{ budgets, categoriesOptions }, periodPreferences] = await Promise.all([
+    fetchBudgetsForUser(userId, selectedPeriod),
+    fetchUserPeriodPreferences(userId),
+  ]);
 
   return (
     <main className="flex flex-col gap-6">
@@ -48,6 +49,7 @@ export default async function Page({ searchParams }: PageProps) {
         categories={categoriesOptions}
         selectedPeriod={selectedPeriod}
         periodLabel={periodLabel}
+        periodPreferences={periodPreferences}
       />
     </main>
   );

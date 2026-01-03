@@ -43,6 +43,7 @@ export type SelectOption = {
   avatarUrl?: string | null;
   logo?: string | null;
   icon?: string | null;
+  accountType?: string | null;
 };
 
 export type LancamentoFilterOption = {

@@ -100,6 +100,31 @@ export const verification = pgTable("verification", {
   }),
 });
 
+export const userPreferences = pgTable("user_preferences", {
+  id: uuid("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
+  userId: text("user_id")
+    .notNull()
+    .unique()
+    .references(() => user.id, { onDelete: "cascade" }),
+  disableMagnetlines: boolean("disable_magnetlines").notNull().default(false),
+  periodMonthsBefore: integer("period_months_before").notNull().default(3),
+  periodMonthsAfter: integer("period_months_after").notNull().default(3),
+  createdAt: timestamp("created_at", {
+    mode: "date",
+    withTimezone: true,
+  })
+    .notNull()
+    .default(sql`now()`),
+  updatedAt: timestamp("updated_at", {
+    mode: "date",
+    withTimezone: true,
+  })
+    .notNull()
+    .default(sql`now()`),
+});
+
 // ===================== PUBLIC TABLES =====================
 
 export const contas = pgTable(
@@ -117,6 +142,9 @@ export const contas = pgTable(
       .notNull()
       .default("0"),
     excludeFromBalance: boolean("excluir_do_saldo")
+      .notNull()
+      .default(false),
+    excludeInitialBalanceFromIncome: boolean("excluir_saldo_inicial_receitas")
       .notNull()
       .default(false),
     userId: text("user_id")
@@ -359,30 +387,6 @@ export const anotacoes = pgTable("anotacoes", {
     .references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const userUpdateLog = pgTable(
-  "user_update_log",
-  {
-    id: uuid("id")
-      .primaryKey()
-      .default(sql`gen_random_uuid()`),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    updateId: text("update_id").notNull(), // commit hash
-    readAt: timestamp("read_at", {
-      mode: "date",
-      withTimezone: true,
-    })
-      .notNull()
-      .defaultNow(),
-  },
-  (table) => ({
-    userIdUpdateIdIdx: uniqueIndex("user_update_log_user_update_idx").on(
-      table.userId,
-      table.updateId
-    ),
-  })
-);
 
 export const savedInsights = pgTable(
   "saved_insights",
@@ -556,7 +560,6 @@ export const userRelations = relations(user, ({ many, one }) => ({
   orcamentos: many(orcamentos),
   pagadores: many(pagadores),
   installmentAnticipations: many(installmentAnticipations),
-  updateLogs: many(userUpdateLog),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -664,12 +667,6 @@ export const savedInsightsRelations = relations(savedInsights, ({ one }) => ({
   }),
 }));
 
-export const userUpdateLogRelations = relations(userUpdateLog, ({ one }) => ({
-  user: one(user, {
-    fields: [userUpdateLog.userId],
-    references: [user.id],
-  }),
-}));
 
 export const lancamentosRelations = relations(lancamentos, ({ one }) => ({
   user: one(user, {
@@ -725,6 +722,8 @@ export type NewUser = typeof user.$inferInsert;
 export type Account = typeof account.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type Verification = typeof verification.$inferSelect;
+export type UserPreferences = typeof userPreferences.$inferSelect;
+export type NewUserPreferences = typeof userPreferences.$inferInsert;
 export type Conta = typeof contas.$inferSelect;
 export type Categoria = typeof categorias.$inferSelect;
 export type Pagador = typeof pagadores.$inferSelect;
@@ -736,4 +735,3 @@ export type SavedInsight = typeof savedInsights.$inferSelect;
 export type Lancamento = typeof lancamentos.$inferSelect;
 export type InstallmentAnticipation =
   typeof installmentAnticipations.$inferSelect;
-export type UserUpdateLog = typeof userUpdateLog.$inferSelect;

@@ -118,6 +118,7 @@ export function MonthlyCalendar({
         cartaoOptions={formOptions.cartaoOptions}
         categoriaOptions={formOptions.categoriaOptions}
         estabelecimentos={formOptions.estabelecimentos}
+        periodPreferences={formOptions.periodPreferences}
         defaultPeriod={period.period}
         defaultPurchaseDate={createDate ?? undefined}
       />

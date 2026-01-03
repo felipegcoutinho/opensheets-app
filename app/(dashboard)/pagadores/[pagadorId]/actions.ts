@@ -9,6 +9,7 @@ import {
   fetchPagadorHistory,
   fetchPagadorMonthlyBreakdown,
 } from "@/lib/pagadores/details";
+import { displayPeriod } from "@/lib/utils/period";
 import { and, desc, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
@@ -31,17 +32,6 @@ const formatCurrency = (value: number) =>
     currency: "BRL",
     maximumFractionDigits: 2,
   });
-
-const formatPeriodLabel = (period: string) => {
-  const [yearStr, monthStr] = period.split("-");
-  const year = Number.parseInt(yearStr, 10);
-  const month = Number.parseInt(monthStr, 10) - 1;
-  const date = new Date(year, month, 1);
-  return date.toLocaleDateString("pt-BR", {
-    month: "long",
-    year: "numeric",
-  });
-};
 
 const formatDate = (value: Date | null | undefined) => {
   if (!value) return "—";
@@ -560,7 +550,7 @@ export async function sendPagadorSummaryAction(
 
     const html = buildSummaryHtml({
       pagadorName: pagadorRow.name,
-      periodLabel: formatPeriodLabel(period),
+      periodLabel: displayPeriod(period),
       monthlyBreakdown,
       historyData,
       cardUsage,
@@ -573,7 +563,7 @@ export async function sendPagadorSummaryAction(
     await resend.emails.send({
       from: resendFrom,
       to: pagadorRow.email,
-      subject: `Resumo Financeiro | ${formatPeriodLabel(period)}`,
+      subject: `Resumo Financeiro | ${displayPeriod(period)}`,
       html,
     });
 

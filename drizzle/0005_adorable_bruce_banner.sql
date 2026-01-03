@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "disable_magnetlines" boolean DEFAULT false NOT NULL;

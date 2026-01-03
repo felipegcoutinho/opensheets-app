@@ -241,7 +241,6 @@ Esta é a **melhor opção para desenvolvedores** que vão modificar o código.
    ```env
    # Banco de dados (usando Docker)
    DATABASE_URL=postgresql://opensheets:opensheets_dev_password@localhost:5432/opensheets_db
-   DB_PROVIDER=local
 
    # Better Auth (gere com: openssl rand -base64 32)
    BETTER_AUTH_SECRET=seu-secret-aqui
@@ -319,7 +318,6 @@ Ideal para quem quer apenas **usar a aplicação** sem mexer no código.
    ```env
    # Use o host "db" (nome do serviço Docker)
    DATABASE_URL=postgresql://opensheets:opensheets_dev_password@db:5432/opensheets_db
-   DB_PROVIDER=local
 
    # Better Auth
    BETTER_AUTH_SECRET=seu-secret-aqui
@@ -365,7 +363,6 @@ Se você já tem PostgreSQL no **Supabase**, **Neon**, **Railway**, etc.
 
    ```env
    DATABASE_URL=postgresql://user:password@host.region.provider.com:5432/database?sslmode=require
-   DB_PROVIDER=remote
 
    BETTER_AUTH_SECRET=seu-secret-aqui
    BETTER_AUTH_URL=http://localhost:3000
@@ -586,7 +583,6 @@ Copie o `.env.example` para `.env` e configure:
 ```env
 # === Database ===
 DATABASE_URL=postgresql://opensheets:opensheets_dev_password@localhost:5432/opensheets_db
-DB_PROVIDER=local  # ou "remote"
 
 # === Better Auth ===
 # Gere com: openssl rand -base64 32
@@ -653,10 +649,10 @@ pnpm env:setup
 
 ### Escolhendo entre Local e Remoto
 
-| Modo       | Quando usar                           | Como configurar                        |
-| ---------- | ------------------------------------- | -------------------------------------- |
-| **Local**  | Desenvolvimento, testes, prototipagem | `DB_PROVIDER=local` + Docker           |
-| **Remoto** | Produção, deploy, banco gerenciado    | `DB_PROVIDER=remote` + URL do provider |
+| Modo       | Quando usar                           | Como configurar                               |
+| ---------- | ------------------------------------- | --------------------------------------------- |
+| **Local**  | Desenvolvimento, testes, prototipagem | `DATABASE_URL` com host "db" ou "localhost"   |
+| **Remoto** | Produção, deploy, banco gerenciado    | `DATABASE_URL` com URL completa do provider   |
 
 ### Drizzle ORM
 

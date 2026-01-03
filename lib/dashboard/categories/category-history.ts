@@ -65,14 +65,15 @@ export async function fetchCategoryHistory(
   userId: string,
   currentPeriod: string
 ): Promise<CategoryHistoryData> {
-  // Generate last 6 months including current
+  // Generate last 8 months, current month, and next month (10 total)
   const periods: string[] = [];
   const monthLabels: string[] = [];
 
   const [year, month] = currentPeriod.split("-").map(Number);
   const currentDate = new Date(year, month - 1, 1);
 
-  for (let i = 8; i >= 0; i--) {
+  // Generate months from -8 to +1 (relative to current)
+  for (let i = 8; i >= -1; i--) {
     const date = addMonths(currentDate, -i);
     const period = format(date, "yyyy-MM");
     const label = format(date, "MMM", { locale: ptBR }).toUpperCase();

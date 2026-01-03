@@ -8,6 +8,7 @@ export type Account = {
   initialBalance: number;
   balance?: number | null;
   excludeFromBalance?: boolean;
+  excludeInitialBalanceFromIncome?: boolean;
 };
 
 export type AccountFormValues = {
@@ -18,4 +19,5 @@ export type AccountFormValues = {
   logo: string;
   initialBalance: string;
   excludeFromBalance: boolean;
+  excludeInitialBalanceFromIncome: boolean;
 };

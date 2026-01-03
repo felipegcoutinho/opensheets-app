@@ -106,17 +106,39 @@ export function AccountFormFields({
         />
       </div>
 
-      <div className="flex items-center gap-2 sm:col-span-2">
-        <Checkbox
-          id="exclude-from-balance"
-          checked={values.excludeFromBalance}
-          onCheckedChange={(checked) =>
-            onChange("excludeFromBalance", checked ? "true" : "false")
-          }
-        />
-        <Label htmlFor="exclude-from-balance" className="cursor-pointer text-sm font-normal">
-          Excluir do saldo total (útil para contas de investimento ou reserva)
-        </Label>
+      <div className="flex flex-col gap-3 sm:col-span-2">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="exclude-from-balance"
+            checked={values.excludeFromBalance === true || values.excludeFromBalance === "true"}
+            onCheckedChange={(checked) =>
+              onChange("excludeFromBalance", !!checked ? "true" : "false")
+            }
+          />
+          <Label
+            htmlFor="exclude-from-balance"
+            className="cursor-pointer text-sm font-normal leading-tight"
+          >
+            Desconsiderar do saldo total (útil para contas de investimento ou
+            reserva)
+          </Label>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id="exclude-initial-balance-from-income"
+            checked={values.excludeInitialBalanceFromIncome === true || values.excludeInitialBalanceFromIncome === "true"}
+            onCheckedChange={(checked) =>
+              onChange("excludeInitialBalanceFromIncome", !!checked ? "true" : "false")
+            }
+          />
+          <Label
+            htmlFor="exclude-initial-balance-from-income"
+            className="cursor-pointer text-sm font-normal leading-tight"
+          >
+            Desconsiderar o saldo inicial ao calcular o total de receitas
+          </Label>
+        </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { getRecentEstablishmentsAction } from "@/app/(dashboard)/lancamentos/actions";
 import { CardDialog } from "@/components/cartoes/card-dialog";
 import type { Card } from "@/components/cartoes/types";
 import { InvoiceSummaryCard } from "@/components/faturas/invoice-summary-card";
@@ -19,6 +20,7 @@ import {
   type ResolvedSearchParams,
 } from "@/lib/lancamentos/page-helpers";
 import { loadLogoOptions } from "@/lib/logo/options";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
 import { parsePeriodParam } from "@/lib/utils/period";
 import { RiPencilLine } from "@remixicon/react";
 import { and, desc } from "drizzle-orm";
@@ -52,10 +54,18 @@ export default async function Page({ params, searchParams }: PageProps) {
     notFound();
   }
 
-  const [filterSources, logoOptions, invoiceData] = await Promise.all([
+  const [
+    filterSources,
+    logoOptions,
+    invoiceData,
+    estabelecimentos,
+    periodPreferences,
+  ] = await Promise.all([
     fetchLancamentoFilterSources(userId),
     loadLogoOptions(),
     fetchInvoiceData(userId, cartaoId, selectedPeriod),
+    getRecentEstablishmentsAction(),
+    fetchUserPeriodPreferences(userId),
   ]);
   const sluggedFilters = buildSluggedFilters(filterSources);
   const slugMaps = buildSlugMaps(sluggedFilters);
@@ -187,6 +197,8 @@ export default async function Page({ params, searchParams }: PageProps) {
           categoriaFilterOptions={categoriaFilterOptions}
           contaCartaoFilterOptions={contaCartaoFilterOptions}
           selectedPeriod={selectedPeriod}
+          estabelecimentos={estabelecimentos}
+          periodPreferences={periodPreferences}
           allowCreate
           defaultCartaoId={card.id}
           defaultPaymentMethod="Cartão de crédito"

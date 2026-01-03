@@ -1,0 +1,1 @@
+ALTER TABLE "anotacoes" ADD COLUMN "arquivada" boolean DEFAULT false NOT NULL;

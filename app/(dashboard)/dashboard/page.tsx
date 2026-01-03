@@ -5,6 +5,8 @@ import MonthPicker from "@/components/month-picker/month-picker";
 import { getUser } from "@/lib/auth/server";
 import { fetchDashboardData } from "@/lib/dashboard/fetch-dashboard-data";
 import { parsePeriodParam } from "@/lib/utils/period";
+import { db, schema } from "@/lib/db";
+import { eq } from "drizzle-orm";
 
 type PageSearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -29,9 +31,20 @@ export default async function Page({ searchParams }: PageProps) {
 
   const data = await fetchDashboardData(user.id, selectedPeriod);
 
+  // Buscar preferências do usuário
+  const preferencesResult = await db
+    .select({
+      disableMagnetlines: schema.userPreferences.disableMagnetlines,
+    })
+    .from(schema.userPreferences)
+    .where(eq(schema.userPreferences.userId, user.id))
+    .limit(1);
+
+  const disableMagnetlines = preferencesResult[0]?.disableMagnetlines ?? false;
+
   return (
     <main className="flex flex-col gap-4 px-6">
-      <DashboardWelcome name={user.name} />
+      <DashboardWelcome name={user.name} disableMagnetlines={disableMagnetlines} />
       <MonthPicker />
       <SectionCards metrics={data.metrics} />
       <DashboardGrid data={data} period={selectedPeriod} />

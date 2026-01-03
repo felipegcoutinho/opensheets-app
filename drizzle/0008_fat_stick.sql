@@ -1,0 +1,2 @@
+ALTER TABLE "user_preferences" ADD COLUMN "period_months_before" integer DEFAULT 3 NOT NULL;--> statement-breakpoint
+ALTER TABLE "user_preferences" ADD COLUMN "period_months_after" integer DEFAULT 3 NOT NULL;

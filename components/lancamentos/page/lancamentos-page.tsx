@@ -25,6 +25,7 @@ import type {
   LancamentoItem,
   SelectOption,
 } from "../types";
+import type { PeriodPreferences } from "@/lib/user-preferences/period";
 
 interface LancamentosPageProps {
   lancamentos: LancamentoItem[];
@@ -39,6 +40,7 @@ interface LancamentosPageProps {
   contaCartaoFilterOptions: ContaCartaoFilterOption[];
   selectedPeriod: string;
   estabelecimentos: string[];
+  periodPreferences: PeriodPreferences;
   allowCreate?: boolean;
   defaultCartaoId?: string | null;
   defaultPaymentMethod?: string | null;
@@ -59,6 +61,7 @@ export function LancamentosPage({
   contaCartaoFilterOptions,
   selectedPeriod,
   estabelecimentos,
+  periodPreferences,
   allowCreate = true,
   defaultCartaoId,
   defaultPaymentMethod,
@@ -114,7 +117,7 @@ export function LancamentosPage({
       return;
     }
 
-    const supportedMethods = ["Pix", "Boleto", "Dinheiro", "Cartão de débito"];
+    const supportedMethods = ["Pix", "Boleto", "Dinheiro", "Cartão de débito", "Pré-Pago | VR/VA", "Transferência bancária"];
     if (!supportedMethods.includes(item.paymentMethod)) {
       return;
     }
@@ -354,6 +357,7 @@ export function LancamentosPage({
           categoriaOptions={categoriaOptions}
           estabelecimentos={estabelecimentos}
           defaultPeriod={selectedPeriod}
+          periodPreferences={periodPreferences}
           defaultCartaoId={defaultCartaoId}
           defaultPaymentMethod={defaultPaymentMethod}
           lockCartaoSelection={lockCartaoSelection}
@@ -379,6 +383,7 @@ export function LancamentosPage({
         estabelecimentos={estabelecimentos}
         lancamento={lancamentoToCopy ?? undefined}
         defaultPeriod={selectedPeriod}
+        periodPreferences={periodPreferences}
       />
 
       <LancamentoDialog
@@ -394,6 +399,7 @@ export function LancamentosPage({
         estabelecimentos={estabelecimentos}
         lancamento={selectedLancamento ?? undefined}
         defaultPeriod={selectedPeriod}
+        periodPreferences={periodPreferences}
         onBulkEditRequest={handleBulkEditRequest}
       />
 
@@ -473,6 +479,7 @@ export function LancamentosPage({
           categoriaOptions={categoriaOptions}
           estabelecimentos={estabelecimentos}
           selectedPeriod={selectedPeriod}
+          periodPreferences={periodPreferences}
           defaultPagadorId={defaultPagadorId}
         />
       ) : null}
@@ -508,6 +515,7 @@ export function LancamentosPage({
             name: p.label,
           }))}
           defaultPeriod={selectedPeriod}
+          periodPreferences={periodPreferences}
         />
       )}
 

@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import type { InstallmentAnticipationWithRelations } from "@/lib/installments/anticipation-types";
+import { displayPeriod } from "@/lib/utils/period";
 import { RiCalendarCheckLine, RiCloseLine, RiEyeLine } from "@remixicon/react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -25,24 +26,6 @@ interface AnticipationCardProps {
   onViewLancamento?: (lancamentoId: string) => void;
   onCanceled?: () => void;
 }
-
-const monthFormatter = new Intl.DateTimeFormat("pt-BR", {
-  month: "long",
-  year: "numeric",
-});
-
-const formatPeriodLabel = (period: string) => {
-  const [year, month] = period.split("-").map(Number);
-  if (!year || !month) {
-    return period;
-  }
-  const date = new Date(year, month - 1, 1);
-  if (Number.isNaN(date.getTime())) {
-    return period;
-  }
-  const label = monthFormatter.format(date);
-  return label.charAt(0).toUpperCase() + label.slice(1);
-};
 
 export function AnticipationCard({
   anticipation,
@@ -93,7 +76,7 @@ export function AnticipationCard({
           </CardDescription>
         </div>
         <Badge variant="secondary">
-          {formatPeriodLabel(anticipation.anticipationPeriod)}
+          {displayPeriod(anticipation.anticipationPeriod)}
         </Badge>
       </CardHeader>
 

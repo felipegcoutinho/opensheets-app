@@ -9,7 +9,8 @@ import {
   buildSluggedFilters,
   fetchLancamentoFilterSources,
 } from "@/lib/lancamentos/page-helpers";
-import { parsePeriodParam } from "@/lib/utils/period";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
+import { displayPeriod, parsePeriodParam } from "@/lib/utils/period";
 import { notFound } from "next/navigation";
 
 type PageSearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -28,24 +29,6 @@ const getSingleParam = (
   return Array.isArray(value) ? value[0] ?? null : value;
 };
 
-const formatPeriodLabel = (period: string) => {
-  const [yearStr, monthStr] = period.split("-");
-  const year = Number.parseInt(yearStr ?? "", 10);
-  const monthIndex = Number.parseInt(monthStr ?? "", 10) - 1;
-
-  if (Number.isNaN(year) || Number.isNaN(monthIndex) || monthIndex < 0) {
-    return period;
-  }
-
-  const date = new Date(year, monthIndex, 1);
-  const label = date.toLocaleDateString("pt-BR", {
-    month: "long",
-    year: "numeric",
-  });
-
-  return label.charAt(0).toUpperCase() + label.slice(1);
-};
-
 export default async function Page({ params, searchParams }: PageProps) {
   const { categoryId } = await params;
   const userId = await getUserId();
@@ -54,10 +37,11 @@ export default async function Page({ params, searchParams }: PageProps) {
   const periodoParam = getSingleParam(resolvedSearchParams, "periodo");
   const { period: selectedPeriod } = parsePeriodParam(periodoParam);
 
-  const [detail, filterSources, estabelecimentos] = await Promise.all([
+  const [detail, filterSources, estabelecimentos, periodPreferences] = await Promise.all([
     fetchCategoryDetails(userId, categoryId, selectedPeriod),
     fetchLancamentoFilterSources(userId),
     getRecentEstablishmentsAction(),
+    fetchUserPeriodPreferences(userId),
   ]);
 
   if (!detail) {
@@ -80,8 +64,8 @@ export default async function Page({ params, searchParams }: PageProps) {
     pagadorRows: filterSources.pagadorRows,
   });
 
-  const currentPeriodLabel = formatPeriodLabel(detail.period);
-  const previousPeriodLabel = formatPeriodLabel(detail.previousPeriod);
+  const currentPeriodLabel = displayPeriod(detail.period);
+  const previousPeriodLabel = displayPeriod(detail.previousPeriod);
 
   return (
     <main className="flex flex-col gap-6">
@@ -108,6 +92,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         contaCartaoFilterOptions={contaCartaoFilterOptions}
         selectedPeriod={detail.period}
         estabelecimentos={estabelecimentos}
+        periodPreferences={periodPreferences}
         allowCreate={true}
       />
     </main>

@@ -26,6 +26,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { useControlledState } from "@/hooks/use-controlled-state";
 import { useFormState } from "@/hooks/use-form-state";
+import type { PeriodPreferences } from "@/lib/user-preferences/period";
+import { createMonthOptions } from "@/lib/utils/period";
 import {
   useCallback,
   useEffect,
@@ -43,63 +45,10 @@ interface BudgetDialogProps {
   budget?: Budget;
   categories: BudgetCategory[];
   defaultPeriod: string;
+  periodPreferences: PeriodPreferences;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
-
-type SelectOption = {
-  value: string;
-  label: string;
-};
-
-const monthFormatter = new Intl.DateTimeFormat("pt-BR", {
-  month: "long",
-  year: "numeric",
-});
-
-const formatPeriodLabel = (period: string) => {
-  const [year, month] = period.split("-").map(Number);
-  if (!year || !month) {
-    return period;
-  }
-  const date = new Date(year, month - 1, 1);
-  if (Number.isNaN(date.getTime())) {
-    return period;
-  }
-  const label = monthFormatter.format(date);
-  return label.charAt(0).toUpperCase() + label.slice(1);
-};
-
-const buildPeriodOptions = (currentValue?: string): SelectOption[] => {
-  const now = new Date();
-  const options: SelectOption[] = [];
-
-  for (let offset = -3; offset <= 3; offset += 1) {
-    const date = new Date(now.getFullYear(), now.getMonth() + offset, 1);
-    const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}`;
-    options.push({ value, label: formatPeriodLabel(value) });
-  }
-
-  if (
-    currentValue &&
-    !options.some((option) => option.value === currentValue)
-  ) {
-    options.push({
-      value: currentValue,
-      label: formatPeriodLabel(currentValue),
-    });
-  }
-
-  return options
-    .sort((a, b) => a.value.localeCompare(b.value))
-    .map((option) => ({
-      value: option.value,
-      label: option.label,
-    }));
-};
 
 const buildInitialValues = ({
   budget,
@@ -119,6 +68,7 @@ export function BudgetDialog({
   budget,
   categories,
   defaultPeriod,
+  periodPreferences,
   open,
   onOpenChange,
 }: BudgetDialogProps) {
@@ -161,8 +111,13 @@ export function BudgetDialog({
   }, [dialogOpen]);
 
   const periodOptions = useMemo(
-    () => buildPeriodOptions(formState.period),
-    [formState.period]
+    () =>
+      createMonthOptions(
+        formState.period,
+        periodPreferences.monthsBefore,
+        periodPreferences.monthsAfter
+      ),
+    [formState.period, periodPreferences.monthsBefore, periodPreferences.monthsAfter]
   );
 
   const handleSubmit = useCallback(

@@ -12,4 +12,6 @@ export const LANCAMENTO_PAYMENT_METHODS = [
   "Pix",
   "Dinheiro",
   "Boleto",
+  "Pré-Pago | VR/VA",
+  "Transferência bancária",
 ] as const;

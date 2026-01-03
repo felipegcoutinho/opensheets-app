@@ -1,8 +1,8 @@
-import { lancamentos, pagadores } from "@/db/schema";
-import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX } from "@/lib/accounts/constants";
+import { lancamentos, pagadores, contas } from "@/db/schema";
+import { ACCOUNT_AUTO_INVOICE_NOTE_PREFIX, INITIAL_BALANCE_NOTE } from "@/lib/accounts/constants";
 import { db } from "@/lib/db";
 import { toNumber } from "@/lib/dashboard/common";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, sql, or, isNull, ne } from "drizzle-orm";
 
 export type MonthData = {
   month: string;
@@ -79,6 +79,7 @@ export async function fetchIncomeExpenseBalance(
         })
         .from(lancamentos)
         .innerJoin(pagadores, eq(lancamentos.pagadorId, pagadores.id))
+        .leftJoin(contas, eq(lancamentos.contaId, contas.id))
         .where(
           and(
             eq(lancamentos.userId, userId),
@@ -87,7 +88,13 @@ export async function fetchIncomeExpenseBalance(
             eq(pagadores.role, "admin"),
             sql`(${lancamentos.note} IS NULL OR ${
               lancamentos.note
-            } NOT LIKE ${`${ACCOUNT_AUTO_INVOICE_NOTE_PREFIX}%`})`
+            } NOT LIKE ${`${ACCOUNT_AUTO_INVOICE_NOTE_PREFIX}%`})`,
+            // Excluir saldos iniciais se a conta tiver o flag ativo
+            or(
+              ne(lancamentos.note, INITIAL_BALANCE_NOTE),
+              isNull(contas.excludeInitialBalanceFromIncome),
+              eq(contas.excludeInitialBalanceFromIncome, false)
+            )
           )
         );
 

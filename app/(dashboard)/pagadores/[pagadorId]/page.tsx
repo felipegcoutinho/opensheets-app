@@ -1,3 +1,4 @@
+import { getRecentEstablishmentsAction } from "@/app/(dashboard)/lancamentos/actions";
 import { PagadorCardUsageCard } from "@/components/pagadores/details/pagador-card-usage-card";
 import { PagadorHistoryCard } from "@/components/pagadores/details/pagador-history-card";
 import { PagadorInfoCard } from "@/components/pagadores/details/pagador-info-card";
@@ -29,6 +30,7 @@ import {
   type SlugMaps,
   type SluggedFilters,
 } from "@/lib/lancamentos/page-helpers";
+import { fetchUserPeriodPreferences } from "@/lib/user-preferences/period";
 import { parsePeriodParam } from "@/lib/utils/period";
 import { getPagadorAccess } from "@/lib/pagadores/access";
 import {
@@ -134,6 +136,8 @@ export default async function Page({ params, searchParams }: PageProps) {
     cardUsage,
     boletoStats,
     shareRows,
+    estabelecimentos,
+    periodPreferences,
   ] = await Promise.all([
     fetchPagadorLancamentos(filters),
     fetchPagadorMonthlyBreakdown({
@@ -157,6 +161,8 @@ export default async function Page({ params, searchParams }: PageProps) {
       period: selectedPeriod,
     }),
     sharesPromise,
+    getRecentEstablishmentsAction(),
+    fetchUserPeriodPreferences(dataOwnerId),
   ]);
 
   const mappedLancamentos = mapLancamentosData(lancamentoRows);
@@ -289,6 +295,8 @@ export default async function Page({ params, searchParams }: PageProps) {
               categoriaFilterOptions={optionSets.categoriaFilterOptions}
               contaCartaoFilterOptions={optionSets.contaCartaoFilterOptions}
               selectedPeriod={selectedPeriod}
+              estabelecimentos={estabelecimentos}
+              periodPreferences={periodPreferences}
               allowCreate={canEdit}
             />
           </section>

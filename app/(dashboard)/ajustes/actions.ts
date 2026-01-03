@@ -48,6 +48,20 @@ const deleteAccountSchema = z.object({
   }),
 });
 
+const updatePreferencesSchema = z.object({
+  disableMagnetlines: z.boolean(),
+  periodMonthsBefore: z
+    .number()
+    .int("Deve ser um número inteiro")
+    .min(1, "Mínimo de 1 mês")
+    .max(24, "Máximo de 24 meses"),
+  periodMonthsAfter: z
+    .number()
+    .int("Deve ser um número inteiro")
+    .min(1, "Mínimo de 1 mês")
+    .max(24, "Máximo de 24 meses"),
+});
+
 // Actions
 
 export async function updateNameAction(
@@ -324,6 +338,76 @@ export async function deleteAccountAction(
     return {
       success: false,
       error: "Erro ao deletar conta. Tente novamente.",
+    };
+  }
+}
+
+export async function updatePreferencesAction(
+  data: z.infer<typeof updatePreferencesSchema>
+): Promise<ActionResponse> {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user?.id) {
+      return {
+        success: false,
+        error: "Não autenticado",
+      };
+    }
+
+    const validated = updatePreferencesSchema.parse(data);
+
+    // Check if preferences exist, if not create them
+    const existingResult = await db
+      .select()
+      .from(schema.userPreferences)
+      .where(eq(schema.userPreferences.userId, session.user.id))
+      .limit(1);
+
+    const existing = existingResult[0] || null;
+
+    if (existing) {
+      // Update existing preferences
+      await db
+        .update(schema.userPreferences)
+        .set({
+          disableMagnetlines: validated.disableMagnetlines,
+          periodMonthsBefore: validated.periodMonthsBefore,
+          periodMonthsAfter: validated.periodMonthsAfter,
+          updatedAt: new Date(),
+        })
+        .where(eq(schema.userPreferences.userId, session.user.id));
+    } else {
+      // Create new preferences
+      await db.insert(schema.userPreferences).values({
+        userId: session.user.id,
+        disableMagnetlines: validated.disableMagnetlines,
+        periodMonthsBefore: validated.periodMonthsBefore,
+        periodMonthsAfter: validated.periodMonthsAfter,
+      });
+    }
+
+    // Revalidar o layout do dashboard
+    revalidatePath("/", "layout");
+
+    return {
+      success: true,
+      message: "Preferências atualizadas com sucesso",
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return {
+        success: false,
+        error: error.issues[0]?.message || "Dados inválidos",
+      };
+    }
+
+    console.error("Erro ao atualizar preferências:", error);
+    return {
+      success: false,
+      error: "Erro ao atualizar preferências. Tente novamente.",
     };
   }
 }
