@@ -5,7 +5,6 @@ import {
   RiBankLine,
   RiCalendarEventLine,
   RiDashboardLine,
-  RiGitCommitLine,
   RiFundsLine,
   RiGroupLine,
   RiLineChartLine,
@@ -162,11 +161,11 @@ export function createSidebarNavData(pagadores: PagadorLike[]): SidebarNavData {
       },
     ],
     navSecondary: [
-      {
-        title: "Changelog",
-        url: "/changelog",
-        icon: RiGitCommitLine,
-      },
+      // {
+      //   title: "Changelog",
+      //   url: "/changelog",
+      //   icon: RiGitCommitLine,
+      // },
       {
         title: "Ajustes",
         url: "/ajustes",
