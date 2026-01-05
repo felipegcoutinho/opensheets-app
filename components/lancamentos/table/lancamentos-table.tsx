@@ -79,6 +79,7 @@ import type {
   LancamentoFilterOption,
   LancamentoItem,
 } from "../types";
+import { LancamentosExport } from "../lancamentos-export";
 import { LancamentosFilters } from "./lancamentos-filters";
 
 const resolveLogoSrc = (logo: string | null) => {
@@ -626,6 +627,7 @@ type LancamentosTableProps = {
   pagadorFilterOptions?: LancamentoFilterOption[];
   categoriaFilterOptions?: LancamentoFilterOption[];
   contaCartaoFilterOptions?: ContaCartaoFilterOption[];
+  selectedPeriod?: string;
   onCreate?: () => void;
   onMassAdd?: () => void;
   onEdit?: (item: LancamentoItem) => void;
@@ -649,6 +651,7 @@ export function LancamentosTable({
   pagadorFilterOptions = [],
   categoriaFilterOptions = [],
   contaCartaoFilterOptions = [],
+  selectedPeriod,
   onCreate,
   onMassAdd,
   onEdit,
@@ -797,6 +800,14 @@ export function LancamentosTable({
               categoriaOptions={categoriaFilterOptions}
               contaCartaoOptions={contaCartaoFilterOptions}
               className="w-full lg:flex-1 lg:justify-end"
+              exportButton={
+                selectedPeriod ? (
+                  <LancamentosExport
+                    lancamentos={data}
+                    period={selectedPeriod}
+                  />
+                ) : null
+              }
             />
           ) : null}
         </div>

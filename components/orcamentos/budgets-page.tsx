@@ -1,10 +1,13 @@
 "use client";
 
-import { deleteBudgetAction } from "@/app/(dashboard)/orcamentos/actions";
+import {
+  deleteBudgetAction,
+  duplicatePreviousMonthBudgetsAction,
+} from "@/app/(dashboard)/orcamentos/actions";
 import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { Button } from "@/components/ui/button";
-import { RiAddCircleLine, RiFundsLine } from "@remixicon/react";
+import { RiAddCircleLine, RiFileCopyLine, RiFundsLine } from "@remixicon/react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { Card } from "../ui/card";
@@ -29,6 +32,7 @@ export function BudgetsPage({
   const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const [budgetToRemove, setBudgetToRemove] = useState<Budget | null>(null);
+  const [duplicateOpen, setDuplicateOpen] = useState(false);
 
   const hasBudgets = budgets.length > 0;
 
@@ -72,6 +76,21 @@ export function BudgetsPage({
     throw new Error(result.error);
   }, [budgetToRemove]);
 
+  const handleDuplicateConfirm = useCallback(async () => {
+    const result = await duplicatePreviousMonthBudgetsAction({
+      period: selectedPeriod,
+    });
+
+    if (result.success) {
+      toast.success(result.message);
+      setDuplicateOpen(false);
+      return;
+    }
+
+    toast.error(result.error);
+    throw new Error(result.error);
+  }, [selectedPeriod]);
+
   const removeTitle = budgetToRemove
     ? `Remover orçamento de "${
         budgetToRemove.category?.name ?? "categoria removida"
@@ -86,7 +105,7 @@ export function BudgetsPage({
   return (
     <>
       <div className="flex w-full flex-col gap-6">
-        <div className="flex justify-start">
+        <div className="flex justify-start gap-4">
           <BudgetDialog
             mode="create"
             categories={categories}
@@ -98,6 +117,14 @@ export function BudgetsPage({
               </Button>
             }
           />
+          <Button
+            variant="outline"
+            disabled={categories.length === 0}
+            onClick={() => setDuplicateOpen(true)}
+          >
+            <RiFileCopyLine className="size-4" />
+            Copiar orçamentos do último mês
+          </Button>
         </div>
 
         {hasBudgets ? (
@@ -141,6 +168,16 @@ export function BudgetsPage({
         pendingLabel="Removendo..."
         confirmVariant="destructive"
         onConfirm={handleRemoveConfirm}
+      />
+
+      <ConfirmActionDialog
+        open={duplicateOpen}
+        onOpenChange={setDuplicateOpen}
+        title="Copiar orçamentos do último mês?"
+        description="Isso copiará os limites definidos no mês anterior para as categorias que ainda não possuem orçamento neste mês."
+        confirmLabel="Copiar orçamentos"
+        pendingLabel="Copiando..."
+        onConfirm={handleDuplicateConfirm}
       />
     </>
   );

@@ -188,3 +188,89 @@ export async function deleteBudgetAction(
     return handleActionError(error);
   }
 }
+
+const duplicatePreviousMonthSchema = z.object({
+  period: periodSchema,
+});
+
+type DuplicatePreviousMonthInput = z.infer<
+  typeof duplicatePreviousMonthSchema
+>;
+
+export async function duplicatePreviousMonthBudgetsAction(
+  input: DuplicatePreviousMonthInput
+): Promise<ActionResult> {
+  try {
+    const user = await getUser();
+    const data = duplicatePreviousMonthSchema.parse(input);
+
+    // Calcular mês anterior
+    const [year, month] = data.period.split("-").map(Number);
+    const currentDate = new Date(year, month - 1, 1);
+    const previousDate = new Date(currentDate);
+    previousDate.setMonth(previousDate.getMonth() - 1);
+
+    const prevYear = previousDate.getFullYear();
+    const prevMonth = String(previousDate.getMonth() + 1).padStart(2, "0");
+    const previousPeriod = `${prevYear}-${prevMonth}`;
+
+    // Buscar orçamentos do mês anterior
+    const previousBudgets = await db.query.orcamentos.findMany({
+      where: and(
+        eq(orcamentos.userId, user.id),
+        eq(orcamentos.period, previousPeriod)
+      ),
+    });
+
+    if (previousBudgets.length === 0) {
+      return {
+        success: false,
+        error: "Não foram encontrados orçamentos no mês anterior.",
+      };
+    }
+
+    // Buscar orçamentos existentes do mês atual
+    const currentBudgets = await db.query.orcamentos.findMany({
+      where: and(
+        eq(orcamentos.userId, user.id),
+        eq(orcamentos.period, data.period)
+      ),
+    });
+
+    // Filtrar para evitar duplicatas
+    const existingCategoryIds = new Set(
+      currentBudgets.map((b) => b.categoriaId)
+    );
+
+    const budgetsToCopy = previousBudgets.filter(
+      (b) => b.categoriaId && !existingCategoryIds.has(b.categoriaId)
+    );
+
+    if (budgetsToCopy.length === 0) {
+      return {
+        success: false,
+        error:
+          "Todas as categorias do mês anterior já possuem orçamento neste mês.",
+      };
+    }
+
+    // Inserir novos orçamentos
+    await db.insert(orcamentos).values(
+      budgetsToCopy.map((b) => ({
+        amount: b.amount,
+        period: data.period,
+        userId: user.id,
+        categoriaId: b.categoriaId!,
+      }))
+    );
+
+    revalidateForEntity("orcamentos");
+
+    return {
+      success: true,
+      message: `${budgetsToCopy.length} orçamento${budgetsToCopy.length > 1 ? "s" : ""} duplicado${budgetsToCopy.length > 1 ? "s" : ""} com sucesso.`,
+    };
+  } catch (error) {
+    return handleActionError(error);
+  }
+}
