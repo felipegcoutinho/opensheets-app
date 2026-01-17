@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils/ui";
 import {
   RiAlertFill,
   RiCheckboxCircleFill,
-  RiNotification3Fill,
+  RiNotification3Line,
   RiTimeLine,
 } from "@remixicon/react";
 import { useState } from "react";
@@ -82,7 +82,7 @@ export function NotificationBell({
                 "data-[state=open]:bg-accent/60 data-[state=open]:text-foreground border"
               )}
             >
-              <RiNotification3Fill
+              <RiNotification3Line
                 className={cn(
                   "size-4 transition-transform duration-200",
                   open ? "scale-90" : "scale-100"

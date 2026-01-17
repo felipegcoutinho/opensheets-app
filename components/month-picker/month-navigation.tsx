@@ -79,7 +79,7 @@ export default function MonthNavigation() {
   };
 
   return (
-    <Card className="sticky top-0 z-30 w-full flex-row bg-month-picker text-month-picker-foreground p-5">
+    <Card className="sticky top-0 z-30 w-full flex-row bg-month-picker text-month-picker-foreground p-4">
       <div className="flex items-center gap-1">
         <NavigationButton
           direction="left"

@@ -22,7 +22,7 @@ export function InstallmentTimeline({
   const lastInstallmentDate = calculateLastInstallmentDate(
     period,
     currentInstallment,
-    totalInstallments
+    totalInstallments,
   );
 
   return (
@@ -30,7 +30,7 @@ export function InstallmentTimeline({
       {/* Linha de conexão */}
       <div className="absolute left-0 right-0 top-6 h-0.5 bg-border">
         <div
-          className="h-full bg-blue-600 transition-all duration-300"
+          className="h-full bg-green-600 transition-all duration-300"
           style={{
             width: `${
               ((currentInstallment - 1) / (totalInstallments - 1)) * 100
@@ -41,7 +41,7 @@ export function InstallmentTimeline({
 
       {/* Ponto 1: Data de Compra */}
       <div className="relative z-10 flex flex-col items-center gap-2">
-        <div className="flex size-4 items-center justify-center rounded-full border-2 border-blue-600 bg-blue-600 shadow-sm">
+        <div className="flex size-4 items-center justify-center rounded-full border-2 border-green-600 bg-green-600 shadow-sm">
           <RiCheckLine className="size-5 text-white" />
         </div>
         <div className="flex flex-col items-center">
