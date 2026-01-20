@@ -3,14 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { CartoesReportData } from "@/lib/relatorios/cartoes-report";
-import {
-  RiBankCard2Line,
-  RiArrowUpLine,
-  RiArrowDownLine,
-} from "@remixicon/react";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { title_font } from "@/public/fonts/font_index";
+import {
+  RiArrowDownLine,
+  RiArrowUpLine,
+  RiBankCard2Line,
+} from "@remixicon/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 type CardsOverviewProps = {
@@ -78,7 +79,8 @@ export function CardsOverview({ data }: CardsOverviewProps) {
     return (
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base font-medium">
+          <CardTitle className="text-base font-bold flex items-center gap-2">
+            <RiBankCard2Line className="size-4" />
             Resumo dos Cartões
           </CardTitle>
         </CardHeader>
@@ -95,7 +97,10 @@ export function CardsOverview({ data }: CardsOverviewProps) {
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium">
+        <CardTitle
+          className={`${title_font.className} flex items-center gap-1.5 text-base`}
+        >
+          <RiBankCard2Line className="size-4 text-primary" />
           Resumo dos Cartões
         </CardTitle>
       </CardHeader>

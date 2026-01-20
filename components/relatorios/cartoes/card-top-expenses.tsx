@@ -1,7 +1,12 @@
 "use client";
 
+import MoneyValues from "@/components/money-values";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { WidgetEmptyState } from "@/components/widget-empty-state";
 import type { CardDetailData } from "@/lib/relatorios/cartoes-report";
+import { title_font } from "@/public/fonts/font_index";
 import { RiShoppingBag3Line } from "@remixicon/react";
 
 type CardTopExpensesProps = {
@@ -9,71 +14,95 @@ type CardTopExpensesProps = {
 };
 
 export function CardTopExpenses({ data }: CardTopExpensesProps) {
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(value);
-  };
-
   if (data.length === 0) {
     return (
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base font-medium">
-            Maiores Gastos
+      <Card className="h-full">
+        <CardHeader className="pb-3">
+          <CardTitle
+            className={`${title_font.className} flex items-center gap-1.5 text-base`}
+          >
+            <RiShoppingBag3Line className="size-4 text-primary" />
+            Top 10 Gastos do Mês
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-            <RiShoppingBag3Line className="size-8 mb-2" />
-            <p className="text-sm">Nenhum gasto neste período</p>
-          </div>
+          <WidgetEmptyState
+            icon={
+              <RiShoppingBag3Line className="size-6 text-muted-foreground" />
+            }
+            title="Nenhum gasto encontrado"
+            description="Quando houver gastos registrados, eles aparecerão aqui."
+          />
         </CardContent>
       </Card>
     );
   }
 
+  const maxAmount = Math.max(...data.map((e) => e.amount));
+
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium">
+    <Card className="h-full">
+      <CardHeader className="pb-3">
+        <CardTitle
+          className={`${title_font.className} flex items-center gap-1.5 text-base`}
+        >
+          <RiShoppingBag3Line className="size-4 text-primary" />
           Top 10 Gastos do Mês
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
+      <CardContent className="pt-0">
+        <div className="flex flex-col">
           {data.map((expense, index) => (
             <div
               key={expense.id}
-              className="flex items-center justify-between py-2 border-b last:border-b-0"
+              className="flex flex-col py-2 border-b border-dashed last:border-0"
             >
-              <div className="flex items-center gap-3 min-w-0">
-                <span className="text-xs text-muted-foreground w-5">
-                  {index + 1}.
-                </span>
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate max-w-[200px]">
-                    {expense.name}
-                  </p>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <span>{expense.date}</span>
-                    {expense.category && (
-                      <>
-                        <span>•</span>
-                        <span className="truncate max-w-[100px]">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  {/* Rank number */}
+                  <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-muted">
+                    <span className="text-sm font-semibold text-muted-foreground">
+                      {index + 1}
+                    </span>
+                  </div>
+
+                  {/* Name and details */}
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium truncate block">
+                      {expense.name}
+                    </span>
+                    <div className="flex items-center gap-1 mt-0.5 flex-wrap">
+                      <span className="text-xs text-muted-foreground">
+                        {expense.date}
+                      </span>
+                      {expense.category && (
+                        <Badge
+                          variant="secondary"
+                          className="text-xs px-1.5 py-0 h-5"
+                        >
                           {expense.category}
-                        </span>
-                      </>
-                    )}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
+
+                {/* Value */}
+                <div className="flex shrink-0 flex-col items-end">
+                  <MoneyValues
+                    className="text-red-600 dark:text-red-500"
+                    amount={expense.amount}
+                  />
+                </div>
               </div>
-              <span className="text-sm font-medium text-red-500 shrink-0">
-                {formatCurrency(expense.amount)}
-              </span>
+
+              {/* Progress bar */}
+              <div className="ml-12 mt-1.5">
+                <Progress
+                  className="h-1.5"
+                  value={(expense.amount / maxAmount) * 100}
+                />
+              </div>
             </div>
           ))}
         </div>
