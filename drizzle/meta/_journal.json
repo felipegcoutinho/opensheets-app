@@ -64,6 +64,13 @@
       "when": 1767125796314,
       "tag": "0008_fat_stick",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1768925100873,
+      "tag": "0009_add_dashboard_widgets",
+      "breakpoints": true
     }
   ]
 }

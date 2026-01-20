@@ -109,6 +109,10 @@ export const userPreferences = pgTable("user_preferences", {
     .unique()
     .references(() => user.id, { onDelete: "cascade" }),
   disableMagnetlines: boolean("disable_magnetlines").notNull().default(false),
+  dashboardWidgets: jsonb("dashboard_widgets").$type<{
+    order: string[];
+    hidden: string[];
+  }>(),
   createdAt: timestamp("created_at", {
     mode: "date",
     withTimezone: true,
@@ -139,9 +143,7 @@ export const contas = pgTable(
     initialBalance: numeric("saldo_inicial", { precision: 12, scale: 2 })
       .notNull()
       .default("0"),
-    excludeFromBalance: boolean("excluir_do_saldo")
-      .notNull()
-      .default(false),
+    excludeFromBalance: boolean("excluir_do_saldo").notNull().default(false),
     excludeInitialBalanceFromIncome: boolean("excluir_saldo_inicial_receitas")
       .notNull()
       .default(false),
@@ -158,9 +160,9 @@ export const contas = pgTable(
   (table) => ({
     userIdStatusIdx: index("contas_user_id_status_idx").on(
       table.userId,
-      table.status
+      table.status,
     ),
-  })
+  }),
 );
 
 export const categorias = pgTable(
@@ -185,9 +187,9 @@ export const categorias = pgTable(
   (table) => ({
     userIdTypeIdx: index("categorias_user_id_type_idx").on(
       table.userId,
-      table.type
+      table.type,
     ),
-  })
+  }),
 );
 
 export const pagadores = pgTable(
@@ -222,17 +224,17 @@ export const pagadores = pgTable(
   },
   (table) => ({
     uniqueShareCode: uniqueIndex("pagadores_share_code_key").on(
-      table.shareCode
+      table.shareCode,
     ),
     userIdStatusIdx: index("pagadores_user_id_status_idx").on(
       table.userId,
-      table.status
+      table.status,
     ),
     userIdRoleIdx: index("pagadores_user_id_role_idx").on(
       table.userId,
-      table.role
+      table.role,
     ),
-  })
+  }),
 );
 
 export const pagadorShares = pgTable(
@@ -261,9 +263,9 @@ export const pagadorShares = pgTable(
   (table) => ({
     uniquePagadorShare: uniqueIndex("pagador_shares_unique").on(
       table.pagadorId,
-      table.sharedWithUserId
+      table.sharedWithUserId,
     ),
-  })
+  }),
 );
 
 export const cartoes = pgTable(
@@ -291,14 +293,17 @@ export const cartoes = pgTable(
       .references(() => user.id, { onDelete: "cascade" }),
     contaId: uuid("conta_id")
       .notNull()
-      .references(() => contas.id, { onDelete: "cascade", onUpdate: "cascade" }),
+      .references(() => contas.id, {
+        onDelete: "cascade",
+        onUpdate: "cascade",
+      }),
   },
   (table) => ({
     userIdStatusIdx: index("cartoes_user_id_status_idx").on(
       table.userId,
-      table.status
+      table.status,
     ),
-  })
+  }),
 );
 
 export const faturas = pgTable(
@@ -326,13 +331,13 @@ export const faturas = pgTable(
   (table) => ({
     userIdPeriodIdx: index("faturas_user_id_period_idx").on(
       table.userId,
-      table.period
+      table.period,
     ),
     cartaoIdPeriodIdx: index("faturas_cartao_id_period_idx").on(
       table.cartaoId,
-      table.period
+      table.period,
     ),
-  })
+  }),
 );
 
 export const orcamentos = pgTable(
@@ -360,9 +365,9 @@ export const orcamentos = pgTable(
   (table) => ({
     userIdPeriodIdx: index("orcamentos_user_id_period_idx").on(
       table.userId,
-      table.period
+      table.period,
     ),
-  })
+  }),
 );
 
 export const anotacoes = pgTable("anotacoes", {
@@ -384,7 +389,6 @@ export const anotacoes = pgTable("anotacoes", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
-
 
 export const savedInsights = pgTable(
   "saved_insights",
@@ -414,9 +418,9 @@ export const savedInsights = pgTable(
   (table) => ({
     userPeriodIdx: uniqueIndex("saved_insights_user_period_idx").on(
       table.userId,
-      table.period
+      table.period,
     ),
-  })
+  }),
 );
 
 export const installmentAnticipations = pgTable(
@@ -458,10 +462,10 @@ export const installmentAnticipations = pgTable(
   },
   (table) => ({
     seriesIdIdx: index("installment_anticipations_series_id_idx").on(
-      table.seriesId
+      table.seriesId,
     ),
     userIdIdx: index("installment_anticipations_user_id_idx").on(table.userId),
-  })
+  }),
 );
 
 export const lancamentos = pgTable(
@@ -488,7 +492,7 @@ export const lancamentos = pgTable(
     isAnticipated: boolean("antecipado").default(false),
     anticipationId: uuid("antecipacao_id").references(
       () => installmentAnticipations.id,
-      { onDelete: "set null" }
+      { onDelete: "set null" },
     ),
     createdAt: timestamp("created_at", {
       mode: "date",
@@ -522,12 +526,12 @@ export const lancamentos = pgTable(
     // Índice composto mais importante: userId + period (usado em quase todas as queries do dashboard)
     userIdPeriodIdx: index("lancamentos_user_id_period_idx").on(
       table.userId,
-      table.period
+      table.period,
     ),
     // Índice para queries ordenadas por data de compra
     userIdPurchaseDateIdx: index("lancamentos_user_id_purchase_date_idx").on(
       table.userId,
-      table.purchaseDate
+      table.purchaseDate,
     ),
     // Índice para buscar parcelas de uma série
     seriesIdIdx: index("lancamentos_series_id_idx").on(table.seriesId),
@@ -536,14 +540,14 @@ export const lancamentos = pgTable(
     // Índice para filtrar por condição (aberto, realizado, cancelado)
     userIdConditionIdx: index("lancamentos_user_id_condition_idx").on(
       table.userId,
-      table.condition
+      table.condition,
     ),
     // Índice para queries de cartão específico
     cartaoIdPeriodIdx: index("lancamentos_cartao_id_period_idx").on(
       table.cartaoId,
-      table.period
+      table.period,
     ),
-  })
+  }),
 );
 
 export const userRelations = relations(user, ({ many, one }) => ({
@@ -665,7 +669,6 @@ export const savedInsightsRelations = relations(savedInsights, ({ one }) => ({
   }),
 }));
 
-
 export const lancamentosRelations = relations(lancamentos, ({ one }) => ({
   user: one(user, {
     fields: [lancamentos.userId],
@@ -712,7 +715,7 @@ export const installmentAnticipationsRelations = relations(
       fields: [installmentAnticipations.categoriaId],
       references: [categorias.id],
     }),
-  })
+  }),
 );
 
 export type User = typeof user.$inferSelect;
