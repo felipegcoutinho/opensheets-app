@@ -1,9 +1,15 @@
-import { lancamentos, pagadores, cartoes, categorias, faturas } from "@/db/schema";
+import {
+  cartoes,
+  categorias,
+  faturas,
+  lancamentos,
+  pagadores,
+} from "@/db/schema";
 import { db } from "@/lib/db";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
-import { getPreviousPeriod } from "@/lib/utils/period";
 import { safeToNumber } from "@/lib/utils/number";
-import { and, eq, sum, gte, lte, inArray, not, ilike } from "drizzle-orm";
+import { getPreviousPeriod } from "@/lib/utils/period";
+import { and, eq, gte, ilike, inArray, lte, not, sum } from "drizzle-orm";
 
 const DESPESA = "Despesa";
 
@@ -60,7 +66,7 @@ export type CartoesReportData = {
 export async function fetchCartoesReportData(
   userId: string,
   currentPeriod: string,
-  selectedCartaoId?: string | null
+  selectedCartaoId?: string | null,
 ): Promise<CartoesReportData> {
   const previousPeriod = getPreviousPeriod(currentPeriod);
 
@@ -75,7 +81,9 @@ export async function fetchCartoesReportData(
       status: cartoes.status,
     })
     .from(cartoes)
-    .where(and(eq(cartoes.userId, userId), not(ilike(cartoes.status, "inativo"))));
+    .where(
+      and(eq(cartoes.userId, userId), not(ilike(cartoes.status, "inativo"))),
+    );
 
   if (allCards.length === 0) {
     return {
@@ -103,8 +111,8 @@ export async function fetchCartoesReportData(
         eq(lancamentos.period, currentPeriod),
         eq(pagadores.role, PAGADOR_ROLE_ADMIN),
         eq(lancamentos.transactionType, DESPESA),
-        inArray(lancamentos.cartaoId, cardIds)
-      )
+        inArray(lancamentos.cartaoId, cardIds),
+      ),
     )
     .groupBy(lancamentos.cartaoId);
 
@@ -122,15 +130,18 @@ export async function fetchCartoesReportData(
         eq(lancamentos.period, previousPeriod),
         eq(pagadores.role, PAGADOR_ROLE_ADMIN),
         eq(lancamentos.transactionType, DESPESA),
-        inArray(lancamentos.cartaoId, cardIds)
-      )
+        inArray(lancamentos.cartaoId, cardIds),
+      ),
     )
     .groupBy(lancamentos.cartaoId);
 
   const currentUsageMap = new Map<string, number>();
   for (const row of currentUsageData) {
     if (row.cartaoId) {
-      currentUsageMap.set(row.cartaoId, Math.abs(safeToNumber(row.totalAmount)));
+      currentUsageMap.set(
+        row.cartaoId,
+        Math.abs(safeToNumber(row.totalAmount)),
+      );
     }
   }
 
@@ -139,7 +150,7 @@ export async function fetchCartoesReportData(
     if (row.cartaoId) {
       previousUsageMap.set(
         row.cartaoId,
-        Math.abs(safeToNumber(row.totalAmount))
+        Math.abs(safeToNumber(row.totalAmount)),
       );
     }
   }
@@ -183,11 +194,13 @@ export async function fetchCartoesReportData(
   // Calculate totals
   const totalLimit = cards.reduce((acc, c) => acc + c.limit, 0);
   const totalUsage = cards.reduce((acc, c) => acc + c.currentUsage, 0);
-  const totalUsagePercent = totalLimit > 0 ? (totalUsage / totalLimit) * 100 : 0;
+  const totalUsagePercent =
+    totalLimit > 0 ? (totalUsage / totalLimit) * 100 : 0;
 
   // Fetch selected card details if provided
   let selectedCard: CardDetailData | null = null;
-  const targetCardId = selectedCartaoId || (cards.length > 0 ? cards[0].id : null);
+  const targetCardId =
+    selectedCartaoId || (cards.length > 0 ? cards[0].id : null);
 
   if (targetCardId) {
     const cardSummary = cards.find((c) => c.id === targetCardId);
@@ -196,7 +209,7 @@ export async function fetchCartoesReportData(
         userId,
         targetCardId,
         cardSummary,
-        currentPeriod
+        currentPeriod,
       );
     }
   }
@@ -214,12 +227,12 @@ async function fetchCardDetail(
   userId: string,
   cardId: string,
   cardSummary: CardSummary,
-  currentPeriod: string
+  currentPeriod: string,
 ): Promise<CardDetailData> {
-  // Build period range for last 6 months
+  // Build period range for last 12 months
   const periods: string[] = [];
   let p = currentPeriod;
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 12; i++) {
     periods.unshift(p);
     p = getPreviousPeriod(p);
   }
@@ -256,8 +269,8 @@ async function fetchCardDetail(
         gte(lancamentos.period, startPeriod),
         lte(lancamentos.period, currentPeriod),
         eq(pagadores.role, PAGADOR_ROLE_ADMIN),
-        eq(lancamentos.transactionType, DESPESA)
-      )
+        eq(lancamentos.transactionType, DESPESA),
+      ),
     )
     .groupBy(lancamentos.period)
     .orderBy(lancamentos.period);
@@ -286,8 +299,8 @@ async function fetchCardDetail(
         eq(lancamentos.cartaoId, cardId),
         eq(lancamentos.period, currentPeriod),
         eq(pagadores.role, PAGADOR_ROLE_ADMIN),
-        eq(lancamentos.transactionType, DESPESA)
-      )
+        eq(lancamentos.transactionType, DESPESA),
+      ),
     )
     .groupBy(lancamentos.categoriaId);
 
@@ -312,7 +325,7 @@ async function fetchCardDetail(
 
   const totalCategoryAmount = categoryData.reduce(
     (acc, c) => acc + Math.abs(safeToNumber(c.totalAmount)),
-    0
+    0,
   );
 
   const categoryBreakdown = categoryData
@@ -326,7 +339,8 @@ async function fetchCardDetail(
         name: catInfo?.name || "Sem categoria",
         icon: catInfo?.icon || null,
         amount,
-        percent: totalCategoryAmount > 0 ? (amount / totalCategoryAmount) * 100 : 0,
+        percent:
+          totalCategoryAmount > 0 ? (amount / totalCategoryAmount) * 100 : 0,
       };
     })
     .sort((a, b) => b.amount - a.amount)
@@ -349,8 +363,8 @@ async function fetchCardDetail(
         eq(lancamentos.cartaoId, cardId),
         eq(lancamentos.period, currentPeriod),
         eq(pagadores.role, PAGADOR_ROLE_ADMIN),
-        eq(lancamentos.transactionType, DESPESA)
-      )
+        eq(lancamentos.transactionType, DESPESA),
+      ),
     )
     .orderBy(lancamentos.amount)
     .limit(10);
@@ -382,8 +396,8 @@ async function fetchCardDetail(
         eq(faturas.userId, userId),
         eq(faturas.cartaoId, cardId),
         gte(faturas.period, startPeriod),
-        lte(faturas.period, currentPeriod)
-      )
+        lte(faturas.period, currentPeriod),
+      ),
     )
     .orderBy(faturas.period);
 

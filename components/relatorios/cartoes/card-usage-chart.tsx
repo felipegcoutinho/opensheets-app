@@ -1,17 +1,33 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   type ChartConfig,
 } from "@/components/ui/chart";
 import type { CardDetailData } from "@/lib/relatorios/cartoes-report";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ReferenceLine } from "recharts";
+import { cn } from "@/lib/utils";
+import { RiBankCard2Line } from "@remixicon/react";
+import Image from "next/image";
+import { useState } from "react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ReferenceLine,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 type CardUsageChartProps = {
   data: CardDetailData["monthlyUsage"];
   limit: number;
+  card: {
+    name: string;
+    logo: string | null;
+  };
 };
 
 const chartConfig = {
@@ -21,7 +37,29 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function CardUsageChart({ data, limit }: CardUsageChartProps) {
+type PeriodFilter = "3" | "6" | "12";
+
+const filterOptions: { value: PeriodFilter; label: string }[] = [
+  { value: "3", label: "3 meses" },
+  { value: "6", label: "6 meses" },
+  { value: "12", label: "12 meses" },
+];
+
+const resolveLogoPath = (logo: string | null) => {
+  if (!logo) return null;
+  if (
+    logo.startsWith("http://") ||
+    logo.startsWith("https://") ||
+    logo.startsWith("data:")
+  ) {
+    return logo;
+  }
+  return logo.startsWith("/") ? logo : `/logos/${logo}`;
+};
+
+export function CardUsageChart({ data, limit, card }: CardUsageChartProps) {
+  const [period, setPeriod] = useState<PeriodFilter>("6");
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
@@ -44,17 +82,58 @@ export function CardUsageChart({ data, limit }: CardUsageChartProps) {
     return formatCurrency(value);
   };
 
-  const chartData = data.map((item) => ({
+  // Filter data based on selected period
+  const filteredData = data.slice(-Number(period));
+
+  const chartData = filteredData.map((item) => ({
     month: item.periodLabel,
     amount: item.amount,
   }));
 
+  const logoPath = resolveLogoPath(card.logo);
+
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-medium">
-          Uso Mensal (6 meses)
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          {/* Card logo and name on the left */}
+          <div className="flex items-center gap-2">
+            {logoPath ? (
+              <div className="flex size-10 shrink-0 items-center justify-center">
+                <Image
+                  src={logoPath}
+                  alt={`Logo ${card.name}`}
+                  width={32}
+                  height={32}
+                  className="rounded object-contain"
+                />
+              </div>
+            ) : (
+              <div className="flex size-10 shrink-0 items-center justify-center">
+                <RiBankCard2Line className="size-5 text-muted-foreground" />
+              </div>
+            )}
+            <span className="text-base font-semibold">{card.name}</span>
+          </div>
+
+          {/* Filters on the right */}
+          <div className="flex items-center gap-1">
+            {filterOptions.map((option) => (
+              <Button
+                key={option.value}
+                variant={period === option.value ? "default" : "outline"}
+                size="sm"
+                onClick={() => setPeriod(option.value)}
+                className={cn(
+                  "h-7 text-xs",
+                  period === option.value && "pointer-events-none",
+                )}
+              >
+                {option.label}
+              </Button>
+            ))}
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[280px] w-full">
@@ -131,7 +210,7 @@ export function CardUsageChart({ data, limit }: CardUsageChartProps) {
             />
             <Bar
               dataKey="amount"
-              fill="#3b82f6"
+              fill="var(--primary)"
               radius={[4, 4, 0, 0]}
               maxBarSize={50}
             />
