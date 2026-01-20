@@ -1,7 +1,5 @@
 import { BoletosWidget } from "@/components/dashboard/boletos-widget";
-import { ExpensesByCategoryWidget } from "@/components/dashboard/expenses-by-category-widget";
 import { ExpensesByCategoryWidgetWithChart } from "@/components/dashboard/expenses-by-category-widget-with-chart";
-import { IncomeByCategoryWidget } from "@/components/dashboard/income-by-category-widget";
 import { IncomeByCategoryWidgetWithChart } from "@/components/dashboard/income-by-category-widget-with-chart";
 import { IncomeExpenseBalanceWidget } from "@/components/dashboard/income-expense-balance-widget";
 import { InstallmentExpensesWidget } from "@/components/dashboard/installment-expenses-widget";
@@ -16,6 +14,7 @@ import { RecurringExpensesWidget } from "@/components/dashboard/recurring-expens
 import { TopEstablishmentsWidget } from "@/components/dashboard/top-establishments-widget";
 import { TopExpensesWidget } from "@/components/dashboard/top-expenses-widget";
 import {
+  RiArrowRightLine,
   RiArrowUpDoubleLine,
   RiBarChartBoxLine,
   RiBarcodeLine,
@@ -26,7 +25,6 @@ import {
   RiNumbersLine,
   RiPieChartLine,
   RiRefreshLine,
-  RiSecurePaymentLine,
   RiSlideshowLine,
   RiStore2Line,
   RiStore3Line,
@@ -142,10 +140,10 @@ export const widgetsConfig: WidgetConfig[] = [
     action: (
       <Link
         href="/dashboard/analise-parcelas"
-        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
       >
-        <RiSecurePaymentLine className="inline mr-1 size-4" />
         Análise
+        <RiArrowRightLine className="size-4" />
       </Link>
     ),
   },
@@ -168,6 +166,15 @@ export const widgetsConfig: WidgetConfig[] = [
     icon: <RiStore2Line className="size-4" />,
     component: ({ data }) => (
       <TopEstablishmentsWidget data={data.topEstablishmentsData} />
+    ),
+    action: (
+      <Link
+        href="/top-estabelecimentos"
+        className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
+      >
+        Ver mais
+        <RiArrowRightLine className="size-4" />
+      </Link>
     ),
   },
   {
