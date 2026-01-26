@@ -71,6 +71,13 @@
       "when": 1768925100873,
       "tag": "0009_add_dashboard_widgets",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1769369834242,
+      "tag": "0010_lame_psynapse",
+      "breakpoints": true
     }
   ]
 }

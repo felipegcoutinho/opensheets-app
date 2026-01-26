@@ -60,10 +60,14 @@ export function LancamentoDialog({
   defaultCartaoId,
   defaultPaymentMethod,
   defaultPurchaseDate,
+  defaultName,
+  defaultAmount,
   lockCartaoSelection,
   lockPaymentMethod,
   isImporting = false,
   defaultTransactionType,
+  forceShowTransactionType = false,
+  onSuccess,
   onBulkEditRequest,
 }: LancamentoDialogProps) {
   const [dialogOpen, setDialogOpen] = useControlledState(
@@ -77,6 +81,8 @@ export function LancamentoDialog({
       defaultCartaoId,
       defaultPaymentMethod,
       defaultPurchaseDate,
+      defaultName,
+      defaultAmount,
       defaultTransactionType,
       isImporting,
     }),
@@ -96,6 +102,8 @@ export function LancamentoDialog({
             defaultCartaoId,
             defaultPaymentMethod,
             defaultPurchaseDate,
+            defaultName,
+            defaultAmount,
             defaultTransactionType,
             isImporting,
           },
@@ -112,6 +120,8 @@ export function LancamentoDialog({
     defaultCartaoId,
     defaultPaymentMethod,
     defaultPurchaseDate,
+    defaultName,
+    defaultAmount,
     defaultTransactionType,
     isImporting,
   ]);
@@ -247,6 +257,7 @@ export function LancamentoDialog({
 
           if (result.success) {
             toast.success(result.message);
+            onSuccess?.();
             setDialogOpen(false);
             return;
           }
@@ -290,6 +301,7 @@ export function LancamentoDialog({
 
         if (result.success) {
           toast.success(result.message);
+          onSuccess?.();
           setDialogOpen(false);
           return;
         }
@@ -304,6 +316,7 @@ export function LancamentoDialog({
       lancamento?.id,
       lancamento?.seriesId,
       setDialogOpen,
+      onSuccess,
       onBulkEditRequest,
     ],
   );
@@ -371,7 +384,7 @@ export function LancamentoDialog({
             categoriaOptions={categoriaOptions}
             categoriaGroups={categoriaGroups}
             isUpdateMode={isUpdateMode}
-            hideTransactionType={Boolean(isNewWithType)}
+            hideTransactionType={Boolean(isNewWithType) && !forceShowTransactionType}
           />
 
           {!isUpdateMode ? (

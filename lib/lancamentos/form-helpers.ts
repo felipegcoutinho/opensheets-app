@@ -43,6 +43,8 @@ export type LancamentoFormOverrides = {
   defaultCartaoId?: string | null;
   defaultPaymentMethod?: string | null;
   defaultPurchaseDate?: string | null;
+  defaultName?: string | null;
+  defaultAmount?: string | null;
   defaultTransactionType?: "Despesa" | "Receita";
   isImporting?: boolean;
 };
@@ -84,8 +86,8 @@ export function buildLancamentoInitialState(
       : "");
 
   // Calcular o valor correto para importação de parcelados
-  let amountValue = "";
-  if (typeof lancamento?.amount === "number") {
+  let amountValue = overrides?.defaultAmount ?? "";
+  if (!amountValue && typeof lancamento?.amount === "number") {
     let baseAmount = Math.abs(lancamento.amount);
 
     // Se está importando e é parcelado, usar o valor total (parcela * quantidade)
@@ -106,7 +108,7 @@ export function buildLancamentoInitialState(
       lancamento?.period && /^\d{4}-\d{2}$/.test(lancamento.period)
         ? lancamento.period
         : fallbackPeriod,
-    name: lancamento?.name ?? "",
+    name: lancamento?.name ?? overrides?.defaultName ?? "",
     transactionType:
       lancamento?.transactionType ??
       overrides?.defaultTransactionType ??

@@ -14,7 +14,6 @@ export const inboxItemSchema = z.object({
   parsedName: z.string().optional(),
   parsedAmount: z.coerce.number().optional(),
   parsedDate: z.string().optional().transform((val) => (val ? new Date(val) : undefined)),
-  parsedCardLastDigits: z.string().length(4).optional(),
   parsedTransactionType: z.enum(["Despesa", "Receita"]).optional(),
   clientId: z.string().optional(), // ID local do app para rastreamento
 });

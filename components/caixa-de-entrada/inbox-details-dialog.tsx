@@ -119,12 +119,6 @@ export function InboxDetailsDialog({
                   </span>
                 </div>
               )}
-              {item.parsedCardLastDigits && (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Cartão</span>
-                  <span>•••• {item.parsedCardLastDigits}</span>
-                </div>
-              )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tipo</span>
                 <span>{item.parsedTransactionType || "Não identificado"}</span>

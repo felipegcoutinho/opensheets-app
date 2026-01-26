@@ -95,19 +95,16 @@ export function InboxCard({
 
       <CardContent className="flex flex-1 flex-col gap-3">
         <div className="flex-1">
-          {item.parsedName && <p className="font-medium">{item.parsedName}</p>}
-          <p className="line-clamp-2 text-sm text-muted-foreground">
+          {item.originalTitle && (
+            <p className="font-medium">{item.originalTitle}</p>
+          )}
+          <p className="whitespace-pre-wrap text-sm text-muted-foreground">
             {item.originalText}
           </p>
         </div>
 
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">{timeAgo}</span>
-          {item.parsedCardLastDigits && (
-            <span className="text-xs text-muted-foreground">
-              •••• {item.parsedCardLastDigits}
-            </span>
-          )}
         </div>
 
         <div className="flex gap-2">

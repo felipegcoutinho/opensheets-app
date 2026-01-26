@@ -3,9 +3,14 @@
  */
 
 import { db } from "@/lib/db";
-import { inboxItems, categorias, contas, cartoes } from "@/db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { inboxItems, categorias, contas, cartoes, lancamentos } from "@/db/schema";
+import { eq, desc, and, gte } from "drizzle-orm";
 import type { InboxItem, SelectOption } from "@/components/caixa-de-entrada/types";
+import {
+  fetchLancamentoFilterSources,
+  buildSluggedFilters,
+  buildOptionSets,
+} from "@/lib/lancamentos/page-helpers";
 
 export async function fetchInboxItems(
   userId: string,
@@ -79,4 +84,71 @@ export async function fetchPendingInboxCount(userId: string): Promise<number> {
     .where(and(eq(inboxItems.userId, userId), eq(inboxItems.status, "pending")));
 
   return items.length;
+}
+
+/**
+ * Fetch all data needed for the LancamentoDialog in inbox context
+ */
+export async function fetchInboxDialogData(userId: string): Promise<{
+  pagadorOptions: SelectOption[];
+  splitPagadorOptions: SelectOption[];
+  defaultPagadorId: string | null;
+  contaOptions: SelectOption[];
+  cartaoOptions: SelectOption[];
+  categoriaOptions: SelectOption[];
+  estabelecimentos: string[];
+}> {
+  const filterSources = await fetchLancamentoFilterSources(userId);
+  const sluggedFilters = buildSluggedFilters(filterSources);
+
+  const {
+    pagadorOptions,
+    splitPagadorOptions,
+    defaultPagadorId,
+    contaOptions,
+    cartaoOptions,
+    categoriaOptions,
+  } = buildOptionSets({
+    ...sluggedFilters,
+    pagadorRows: filterSources.pagadorRows,
+  });
+
+  // Fetch recent establishments (same approach as getRecentEstablishmentsAction)
+  const threeMonthsAgo = new Date();
+  threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
+
+  const recentEstablishments = await db
+    .select({ name: lancamentos.name })
+    .from(lancamentos)
+    .where(
+      and(
+        eq(lancamentos.userId, userId),
+        gte(lancamentos.purchaseDate, threeMonthsAgo)
+      )
+    )
+    .orderBy(desc(lancamentos.purchaseDate));
+
+  // Remove duplicates and filter empty names
+  const filteredNames: string[] = recentEstablishments
+    .map((r: { name: string }) => r.name)
+    .filter(
+      (name: string | null): name is string =>
+        name != null &&
+        name.trim().length > 0 &&
+        !name.toLowerCase().startsWith("pagamento fatura")
+    );
+  const estabelecimentos = Array.from<string>(new Set(filteredNames)).slice(
+    0,
+    100
+  );
+
+  return {
+    pagadorOptions,
+    splitPagadorOptions,
+    defaultPagadorId,
+    contaOptions,
+    cartaoOptions,
+    categoriaOptions,
+    estabelecimentos,
+  };
 }

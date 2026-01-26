@@ -2,6 +2,8 @@
  * Types for Caixa de Entrada (Inbox) feature
  */
 
+import type { SelectOption as LancamentoSelectOption } from "@/components/lancamentos/types";
+
 export interface InboxItem {
   id: string;
   sourceApp: string;
@@ -13,7 +15,6 @@ export interface InboxItem {
   parsedName: string | null;
   parsedAmount: string | null;
   parsedDate: Date | null;
-  parsedCardLastDigits: string | null;
   parsedTransactionType: string | null;
   status: string;
   lancamentoId: string | null;
@@ -43,7 +44,5 @@ export interface DiscardInboxInput {
   reason?: string;
 }
 
-export interface SelectOption {
-  id: string;
-  name: string;
-}
+// Re-export the lancamentos SelectOption for use in inbox components
+export type SelectOption = LancamentoSelectOption;

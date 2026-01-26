@@ -20,10 +20,16 @@ export interface LancamentoDialogProps {
   defaultCartaoId?: string | null;
   defaultPaymentMethod?: string | null;
   defaultPurchaseDate?: string | null;
+  defaultName?: string | null;
+  defaultAmount?: string | null;
   lockCartaoSelection?: boolean;
   lockPaymentMethod?: boolean;
   isImporting?: boolean;
   defaultTransactionType?: "Despesa" | "Receita";
+  /** Force showing transaction type select even when defaultTransactionType is set */
+  forceShowTransactionType?: boolean;
+  /** Called after successful create/update. Receives the action result. */
+  onSuccess?: () => void;
   onBulkEditRequest?: (data: {
     id: string;
     name: string;

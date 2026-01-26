@@ -478,7 +478,6 @@ export const inboxItems = pgTable(
     parsedName: text("parsed_name"), // Nome do estabelecimento
     parsedAmount: numeric("parsed_amount", { precision: 12, scale: 2 }),
     parsedDate: date("parsed_date", { mode: "date" }),
-    parsedCardLastDigits: text("parsed_card_last_digits"), // Ex: "1234"
     parsedTransactionType: text("parsed_transaction_type"), // Despesa, Receita
 
     // Status de processamento

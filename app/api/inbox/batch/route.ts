@@ -110,7 +110,6 @@ export async function POST(request: Request) {
             parsedName: item.parsedName,
             parsedAmount: item.parsedAmount?.toString(),
             parsedDate: item.parsedDate,
-            parsedCardLastDigits: item.parsedCardLastDigits,
             parsedTransactionType: item.parsedTransactionType,
             status: "pending",
           })
