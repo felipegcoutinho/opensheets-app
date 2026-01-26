@@ -78,6 +78,13 @@
       "when": 1769369834242,
       "tag": "0010_lame_psynapse",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1769447087678,
+      "tag": "0011_remove_unused_inbox_columns",
+      "breakpoints": true
     }
   ]
 }

@@ -5,12 +5,12 @@
  * Requer autenticação via API token (formato os_xxx).
  */
 
+import { apiTokens, inboxItems } from "@/db/schema";
 import { extractBearerToken, hashToken } from "@/lib/auth/api-token";
 import { db } from "@/lib/db";
-import { apiTokens, inboxItems } from "@/db/schema";
-import { eq, and, isNull } from "drizzle-orm";
-import { NextResponse } from "next/server";
 import { inboxBatchSchema } from "@/lib/schemas/inbox";
+import { and, eq, isNull } from "drizzle-orm";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 // Rate limiting simples em memória
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     if (!token) {
       return NextResponse.json(
         { error: "Token não fornecido" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -59,7 +59,7 @@ export async function POST(request: Request) {
     if (!token.startsWith("os_")) {
       return NextResponse.json(
         { error: "Formato de token inválido" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -69,14 +69,14 @@ export async function POST(request: Request) {
     const tokenRecord = await db.query.apiTokens.findFirst({
       where: and(
         eq(apiTokens.tokenHash, tokenHash),
-        isNull(apiTokens.revokedAt)
+        isNull(apiTokens.revokedAt),
       ),
     });
 
     if (!tokenRecord) {
       return NextResponse.json(
         { error: "Token inválido ou revogado" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     if (!checkRateLimit(tokenRecord.userId)) {
       return NextResponse.json(
         { error: "Limite de requisições excedido", retryAfter: 60 },
-        { status: 429 }
+        { status: 429 },
       );
     }
 
@@ -103,13 +103,11 @@ export async function POST(request: Request) {
             userId: tokenRecord.userId,
             sourceApp: item.sourceApp,
             sourceAppName: item.sourceAppName,
-            deviceId: item.deviceId,
             originalTitle: item.originalTitle,
             originalText: item.originalText,
             notificationTimestamp: item.notificationTimestamp,
             parsedName: item.parsedName,
             parsedAmount: item.parsedAmount?.toString(),
-            parsedDate: item.parsedDate,
             parsedTransactionType: item.parsedTransactionType,
             status: "pending",
           })
@@ -130,9 +128,10 @@ export async function POST(request: Request) {
     }
 
     // Atualizar último uso do token
-    const clientIp = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-      || request.headers.get("x-real-ip")
-      || null;
+    const clientIp =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      request.headers.get("x-real-ip") ||
+      null;
 
     await db
       .update(apiTokens)
@@ -153,20 +152,20 @@ export async function POST(request: Request) {
         failed: failCount,
         results,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: error.issues[0]?.message ?? "Dados inválidos" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error("[API] Error creating batch inbox items:", error);
     return NextResponse.json(
       { error: "Erro ao processar notificações" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

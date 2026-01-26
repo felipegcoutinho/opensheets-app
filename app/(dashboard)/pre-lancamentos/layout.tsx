@@ -1,8 +1,8 @@
 import PageDescription from "@/components/page-description";
-import { RiInbox2Line } from "@remixicon/react";
+import { RiInboxLine } from "@remixicon/react";
 
 export const metadata = {
-  title: "Caixa de Entrada | Opensheets",
+  title: "Pré-Lançamentos | Opensheets",
 };
 
 export default function RootLayout({
@@ -13,9 +13,9 @@ export default function RootLayout({
   return (
     <section className="space-y-6 px-6">
       <PageDescription
-        icon={<RiInbox2Line />}
-        title="Caixa de Entrada"
-        subtitle="Visialize seus lançamentos pendentes"
+        icon={<RiInboxLine />}
+        title="Pré-Lançamentos"
+        subtitle="Notificações capturadas aguardando processamento"
       />
       {children}
     </section>

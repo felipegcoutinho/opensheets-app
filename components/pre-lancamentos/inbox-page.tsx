@@ -3,7 +3,7 @@
 import {
   discardInboxItemAction,
   markInboxAsProcessedAction,
-} from "@/app/(dashboard)/caixa-de-entrada/actions";
+} from "@/app/(dashboard)/pre-lancamentos/actions";
 import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import { EmptyState } from "@/components/empty-state";
 import { LancamentoDialog } from "@/components/lancamentos/dialogs/lancamento-dialog/lancamento-dialog";
@@ -122,17 +122,16 @@ export function InboxPage({
   }, [itemToProcess]);
 
   // Prepare default values from inbox item
-  // Use parsedDate if available, otherwise fall back to notificationTimestamp
-  const getDateString = (date: Date | string | null | undefined): string | null => {
+  const getDateString = (
+    date: Date | string | null | undefined,
+  ): string | null => {
     if (!date) return null;
     if (typeof date === "string") return date.slice(0, 10);
     return date.toISOString().slice(0, 10);
   };
 
   const defaultPurchaseDate =
-    getDateString(itemToProcess?.parsedDate) ??
-    getDateString(itemToProcess?.notificationTimestamp) ??
-    null;
+    getDateString(itemToProcess?.notificationTimestamp) ?? null;
 
   const defaultName = itemToProcess?.parsedName ?? null;
 
@@ -150,7 +149,7 @@ export function InboxPage({
           <Card className="flex min-h-[50vh] w-full items-center justify-center py-12">
             <EmptyState
               media={<RiInboxLine className="size-6 text-primary" />}
-              title="Caixa de entrada vazia"
+              title="Nenhum pré-lançamento"
               description="As notificações capturadas pelo app OpenSheets Companion aparecerão aqui para você processar."
             />
           </Card>

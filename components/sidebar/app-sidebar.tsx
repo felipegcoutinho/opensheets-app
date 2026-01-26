@@ -14,7 +14,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import * as React from "react";
-import { createSidebarNavData, type PagadorLike } from "./nav-link";
+import { createSidebarNavData, type PagadorLike, type SidebarNavOptions } from "./nav-link";
 
 type AppUser = {
   id: string;
@@ -27,12 +27,14 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   user: AppUser;
   pagadorAvatarUrl: string | null;
   pagadores: PagadorLike[];
+  preLancamentosCount?: number;
 }
 
 export function AppSidebar({
   user,
   pagadorAvatarUrl,
   pagadores,
+  preLancamentosCount = 0,
   ...props
 }: AppSidebarProps) {
   if (!user) {
@@ -40,8 +42,8 @@ export function AppSidebar({
   }
 
   const navigation = React.useMemo(
-    () => createSidebarNavData(pagadores),
-    [pagadores]
+    () => createSidebarNavData({ pagadores, preLancamentosCount }),
+    [pagadores, preLancamentosCount]
   );
 
   return (

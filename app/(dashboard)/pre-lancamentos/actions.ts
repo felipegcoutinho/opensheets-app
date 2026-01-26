@@ -3,8 +3,8 @@
 import { inboxItems } from "@/db/schema";
 import { handleActionError } from "@/lib/actions/helpers";
 import type { ActionResult } from "@/lib/actions/types";
-import { db } from "@/lib/db";
 import { getUser } from "@/lib/auth/server";
+import { db } from "@/lib/db";
 import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -15,7 +15,6 @@ const markProcessedSchema = z.object({
 
 const discardInboxSchema = z.object({
   inboxItemId: z.string().uuid("ID do item inválido"),
-  reason: z.string().optional(),
 });
 
 const bulkDiscardSchema = z.object({
@@ -23,7 +22,7 @@ const bulkDiscardSchema = z.object({
 });
 
 function revalidateInbox() {
-  revalidatePath("/caixa-de-entrada");
+  revalidatePath("/pre-lancamentos");
   revalidatePath("/lancamentos");
   revalidatePath("/dashboard");
 }
@@ -32,7 +31,7 @@ function revalidateInbox() {
  * Mark an inbox item as processed after a lancamento was created
  */
 export async function markInboxAsProcessedAction(
-  input: z.infer<typeof markProcessedSchema>
+  input: z.infer<typeof markProcessedSchema>,
 ): Promise<ActionResult> {
   try {
     const user = await getUser();
@@ -46,8 +45,8 @@ export async function markInboxAsProcessedAction(
         and(
           eq(inboxItems.id, data.inboxItemId),
           eq(inboxItems.userId, user.id),
-          eq(inboxItems.status, "pending")
-        )
+          eq(inboxItems.status, "pending"),
+        ),
       )
       .limit(1);
 
@@ -74,7 +73,7 @@ export async function markInboxAsProcessedAction(
 }
 
 export async function discardInboxItemAction(
-  input: z.infer<typeof discardInboxSchema>
+  input: z.infer<typeof discardInboxSchema>,
 ): Promise<ActionResult> {
   try {
     const user = await getUser();
@@ -88,8 +87,8 @@ export async function discardInboxItemAction(
         and(
           eq(inboxItems.id, data.inboxItemId),
           eq(inboxItems.userId, user.id),
-          eq(inboxItems.status, "pending")
-        )
+          eq(inboxItems.status, "pending"),
+        ),
       )
       .limit(1);
 
@@ -103,7 +102,6 @@ export async function discardInboxItemAction(
       .set({
         status: "discarded",
         discardedAt: new Date(),
-        discardReason: data.reason,
         updatedAt: new Date(),
       })
       .where(eq(inboxItems.id, data.inboxItemId));
@@ -117,7 +115,7 @@ export async function discardInboxItemAction(
 }
 
 export async function bulkDiscardInboxItemsAction(
-  input: z.infer<typeof bulkDiscardSchema>
+  input: z.infer<typeof bulkDiscardSchema>,
 ): Promise<ActionResult> {
   try {
     const user = await getUser();
@@ -135,8 +133,8 @@ export async function bulkDiscardInboxItemsAction(
         and(
           inArray(inboxItems.id, data.inboxItemIds),
           eq(inboxItems.userId, user.id),
-          eq(inboxItems.status, "pending")
-        )
+          eq(inboxItems.status, "pending"),
+        ),
       );
 
     revalidateInbox();

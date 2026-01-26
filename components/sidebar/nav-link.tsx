@@ -25,6 +25,7 @@ export type SidebarSubItem = {
   isShared?: boolean;
   key?: string;
   icon?: RemixiconComponentType;
+  badge?: number;
 };
 
 export type SidebarItem = {
@@ -56,7 +57,13 @@ export interface PagadorLike {
   canEdit?: boolean;
 }
 
-export function createSidebarNavData(pagadores: PagadorLike[]): SidebarNavData {
+export interface SidebarNavOptions {
+  pagadores: PagadorLike[];
+  preLancamentosCount?: number;
+}
+
+export function createSidebarNavData(options: SidebarNavOptions): SidebarNavData {
+  const { pagadores, preLancamentosCount = 0 } = options;
   const pagadorItems = pagadores
     .map((pagador) => ({
       title: pagador.name?.trim().length
@@ -89,14 +96,18 @@ export function createSidebarNavData(pagadores: PagadorLike[]): SidebarNavData {
         title: "Gestão Financeira",
         items: [
           {
-            title: "Caixa de Entrada",
-            url: "/caixa-de-entrada",
-            icon: RiInboxLine,
-          },
-          {
             title: "Lançamentos",
             url: "/lancamentos",
             icon: RiArrowLeftRightLine,
+            items: [
+              {
+                title: "Pré-Lançamentos",
+                url: "/pre-lancamentos",
+                key: "pre-lancamentos",
+                icon: RiInboxLine,
+                badge: preLancamentosCount > 0 ? preLancamentosCount : undefined,
+              },
+            ],
           },
           {
             title: "Calendário",

@@ -1,6 +1,6 @@
-import { InboxPage } from "@/components/caixa-de-entrada/inbox-page";
+import { InboxPage } from "@/components/pre-lancamentos/inbox-page";
 import { getUserId } from "@/lib/auth/server";
-import { fetchInboxItems, fetchInboxDialogData } from "./data";
+import { fetchInboxDialogData, fetchInboxItems } from "./data";
 
 export default async function Page() {
   const userId = await getUserId();

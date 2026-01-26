@@ -1,11 +1,11 @@
 /**
- * Data fetching functions for Caixa de Entrada
+ * Data fetching functions for Pré-Lançamentos
  */
 
 import { db } from "@/lib/db";
 import { inboxItems, categorias, contas, cartoes, lancamentos } from "@/db/schema";
 import { eq, desc, and, gte } from "drizzle-orm";
-import type { InboxItem, SelectOption } from "@/components/caixa-de-entrada/types";
+import type { InboxItem, SelectOption } from "@/components/pre-lancamentos/types";
 import {
   fetchLancamentoFilterSources,
   buildSluggedFilters,

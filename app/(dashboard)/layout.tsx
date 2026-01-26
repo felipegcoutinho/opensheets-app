@@ -7,6 +7,7 @@ import { fetchDashboardNotifications } from "@/lib/dashboard/notifications";
 import { fetchPagadoresWithAccess } from "@/lib/pagadores/access";
 import { PAGADOR_ROLE_ADMIN } from "@/lib/pagadores/constants";
 import { parsePeriodParam } from "@/lib/utils/period";
+import { fetchPendingInboxCount } from "./pre-lancamentos/data";
 
 export default async function DashboardLayout({
   children,
@@ -40,6 +41,9 @@ export default async function DashboardLayout({
     currentPeriod,
   );
 
+  // Buscar contagem de pré-lançamentos pendentes
+  const preLancamentosCount = await fetchPendingInboxCount(session.user.id);
+
   return (
     <PrivacyProvider>
       <SidebarProvider>
@@ -52,6 +56,7 @@ export default async function DashboardLayout({
             avatarUrl: item.avatarUrl,
             canEdit: item.canEdit,
           }))}
+          preLancamentosCount={preLancamentosCount}
           variant="sidebar"
         />
         <SidebarInset>

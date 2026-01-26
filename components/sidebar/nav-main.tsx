@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import {
   Collapsible,
   CollapsibleContent,
@@ -40,6 +41,7 @@ type NavItem = {
     isShared?: boolean;
     key?: string;
     icon?: RemixiconComponentType;
+    badge?: number;
   }[];
 };
 
@@ -181,6 +183,11 @@ export function NavMain({ sections }: { sections: NavSection[] }) {
                                           </Avatar>
                                         ) : null}
                                         <span>{subItem.title}</span>
+                                        {subItem.badge ? (
+                                          <Badge variant="destructive" className="ml-auto h-5 min-w-5 px-1.5 text-xs">
+                                            {subItem.badge}
+                                          </Badge>
+                                        ) : null}
                                         {subItem.isShared ? (
                                           <RiUserSharedLine className="size-3.5 text-muted-foreground" />
                                         ) : null}

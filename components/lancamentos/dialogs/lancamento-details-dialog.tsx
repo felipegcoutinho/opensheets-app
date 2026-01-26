@@ -2,12 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-} from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -16,8 +11,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { getPaymentMethodIcon } from "@/lib/utils/icons";
-import { parseLocalDateString } from "@/lib/utils/date";
 import {
   currencyFormatter,
   formatCondition,
@@ -25,6 +18,8 @@ import {
   formatPeriod,
   getTransactionBadgeVariant,
 } from "@/lib/lancamentos/formatting-helpers";
+import { parseLocalDateString } from "@/lib/utils/date";
+import { getPaymentMethodIcon } from "@/lib/utils/icons";
 import { InstallmentTimeline } from "../shared/installment-timeline";
 import type { LancamentoItem } from "../types";
 
@@ -59,7 +54,7 @@ export function LancamentoDetailsDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="p-0 sm:max-w-xl">
-        <Card className="gap-2 space-y-4">
+        <div className="gap-2 space-y-4 py-6">
           <CardHeader className="flex flex-row items-start border-b">
             <div>
               <DialogTitle className="group flex items-center gap-2 text-lg">
@@ -112,7 +107,7 @@ export function LancamentoDetailsDialog({
                       variant={getTransactionBadgeVariant(
                         lancamento.categoriaName === "Saldo inicial"
                           ? "Saldo inicial"
-                          : lancamento.transactionType
+                          : lancamento.transactionType,
                       )}
                     >
                       {lancamento.categoriaName === "Saldo inicial"
@@ -148,7 +143,9 @@ export function LancamentoDetailsDialog({
                 {isInstallment && (
                   <li className="mt-4">
                     <InstallmentTimeline
-                      purchaseDate={parseLocalDateString(lancamento.purchaseDate)}
+                      purchaseDate={parseLocalDateString(
+                        lancamento.purchaseDate,
+                      )}
                       currentInstallment={parcelaAtual}
                       totalInstallments={totalParcelas}
                       period={lancamento.period}
@@ -194,7 +191,7 @@ export function LancamentoDetailsDialog({
               </DialogClose>
             </DialogFooter>
           </CardContent>
-        </Card>
+        </div>
       </DialogContent>
     </Dialog>
   );

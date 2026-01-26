@@ -464,7 +464,6 @@ export const inboxItems = pgTable(
     // Informações da fonte
     sourceApp: text("source_app").notNull(), // Ex: "com.nu.production"
     sourceAppName: text("source_app_name"), // Ex: "Nubank"
-    deviceId: text("device_id"), // Identificador do dispositivo
 
     // Dados originais da notificação
     originalTitle: text("original_title"),
@@ -477,7 +476,6 @@ export const inboxItems = pgTable(
     // Dados parseados (editáveis pelo usuário antes de processar)
     parsedName: text("parsed_name"), // Nome do estabelecimento
     parsedAmount: numeric("parsed_amount", { precision: 12, scale: 2 }),
-    parsedDate: date("parsed_date", { mode: "date" }),
     parsedTransactionType: text("parsed_transaction_type"), // Despesa, Receita
 
     // Status de processamento
@@ -489,9 +487,14 @@ export const inboxItems = pgTable(
     }),
 
     // Metadados de processamento
-    processedAt: timestamp("processed_at", { mode: "date", withTimezone: true }),
-    discardedAt: timestamp("discarded_at", { mode: "date", withTimezone: true }),
-    discardReason: text("discard_reason"),
+    processedAt: timestamp("processed_at", {
+      mode: "date",
+      withTimezone: true,
+    }),
+    discardedAt: timestamp("discarded_at", {
+      mode: "date",
+      withTimezone: true,
+    }),
 
     // Timestamps
     createdAt: timestamp("created_at", { mode: "date", withTimezone: true })
