@@ -100,7 +100,7 @@ export const verification = pgTable("verification", {
 	}),
 });
 
-export const userPreferences = pgTable("user_preferences", {
+export const preferenciasUsuario = pgTable("preferencias_usuario", {
 	id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
 	userId: text("user_id")
 		.notNull()
@@ -229,8 +229,8 @@ export const pagadores = pgTable(
 	}),
 );
 
-export const pagadorShares = pgTable(
-	"pagador_shares",
+export const compartilhamentosPagador = pgTable(
+	"compartilhamentos_pagador",
 	{
 		id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
 		pagadorId: uuid("pagador_id")
@@ -251,10 +251,9 @@ export const pagadorShares = pgTable(
 			.defaultNow(),
 	},
 	(table) => ({
-		uniquePagadorShare: uniqueIndex("pagador_shares_unique").on(
-			table.pagadorId,
-			table.sharedWithUserId,
-		),
+		uniqueCompartilhamentoPagador: uniqueIndex(
+			"compartilhamentos_pagador_unique",
+		).on(table.pagadorId, table.sharedWithUserId),
 	}),
 );
 
@@ -372,8 +371,8 @@ export const anotacoes = pgTable("anotacoes", {
 		.references(() => user.id, { onDelete: "cascade" }),
 });
 
-export const savedInsights = pgTable(
-	"saved_insights",
+export const insightsSalvos = pgTable(
+	"insights_salvos",
 	{
 		id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
 		userId: text("user_id")
@@ -396,7 +395,7 @@ export const savedInsights = pgTable(
 			.defaultNow(),
 	},
 	(table) => ({
-		userPeriodIdx: uniqueIndex("saved_insights_user_period_idx").on(
+		userPeriodIdx: uniqueIndex("insights_salvos_user_period_idx").on(
 			table.userId,
 			table.period,
 		),
@@ -405,8 +404,8 @@ export const savedInsights = pgTable(
 
 // ===================== OPENSHEETS COMPANION =====================
 
-export const apiTokens = pgTable(
-	"api_tokens",
+export const tokensApi = pgTable(
+	"tokens_api",
 	{
 		id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
 		userId: text("user_id")
@@ -424,13 +423,13 @@ export const apiTokens = pgTable(
 			.defaultNow(),
 	},
 	(table) => ({
-		userIdIdx: index("api_tokens_user_id_idx").on(table.userId),
-		tokenHashIdx: uniqueIndex("api_tokens_token_hash_idx").on(table.tokenHash),
+		userIdIdx: index("tokens_api_user_id_idx").on(table.userId),
+		tokenHashIdx: uniqueIndex("tokens_api_token_hash_idx").on(table.tokenHash),
 	}),
 );
 
-export const inboxItems = pgTable(
-	"inbox_items",
+export const preLancamentos = pgTable(
+	"pre_lancamentos",
 	{
 		id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
 		userId: text("user_id")
@@ -481,19 +480,19 @@ export const inboxItems = pgTable(
 			.defaultNow(),
 	},
 	(table) => ({
-		userIdStatusIdx: index("inbox_items_user_id_status_idx").on(
+		userIdStatusIdx: index("pre_lancamentos_user_id_status_idx").on(
 			table.userId,
 			table.status,
 		),
-		userIdCreatedAtIdx: index("inbox_items_user_id_created_at_idx").on(
+		userIdCreatedAtIdx: index("pre_lancamentos_user_id_created_at_idx").on(
 			table.userId,
 			table.createdAt,
 		),
 	}),
 );
 
-export const installmentAnticipations = pgTable(
-	"installment_anticipations",
+export const antecipacoesParcelas = pgTable(
+	"antecipacoes_parcelas",
 	{
 		id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
 		seriesId: uuid("series_id").notNull(),
@@ -528,10 +527,8 @@ export const installmentAnticipations = pgTable(
 			.defaultNow(),
 	},
 	(table) => ({
-		seriesIdIdx: index("installment_anticipations_series_id_idx").on(
-			table.seriesId,
-		),
-		userIdIdx: index("installment_anticipations_user_id_idx").on(table.userId),
+		seriesIdIdx: index("antecipacoes_parcelas_series_id_idx").on(table.seriesId),
+		userIdIdx: index("antecipacoes_parcelas_user_id_idx").on(table.userId),
 	}),
 );
 
@@ -556,7 +553,7 @@ export const lancamentos = pgTable(
 		isDivided: boolean("dividido").default(false),
 		isAnticipated: boolean("antecipado").default(false),
 		anticipationId: uuid("antecipacao_id").references(
-			() => installmentAnticipations.id,
+			() => antecipacoesParcelas.id,
 			{ onDelete: "set null" },
 		),
 		createdAt: timestamp("created_at", {
@@ -626,9 +623,9 @@ export const userRelations = relations(user, ({ many, one }) => ({
 	lancamentos: many(lancamentos),
 	orcamentos: many(orcamentos),
 	pagadores: many(pagadores),
-	installmentAnticipations: many(installmentAnticipations),
-	apiTokens: many(apiTokens),
-	inboxItems: many(inboxItems),
+	antecipacoesParcelas: many(antecipacoesParcelas),
+	tokensApi: many(tokensApi),
+	preLancamentos: many(preLancamentos),
 }));
 
 export const accountRelations = relations(account, ({ one }) => ({
@@ -669,23 +666,26 @@ export const pagadoresRelations = relations(pagadores, ({ one, many }) => ({
 		references: [user.id],
 	}),
 	lancamentos: many(lancamentos),
-	shares: many(pagadorShares),
+	compartilhamentos: many(compartilhamentosPagador),
 }));
 
-export const pagadorSharesRelations = relations(pagadorShares, ({ one }) => ({
-	pagador: one(pagadores, {
-		fields: [pagadorShares.pagadorId],
-		references: [pagadores.id],
+export const compartilhamentosPagadorRelations = relations(
+	compartilhamentosPagador,
+	({ one }) => ({
+		pagador: one(pagadores, {
+			fields: [compartilhamentosPagador.pagadorId],
+			references: [pagadores.id],
+		}),
+		sharedWithUser: one(user, {
+			fields: [compartilhamentosPagador.sharedWithUserId],
+			references: [user.id],
+		}),
+		createdByUser: one(user, {
+			fields: [compartilhamentosPagador.createdByUserId],
+			references: [user.id],
+		}),
 	}),
-	sharedWithUser: one(user, {
-		fields: [pagadorShares.sharedWithUserId],
-		references: [user.id],
-	}),
-	createdByUser: one(user, {
-		fields: [pagadorShares.createdByUserId],
-		references: [user.id],
-	}),
-}));
+);
 
 export const cartoesRelations = relations(cartoes, ({ one, many }) => ({
 	user: one(user, {
@@ -729,27 +729,27 @@ export const anotacoesRelations = relations(anotacoes, ({ one }) => ({
 	}),
 }));
 
-export const savedInsightsRelations = relations(savedInsights, ({ one }) => ({
+export const insightsSalvosRelations = relations(insightsSalvos, ({ one }) => ({
 	user: one(user, {
-		fields: [savedInsights.userId],
+		fields: [insightsSalvos.userId],
 		references: [user.id],
 	}),
 }));
 
-export const apiTokensRelations = relations(apiTokens, ({ one }) => ({
+export const tokensApiRelations = relations(tokensApi, ({ one }) => ({
 	user: one(user, {
-		fields: [apiTokens.userId],
+		fields: [tokensApi.userId],
 		references: [user.id],
 	}),
 }));
 
-export const inboxItemsRelations = relations(inboxItems, ({ one }) => ({
+export const preLancamentosRelations = relations(preLancamentos, ({ one }) => ({
 	user: one(user, {
-		fields: [inboxItems.userId],
+		fields: [preLancamentos.userId],
 		references: [user.id],
 	}),
 	lancamento: one(lancamentos, {
-		fields: [inboxItems.lancamentoId],
+		fields: [preLancamentos.lancamentoId],
 		references: [lancamentos.id],
 	}),
 }));
@@ -775,29 +775,29 @@ export const lancamentosRelations = relations(lancamentos, ({ one }) => ({
 		fields: [lancamentos.pagadorId],
 		references: [pagadores.id],
 	}),
-	anticipation: one(installmentAnticipations, {
+	anticipation: one(antecipacoesParcelas, {
 		fields: [lancamentos.anticipationId],
-		references: [installmentAnticipations.id],
+		references: [antecipacoesParcelas.id],
 	}),
 }));
 
-export const installmentAnticipationsRelations = relations(
-	installmentAnticipations,
+export const antecipacoesParcRelations = relations(
+	antecipacoesParcelas,
 	({ one, many }) => ({
 		user: one(user, {
-			fields: [installmentAnticipations.userId],
+			fields: [antecipacoesParcelas.userId],
 			references: [user.id],
 		}),
 		lancamento: one(lancamentos, {
-			fields: [installmentAnticipations.lancamentoId],
+			fields: [antecipacoesParcelas.lancamentoId],
 			references: [lancamentos.id],
 		}),
 		pagador: one(pagadores, {
-			fields: [installmentAnticipations.pagadorId],
+			fields: [antecipacoesParcelas.pagadorId],
 			references: [pagadores.id],
 		}),
 		categoria: one(categorias, {
-			fields: [installmentAnticipations.categoriaId],
+			fields: [antecipacoesParcelas.categoriaId],
 			references: [categorias.id],
 		}),
 	}),
@@ -808,8 +808,10 @@ export type NewUser = typeof user.$inferInsert;
 export type Account = typeof account.$inferSelect;
 export type Session = typeof session.$inferSelect;
 export type Verification = typeof verification.$inferSelect;
-export type UserPreferences = typeof userPreferences.$inferSelect;
-export type NewUserPreferences = typeof userPreferences.$inferInsert;
+export type PreferenciasUsuario = typeof preferenciasUsuario.$inferSelect;
+export type NovasPreferenciasUsuario = typeof preferenciasUsuario.$inferInsert;
+export type CompartilhamentoPagador =
+	typeof compartilhamentosPagador.$inferSelect;
 export type Conta = typeof contas.$inferSelect;
 export type Categoria = typeof categorias.$inferSelect;
 export type Pagador = typeof pagadores.$inferSelect;
@@ -817,11 +819,10 @@ export type Cartao = typeof cartoes.$inferSelect;
 export type Fatura = typeof faturas.$inferSelect;
 export type Orcamento = typeof orcamentos.$inferSelect;
 export type Anotacao = typeof anotacoes.$inferSelect;
-export type SavedInsight = typeof savedInsights.$inferSelect;
+export type InsightSalvo = typeof insightsSalvos.$inferSelect;
 export type Lancamento = typeof lancamentos.$inferSelect;
-export type InstallmentAnticipation =
-	typeof installmentAnticipations.$inferSelect;
-export type ApiToken = typeof apiTokens.$inferSelect;
-export type NewApiToken = typeof apiTokens.$inferInsert;
-export type InboxItem = typeof inboxItems.$inferSelect;
-export type NewInboxItem = typeof inboxItems.$inferInsert;
+export type AntecipacaoParcela = typeof antecipacoesParcelas.$inferSelect;
+export type TokenApi = typeof tokensApi.$inferSelect;
+export type NovoTokenApi = typeof tokensApi.$inferInsert;
+export type PreLancamento = typeof preLancamentos.$inferSelect;
+export type NovoPreLancamento = typeof preLancamentos.$inferInsert;
