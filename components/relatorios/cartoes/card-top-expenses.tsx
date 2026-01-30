@@ -90,7 +90,7 @@ export function CardTopExpenses({ data }: CardTopExpensesProps) {
 								{/* Value */}
 								<div className="flex shrink-0 flex-col items-end">
 									<MoneyValues
-										className="text-red-600 dark:text-red-500"
+										className="text-foreground"
 										amount={expense.amount}
 									/>
 								</div>

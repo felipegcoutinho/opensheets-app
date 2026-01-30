@@ -50,7 +50,7 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
 		<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 			{cards.map((card) => (
 				<Card key={card.title}>
-					<CardContent className="p-4">
+					<CardContent className="px-4 py-2">
 						<div className="flex items-start justify-between gap-3">
 							<div className="space-y-1">
 								<p className="text-xs font-medium text-muted-foreground">
@@ -58,11 +58,11 @@ export function SummaryCards({ summary }: SummaryCardsProps) {
 								</p>
 								{card.isMoney ? (
 									<MoneyValues
-										className="text-xl font-semibold"
+										className="text-2xl font-semibold"
 										amount={card.value}
 									/>
 								) : (
-									<p className="text-xl font-semibold">{card.value}</p>
+									<p className="text-2xl font-semibold">{card.value}</p>
 								)}
 								<p className="text-xs text-muted-foreground">
 									{card.description}

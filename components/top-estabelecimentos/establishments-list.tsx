@@ -105,7 +105,7 @@ export function EstablishmentsList({
 									{/* Value and stats */}
 									<div className="flex shrink-0 flex-col items-end gap-0.5">
 										<MoneyValues
-											className="text-red-600 dark:text-red-500"
+											className="text-foreground"
 											amount={establishment.totalAmount}
 										/>
 										<span className="text-xs text-muted-foreground">

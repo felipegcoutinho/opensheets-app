@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
 	Dialog,
 	DialogContent,
@@ -253,69 +252,57 @@ export function ApiTokensForm({ tokens }: ApiTokensFormProps) {
 			</div>
 
 			{activeTokens.length === 0 ? (
-				<Card>
-					<CardContent className="flex flex-col items-center justify-center py-8 text-center">
-						<RiSmartphoneLine className="h-10 w-10 text-muted-foreground mb-3" />
-						<p className="text-sm text-muted-foreground">
-							Nenhum dispositivo conectado.
-						</p>
-						<p className="text-sm text-muted-foreground">
-							Crie um token para conectar o app OpenSheets Companion.
-						</p>
-					</CardContent>
-				</Card>
+				<div className="flex items-center gap-3 py-4 text-muted-foreground">
+					<RiSmartphoneLine className="h-5 w-5" />
+					<p className="text-sm">
+						Nenhum dispositivo conectado. Crie um token para começar.
+					</p>
+				</div>
 			) : (
-				<div className="space-y-3">
+				<div className="divide-y py-2">
 					{activeTokens.map((token) => (
-						<Card key={token.id}>
-							<CardContent className="p-4">
-								<div className="flex items-start justify-between">
-									<div className="flex items-start gap-3">
-										<div className="rounded-full bg-muted p-2">
-											<RiSmartphoneLine className="h-5 w-5" />
-										</div>
-										<div>
-											<div className="flex items-center gap-2">
-												<span className="font-medium">{token.name}</span>
-												<Badge variant="outline" className="text-xs">
-													{token.tokenPrefix}...
-												</Badge>
-											</div>
-											<div className="text-sm text-muted-foreground mt-1">
-												{token.lastUsedAt ? (
-													<span>
-														Usado{" "}
-														{formatDistanceToNow(token.lastUsedAt, {
-															addSuffix: true,
-															locale: ptBR,
-														})}
-														{token.lastUsedIp && (
-															<span className="text-xs ml-1">
-																({token.lastUsedIp})
-															</span>
-														)}
-													</span>
-												) : (
-													<span>Nunca usado</span>
-												)}
-											</div>
-											<div className="text-xs text-muted-foreground mt-0.5">
-												Criado em{" "}
-												{new Date(token.createdAt).toLocaleDateString("pt-BR")}
-											</div>
-										</div>
-									</div>
-									<Button
-										variant="ghost"
-										size="icon"
-										className="text-destructive hover:text-destructive hover:bg-destructive/10"
-										onClick={() => setRevokeId(token.id)}
-									>
-										<RiDeleteBinLine className="h-4 w-4" />
-									</Button>
+						<div
+							key={token.id}
+							className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
+						>
+							<div className="flex items-center gap-3">
+								<div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
+									<RiSmartphoneLine className="h-4 w-4" />
 								</div>
-							</CardContent>
-						</Card>
+								<div>
+									<div className="flex items-center gap-2">
+										<span className="text-sm font-bold">{token.name}</span>
+										<Badge variant="outline" className="text-xs font-mono">
+											{token.tokenPrefix}...
+										</Badge>
+									</div>
+									<p className="text-xs text-muted-foreground py-1">
+										{token.lastUsedAt ? (
+											<>
+												Usado{" "}
+												{formatDistanceToNow(token.lastUsedAt, {
+													addSuffix: true,
+													locale: ptBR,
+												})}
+											</>
+										) : (
+											"Nunca usado"
+										)}
+										{" · "}
+										Criado em{" "}
+										{new Date(token.createdAt).toLocaleDateString("pt-BR")}
+									</p>
+								</div>
+							</div>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+								onClick={() => setRevokeId(token.id)}
+							>
+								<RiDeleteBinLine className="h-4 w-4" />
+							</Button>
+						</div>
 					))}
 				</div>
 			)}

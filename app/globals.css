@@ -28,7 +28,7 @@
   --muted-foreground: oklch(45% 0.015 60);
 
   /* Accent - complementary warm tone */
-  --accent: oklch(93.996% 0.01787 64.782);
+  --accent: oklch(96.563% 0.00504 67.275);
   --accent-foreground: oklch(22% 0.025 45);
 
   /* Destructive - accessible red */
@@ -59,7 +59,7 @@
   --sidebar-ring: oklch(69.18% 0.18855 38.353);
 
   /* Layout */
-  --radius: 0.8rem;
+  --radius: 1rem;
 
   /* Shadows - warm tinted for cohesion */
   --shadow-2xs: 0 1px 2px 0px oklch(35% 0.02 45 / 0.04);

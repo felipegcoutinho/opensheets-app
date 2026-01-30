@@ -54,7 +54,7 @@ export default async function TopEstabelecimentosPage({
 		<main className="flex flex-col gap-4">
 			<Card className="p-3 flex-row justify-between items-center">
 				<span className="text-sm text-muted-foreground">
-					Selecione o período
+					Selecione o intervalo de meses
 				</span>
 				<PeriodFilterButtons currentFilter={periodFilter} />
 			</Card>
@@ -63,8 +63,8 @@ export default async function TopEstabelecimentosPage({
 
 			<HighlightsCards summary={data.summary} />
 
-			<div className="grid gap-4 @3xl/main:grid-cols-3">
-				<div className="@3xl/main:col-span-2">
+			<div className="grid grid-cols-2 gap-4">
+				<div>
 					<EstablishmentsList establishments={data.establishments} />
 				</div>
 				<div>

@@ -1,18 +1,14 @@
 "use client";
 
-import {
-	RiArrowDownLine,
-	RiArrowUpLine,
-	RiBankCard2Line,
-} from "@remixicon/react";
+import { RiBankCard2Line } from "@remixicon/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import MoneyValues from "@/components/money-values";
+import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import type { CartoesReportData } from "@/lib/relatorios/cartoes-report";
 import { cn } from "@/lib/utils";
-import { title_font } from "@/public/fonts/font_index";
 
 type CardsOverviewProps = {
 	data: CartoesReportData;
@@ -53,14 +49,13 @@ export function CardsOverview({ data }: CardsOverviewProps) {
 	const searchParams = useSearchParams();
 	const periodoParam = searchParams.get("periodo");
 
-	const formatCurrency = (value: number) => {
-		return new Intl.NumberFormat("pt-BR", {
+	const formatCurrency = (value: number) =>
+		new Intl.NumberFormat("pt-BR", {
 			style: "currency",
 			currency: "BRL",
 			minimumFractionDigits: 0,
 			maximumFractionDigits: 0,
 		}).format(value);
-	};
 
 	const getUsageColor = (percent: number) => {
 		if (percent < 50) return "bg-green-500";
@@ -75,155 +70,119 @@ export function CardsOverview({ data }: CardsOverviewProps) {
 		return `/relatorios/cartoes?${params.toString()}`;
 	};
 
+	const summaryCards = [
+		{ title: "Limite", value: data.totalLimit, isMoney: true },
+		{ title: "Usado", value: data.totalUsage, isMoney: true },
+		{
+			title: "Disponível",
+			value: data.totalLimit - data.totalUsage,
+			isMoney: true,
+		},
+		{ title: "Utilização", value: data.totalUsagePercent, isMoney: false },
+	];
+
 	if (data.cards.length === 0) {
 		return (
 			<Card>
-				<CardHeader className="pb-2">
-					<CardTitle className="text-base font-bold flex items-center gap-2">
-						<RiBankCard2Line className="size-4" />
-						Resumo dos Cartões
-					</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-						<RiBankCard2Line className="size-8 mb-2" />
-						<p className="text-sm">Nenhum cartão ativo encontrado</p>
-					</div>
+				<CardContent className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+					<RiBankCard2Line className="size-8 mb-2" />
+					<p className="text-sm">Nenhum cartão encontrado</p>
 				</CardContent>
 			</Card>
 		);
 	}
 
 	return (
-		<Card>
-			<CardHeader className="pb-2">
-				<CardTitle
-					className={`${title_font.className} flex items-center gap-1.5 text-base`}
-				>
-					<RiBankCard2Line className="size-4 text-primary" />
-					Resumo dos Cartões
-				</CardTitle>
-			</CardHeader>
-			<CardContent className="space-y-4">
-				<div className="grid gap-3 sm:grid-cols-3">
-					<div className="p-3 rounded-lg border bg-muted/30">
-						<p className="text-xs text-muted-foreground">Limite Total</p>
-						<p className="text-lg font-semibold">
-							{formatCurrency(data.totalLimit)}
-						</p>
-					</div>
-					<div className="p-3 rounded-lg border bg-muted/30">
-						<p className="text-xs text-muted-foreground">Uso Total</p>
-						<p className="text-lg font-semibold">
-							{formatCurrency(data.totalUsage)}
-						</p>
-					</div>
-					<div className="p-3 rounded-lg border bg-muted/30">
-						<p className="text-xs text-muted-foreground">Utilização</p>
-						<p className="text-lg font-semibold">
-							{data.totalUsagePercent.toFixed(0)}%
-						</p>
-					</div>
-				</div>
+		<div className="space-y-3">
+			{/* Summary stats */}
+			<div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
+				{summaryCards.map((card) => (
+					<Card key={card.title}>
+						<CardContent className="px-4 py-2">
+							<p className="text-xs text-muted-foreground mb-1">{card.title}</p>
+							{card.isMoney ? (
+								<MoneyValues
+									className="text-2xl font-semibold"
+									amount={card.value}
+								/>
+							) : (
+								<p className="text-2xl font-semibold">
+									{card.value.toFixed(0)}%
+								</p>
+							)}
+						</CardContent>
+					</Card>
+				))}
+			</div>
 
-				<div className="flex flex-col">
-					{data.cards.map((card) => {
-						const logoPath = resolveLogoPath(card.logo);
-						const brandAsset = resolveBrandAsset(card.brand);
+			<p className="text-base font-bold ml-2">Meus cartões</p>
 
-						return (
+			{/* Cards list */}
+			<div className="grid gap-2 grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
+				{data.cards.map((card) => {
+					const logoPath = resolveLogoPath(card.logo);
+					const brandAsset = resolveBrandAsset(card.brand);
+					const isSelected = data.selectedCard?.card.id === card.id;
+
+					return (
+						<Card
+							key={card.id}
+							className={cn("px-1 py-4", isSelected && "ring-1 ring-primary")}
+						>
 							<Link
-								key={card.id}
 								href={buildUrl(card.id)}
-								className={cn(
-									"flex flex-col py-2 border-b border-dashed last:border-0 transition-colors hover:bg-muted/50",
-									data.selectedCard?.card.id === card.id && "bg-muted/30",
-								)}
+								className={cn("flex items-center gap-3 p-3")}
 							>
-								<div className="flex items-center justify-between gap-3">
-									<div className="flex min-w-0 flex-1 items-center gap-2">
-										{/* Logo container - size-10 like expenses-by-category */}
-										<div className="flex size-10 shrink-0 items-center justify-center">
-											{logoPath ? (
-												<Image
-													src={logoPath}
-													alt={`Logo ${card.name}`}
-													width={28}
-													height={28}
-													className="rounded object-contain"
-												/>
-											) : (
-												<RiBankCard2Line className="size-4 text-muted-foreground" />
-											)}
-										</div>
-
-										{/* Name and brand */}
-										<div className="min-w-0 flex-1">
-											<div className="flex items-center gap-2">
-												<span className="text-sm font-medium truncate">
-													{card.name}
-												</span>
-												{brandAsset && (
-													<Image
-														src={brandAsset}
-														alt={`Bandeira ${card.brand}`}
-														width={24}
-														height={16}
-														className="h-2.5 w-auto shrink-0"
-													/>
-												)}
-											</div>
-											<div className="flex items-center gap-2 text-xs text-muted-foreground">
-												<span>
-													{formatCurrency(card.currentUsage)} /{" "}
-													{formatCurrency(card.limit)}
-												</span>
-											</div>
-										</div>
+								<div className="flex size-9 shrink-0 items-center justify-center">
+									{logoPath ? (
+										<Image
+											src={logoPath}
+											alt={card.name}
+											width={32}
+											height={32}
+											className="rounded object-contain"
+										/>
+									) : (
+										<RiBankCard2Line className="size-5 text-muted-foreground" />
+									)}
+								</div>
+								<div className="min-w-0 flex-1 space-y-1">
+									<div className="flex items-center gap-2">
+										<span className="text-base font-bold truncate">
+											{card.name}
+										</span>
+										{brandAsset && (
+											<Image
+												src={brandAsset}
+												alt={card.brand || ""}
+												width={18}
+												height={12}
+												className="h-2.5 w-auto shrink-0 opacity-70"
+											/>
+										)}
 									</div>
-
-									{/* Trend and percentage */}
-									<div className="flex shrink-0 flex-col items-end gap-0.5">
-										<span className="text-sm font-medium">
+									<p className="text-xs text-muted-foreground tabular-nums">
+										{formatCurrency(card.currentUsage)} /{" "}
+										{formatCurrency(card.limit)}
+									</p>
+									<div className="flex items-center gap-2">
+										<Progress
+											value={Math.min(card.usagePercent, 100)}
+											className={cn(
+												"h-2 flex-1",
+												`[&>div]:${getUsageColor(card.usagePercent)}`,
+											)}
+										/>
+										<span className="text-xs font-medium tabular-nums">
 											{card.usagePercent.toFixed(0)}%
 										</span>
-										<div className="flex items-center gap-1">
-											{card.trend === "up" && (
-												<RiArrowUpLine className="size-3 text-red-500" />
-											)}
-											{card.trend === "down" && (
-												<RiArrowDownLine className="size-3 text-green-500" />
-											)}
-											<span
-												className={cn(
-													"text-xs",
-													card.trend === "up" && "text-red-500",
-													card.trend === "down" && "text-green-500",
-													card.trend === "stable" && "text-muted-foreground",
-												)}
-											>
-												{card.changePercent > 0 ? "+" : ""}
-												{card.changePercent.toFixed(0)}%
-											</span>
-										</div>
 									</div>
 								</div>
-
-								{/* Progress bar - aligned with content */}
-								<div className="ml-12 mt-1.5">
-									<Progress
-										value={Math.min(card.usagePercent, 100)}
-										className={cn(
-											"h-1.5",
-											`[&>div]:${getUsageColor(card.usagePercent)}`,
-										)}
-									/>
-								</div>
 							</Link>
-						);
-					})}
-				</div>
-			</CardContent>
-		</Card>
+						</Card>
+					);
+				})}
+			</div>
+		</div>
 	);
 }

@@ -1,9 +1,15 @@
 "use client";
 
-import { RiBankCard2Fill } from "@remixicon/react";
-import { Badge } from "@/components/ui/badge";
+import { RiCalendarCheckLine } from "@remixicon/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { CardDetailData } from "@/lib/relatorios/cartoes-report";
+import { cn } from "@/lib/utils";
 import { title_font } from "@/public/fonts/font_index";
 
 type CardInvoiceStatusProps = {
@@ -35,47 +41,35 @@ export function CardInvoiceStatus({ data }: CardInvoiceStatusProps) {
 		}).format(value);
 	};
 
-	const getStatusBadge = (status: string | null) => {
+	const getStatusColor = (status: string | null) => {
 		switch (status) {
 			case "pago":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-900"
-					>
-						Pago
-					</Badge>
-				);
+				return "bg-green-500";
 			case "pendente":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950 dark:text-yellow-400 dark:border-yellow-900"
-					>
-						Pendente
-					</Badge>
-				);
+				return "bg-yellow-500";
 			case "atrasado":
-				return (
-					<Badge
-						variant="outline"
-						className="bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-400 dark:border-red-900"
-					>
-						Atrasado
-					</Badge>
-				);
+				return "bg-red-500";
 			default:
-				return (
-					<Badge variant="outline" className="text-muted-foreground">
-						—
-					</Badge>
-				);
+				return "bg-muted";
 		}
 	};
 
-	const formatPeriod = (period: string) => {
-		const [year, month] = period.split("-");
-		return `${monthLabels[parseInt(month, 10) - 1]}/${year.slice(2)}`;
+	const getStatusLabel = (status: string | null) => {
+		switch (status) {
+			case "pago":
+				return "Pago";
+			case "pendente":
+				return "Pendente";
+			case "atrasado":
+				return "Atrasado";
+			default:
+				return "—";
+		}
+	};
+
+	const formatPeriodShort = (period: string) => {
+		const [, month] = period.split("-");
+		return monthLabels[parseInt(month, 10) - 1];
 	};
 
 	return (
@@ -84,29 +78,38 @@ export function CardInvoiceStatus({ data }: CardInvoiceStatusProps) {
 				<CardTitle
 					className={`${title_font.className} flex items-center gap-1.5 text-base`}
 				>
-					<RiBankCard2Fill className="size-4 text-primary" />
-					Status das Faturas
+					<RiCalendarCheckLine className="size-4 text-primary" />
+					Faturas
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<div className="space-y-2">
-					{[...data].reverse().map((invoice) => (
-						<div
-							key={invoice.period}
-							className="flex items-center justify-between py-2 border-b last:border-b-0"
-						>
-							<div className="flex items-center gap-3">
-								<span className="text-sm font-medium w-16">
-									{formatPeriod(invoice.period)}
-								</span>
-								{getStatusBadge(invoice.status)}
-							</div>
-							<span className="text-sm font-bold">
-								{formatCurrency(invoice.amount)}
-							</span>
-						</div>
-					))}
-				</div>
+				<TooltipProvider>
+					<div className="flex items-center gap-1">
+						{data.map((invoice) => (
+							<Tooltip key={invoice.period}>
+								<TooltipTrigger asChild>
+									<div className="flex-1 flex flex-col items-center gap-2 cursor-default">
+										<div
+											className={cn(
+												"w-full h-2.5 rounded",
+												getStatusColor(invoice.status),
+											)}
+										/>
+										<span className="text-xs text-muted-foreground">
+											{formatPeriodShort(invoice.period)}
+										</span>
+									</div>
+								</TooltipTrigger>
+								<TooltipContent side="top">
+									<p className="font-medium">
+										{formatCurrency(invoice.amount)}
+									</p>
+									<p className="text-xs ">{getStatusLabel(invoice.status)}</p>
+								</TooltipContent>
+							</Tooltip>
+						))}
+					</div>
+				</TooltipProvider>
 			</CardContent>
 		</Card>
 	);

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { ApiTokensForm } from "@/components/ajustes/api-tokens-form";
+import { CompanionTab } from "@/components/ajustes/companion-tab";
 import { DeleteAccountForm } from "@/components/ajustes/delete-account-form";
 import { PreferencesForm } from "@/components/ajustes/preferences-form";
 import { UpdateEmailForm } from "@/components/ajustes/update-email-form";
@@ -33,7 +33,7 @@ export default async function Page() {
 			<Tabs defaultValue="preferencias" className="w-full">
 				<TabsList>
 					<TabsTrigger value="preferencias">Preferências</TabsTrigger>
-					<TabsTrigger value="dispositivos">Dispositivos</TabsTrigger>
+					<TabsTrigger value="companion">Companion</TabsTrigger>
 					<TabsTrigger value="nome">Alterar nome</TabsTrigger>
 					<TabsTrigger value="senha">Alterar senha</TabsTrigger>
 					<TabsTrigger value="email">Alterar e-mail</TabsTrigger>
@@ -61,20 +61,8 @@ export default async function Page() {
 					</Card>
 				</TabsContent>
 
-				<TabsContent value="dispositivos" className="mt-4">
-					<Card className="p-6">
-						<div className="space-y-4">
-							<div>
-								<h2 className="text-lg font-bold mb-1">OpenSheets Companion</h2>
-								<p className="text-sm text-muted-foreground mb-4">
-									Conecte o app Android OpenSheets Companion para capturar
-									automaticamente notificações de transações financeiras e
-									enviá-las para sua caixa de entrada.
-								</p>
-							</div>
-							<ApiTokensForm tokens={userApiTokens} />
-						</div>
-					</Card>
+				<TabsContent value="companion" className="mt-4">
+					<CompanionTab tokens={userApiTokens} />
 				</TabsContent>
 
 				<TabsContent value="nome" className="mt-4">
