@@ -141,6 +141,11 @@ export function LancamentoDialog({
 		return groupAndSortCategorias(filtered);
 	}, [categoriaOptions, formState.transactionType]);
 
+	const totalAmount = useMemo(() => {
+		const parsed = Number.parseFloat(formState.amount);
+		return Number.isNaN(parsed) ? 0 : Math.abs(parsed);
+	}, [formState.amount]);
+
 	const handleFieldChange = useCallback(
 		<Key extends keyof FormState>(key: Key, value: FormState[Key]) => {
 			if (key === "period") {
@@ -223,6 +228,12 @@ export function LancamentoDialog({
 					? formState.secondaryPagadorId
 					: undefined,
 				isSplit: formState.isSplit,
+				primarySplitAmount: formState.isSplit
+					? Number.parseFloat(formState.primarySplitAmount) || undefined
+					: undefined,
+				secondarySplitAmount: formState.isSplit
+					? Number.parseFloat(formState.secondarySplitAmount) || undefined
+					: undefined,
 				contaId: formState.contaId,
 				cartaoId: formState.cartaoId,
 				categoriaId: formState.categoriaId,
@@ -402,6 +413,7 @@ export function LancamentoDialog({
 						onFieldChange={handleFieldChange}
 						pagadorOptions={pagadorOptions}
 						secondaryPagadorOptions={secondaryPagadorOptions}
+						totalAmount={totalAmount}
 					/>
 
 					<PaymentMethodSection

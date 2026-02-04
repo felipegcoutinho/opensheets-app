@@ -1,5 +1,4 @@
 "use client";
-import { RiCheckLine, RiCloseCircleLine } from "@remixicon/react";
 import Image from "next/image";
 import {
 	useCallback,
@@ -33,7 +32,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { useControlledState } from "@/hooks/use-controlled-state";
 import { useFormState } from "@/hooks/use-form-state";
 import {
@@ -270,16 +268,9 @@ export function PagadorDialog({
 								</div>
 							</fieldset>
 
-							<fieldset className="flex flex-col gap-3">
-								<div className="grid grid-cols-4 gap-3 sm:grid-cols-5">
-									{availableAvatars.length === 0 ? (
-										<div className="col-span-5 flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/60 bg-muted/10 p-6 text-center text-sm text-muted-foreground">
-											<RiCloseCircleLine className="size-6" />
-											Nenhum avatar disponível. Adicione imagens em
-											<span className="font-mono text-xs">public/avatares</span>
-											.
-										</div>
-									) : null}
+							<fieldset className="flex flex-col gap-2">
+								<Label>Avatar</Label>
+								<div className="flex flex-wrap gap-3">
 									{availableAvatars.map((avatar) => {
 										const isSelected = avatar === formState.avatarUrl;
 										return (
@@ -287,22 +278,16 @@ export function PagadorDialog({
 												type="button"
 												key={avatar}
 												onClick={() => updateField("avatarUrl", avatar)}
-												className="group relative flex items-center justify-center overflow-hidden rounded-xl border border-border/70 p-2 transition-all hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 data-[selected=true]:border-primary data-[selected=true]:bg-primary/10"
+												className="group relative flex items-center justify-center rounded-full p-0.5 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 data-[selected=true]:ring-2 data-[selected=true]:ring-primary"
 												data-selected={isSelected}
 												aria-pressed={isSelected}
 											>
-												<span className="absolute inset-0 rounded-xl border-2 border-primary/80 opacity-0 transition-opacity group-data-[selected=true]:opacity-100" />
-												{isSelected ? (
-													<span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-sidebar-foreground text-primary-foreground shadow-sm">
-														<RiCheckLine className="size-3.5" />
-													</span>
-												) : null}
 												<Image
 													src={getAvatarSrc(avatar)}
 													alt={`Avatar ${avatar}`}
-													width={72}
-													height={72}
-													className="size-12 rounded-lg object-cover"
+													width={40}
+													height={40}
+													className="size-12 rounded-full object-cove hover:scale-110 transition-transform duration-200"
 												/>
 											</button>
 										);
@@ -312,12 +297,11 @@ export function PagadorDialog({
 
 							<div className="flex flex-col gap-2">
 								<Label htmlFor="pagador-note">Anotações</Label>
-								<Textarea
+								<Input
 									id="pagador-note"
-									rows={2}
 									value={formState.note}
 									onChange={(event) => updateField("note", event.target.value)}
-									placeholder="Observações, preferências ou detalhes relevantes sobre este pagador"
+									placeholder="Observações sobre este pagador"
 								/>
 							</div>
 						</div>

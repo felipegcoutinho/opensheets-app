@@ -5,6 +5,7 @@ import {
 	RiBarcodeLine,
 	RiBillLine,
 	RiExchangeLine,
+	RiGroupLine,
 	RiLineChartLine,
 	RiMoneyDollarCircleLine,
 	RiNumbersLine,
@@ -24,6 +25,7 @@ import { IncomeExpenseBalanceWidget } from "@/components/dashboard/income-expens
 import { InstallmentExpensesWidget } from "@/components/dashboard/installment-expenses-widget";
 import { InvoicesWidget } from "@/components/dashboard/invoices-widget";
 import { MyAccountsWidget } from "@/components/dashboard/my-accounts-widget";
+import { PagadoresWidget } from "@/components/dashboard/pagadores-widget";
 import { PaymentConditionsWidget } from "@/components/dashboard/payment-conditions-widget";
 import { PaymentMethodsWidget } from "@/components/dashboard/payment-methods-widget";
 import { PaymentStatusWidget } from "@/components/dashboard/payment-status-widget";
@@ -91,6 +93,24 @@ export const widgetsConfig: WidgetConfig[] = [
 		icon: <RiLineChartLine className="size-4" />,
 		component: ({ data }) => (
 			<IncomeExpenseBalanceWidget data={data.incomeExpenseBalanceData} />
+		),
+	},
+	{
+		id: "pagadores",
+		title: "Pagadores",
+		subtitle: "Despesas por pagador no período",
+		icon: <RiGroupLine className="size-4" />,
+		component: ({ data }) => (
+			<PagadoresWidget pagadores={data.pagadoresSnapshot.pagadores} />
+		),
+		action: (
+			<Link
+				href="/pagadores"
+				className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1"
+			>
+				Ver todos
+				<RiArrowRightLine className="size-4" />
+			</Link>
 		),
 	},
 	{

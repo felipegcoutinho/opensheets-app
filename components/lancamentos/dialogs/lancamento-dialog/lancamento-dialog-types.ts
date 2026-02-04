@@ -73,6 +73,7 @@ export interface SplitAndSettlementSectionProps extends BaseFieldSectionProps {
 export interface PagadorSectionProps extends BaseFieldSectionProps {
 	pagadorOptions: SelectOption[];
 	secondaryPagadorOptions: SelectOption[];
+	totalAmount: number;
 }
 
 export interface PaymentMethodSectionProps extends BaseFieldSectionProps {

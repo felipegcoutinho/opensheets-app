@@ -143,6 +143,8 @@ const baseFields = z.object({
 	pagadorId: uuidSchema("Pagador").nullable().optional(),
 	secondaryPagadorId: uuidSchema("Pagador secundário").optional(),
 	isSplit: z.boolean().optional().default(false),
+	primarySplitAmount: z.coerce.number().min(0).optional(),
+	secondarySplitAmount: z.coerce.number().min(0).optional(),
 	contaId: uuidSchema("Conta").nullable().optional(),
 	cartaoId: uuidSchema("Cartão").nullable().optional(),
 	categoriaId: uuidSchema("Categoria").nullable().optional(),
@@ -233,6 +235,23 @@ const refineLancamento = (
 				path: ["secondaryPagadorId"],
 				message: "Escolha um pagador diferente para dividir o lançamento.",
 			});
+		}
+
+		// Validate custom split amounts sum to total
+		if (
+			data.primarySplitAmount !== undefined &&
+			data.secondarySplitAmount !== undefined
+		) {
+			const sum = data.primarySplitAmount + data.secondarySplitAmount;
+			const total = Math.abs(data.amount);
+			// Allow 1 cent tolerance for rounding differences
+			if (Math.abs(sum - total) > 0.01) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					path: ["primarySplitAmount"],
+					message: "A soma das divisões deve ser igual ao valor total.",
+				});
+			}
 		}
 	}
 };
@@ -354,17 +373,33 @@ const buildShares = ({
 	pagadorId,
 	isSplit,
 	secondaryPagadorId,
+	primarySplitAmountCents,
+	secondarySplitAmountCents,
 }: {
 	totalCents: number;
 	pagadorId: string | null;
 	isSplit: boolean;
 	secondaryPagadorId?: string;
+	primarySplitAmountCents?: number;
+	secondarySplitAmountCents?: number;
 }): Share[] => {
 	if (isSplit) {
 		if (!pagadorId || !secondaryPagadorId) {
 			throw new Error("Configuração de divisão inválida para o lançamento.");
 		}
 
+		// Use custom split amounts if provided
+		if (
+			primarySplitAmountCents !== undefined &&
+			secondarySplitAmountCents !== undefined
+		) {
+			return [
+				{ pagadorId, amountCents: primarySplitAmountCents },
+				{ pagadorId: secondaryPagadorId, amountCents: secondarySplitAmountCents },
+			];
+		}
+
+		// Fallback to equal split
 		const [primaryAmount, secondaryAmount] = splitAmount(totalCents, 2);
 		return [
 			{ pagadorId, amountCents: primaryAmount },
@@ -598,6 +633,12 @@ export async function createLancamentoAction(
 			pagadorId: data.pagadorId ?? null,
 			isSplit: data.isSplit ?? false,
 			secondaryPagadorId: data.secondaryPagadorId,
+			primarySplitAmountCents: data.primarySplitAmount
+				? Math.round(data.primarySplitAmount * 100)
+				: undefined,
+			secondarySplitAmountCents: data.secondarySplitAmount
+				? Math.round(data.secondarySplitAmount * 100)
+				: undefined,
 		});
 
 		const isSeriesLancamento =

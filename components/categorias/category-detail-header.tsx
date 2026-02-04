@@ -2,9 +2,9 @@ import { RiArrowDownLine, RiArrowUpLine } from "@remixicon/react";
 import type { CategoryType } from "@/lib/categorias/constants";
 import { currencyFormatter } from "@/lib/lancamentos/formatting-helpers";
 import { cn } from "@/lib/utils/ui";
-import { CategoryIconBadge } from "./category-icon-badge";
 import { TypeBadge } from "../type-badge";
 import { Card } from "../ui/card";
+import { CategoryIconBadge } from "./category-icon-badge";
 
 type CategorySummary = {
 	id: string;

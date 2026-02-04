@@ -8,7 +8,7 @@ export function TypeSelectContent({ label }: { label: string }) {
 	return (
 		<span className="flex items-center gap-2">
 			<DotIcon
-				bg_dot={
+				color={
 					isReceita
 						? "bg-emerald-600 dark:bg-emerald-300"
 						: "bg-rose-600 dark:bg-rose-300"

@@ -115,13 +115,24 @@ export function DashboardGridEditable({
 		}
 	}, []);
 
-	const handleToggleWidget = useCallback((widgetId: string) => {
-		setHiddenWidgets((prev) =>
-			prev.includes(widgetId)
-				? prev.filter((id) => id !== widgetId)
-				: [...prev, widgetId],
-		);
-	}, []);
+	const handleToggleWidget = useCallback(
+		(widgetId: string) => {
+			const newHidden = hiddenWidgets.includes(widgetId)
+				? hiddenWidgets.filter((id) => id !== widgetId)
+				: [...hiddenWidgets, widgetId];
+
+			setHiddenWidgets(newHidden);
+
+			// Salvar automaticamente ao toggle
+			startTransition(async () => {
+				await updateWidgetPreferences({
+					order: widgetOrder,
+					hidden: newHidden,
+				});
+			});
+		},
+		[hiddenWidgets, widgetOrder],
+	);
 
 	const handleHideWidget = useCallback((widgetId: string) => {
 		setHiddenWidgets((prev) => [...prev, widgetId]);

@@ -9,6 +9,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { EmptyState } from "@/components/empty-state";
 import { CategoryReportSkeleton } from "@/components/skeletons/category-report-skeleton";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { CategoryChartData } from "@/lib/relatorios/fetch-category-chart-data";
 import type { CategoryReportData } from "@/lib/relatorios/types";
@@ -123,36 +124,39 @@ export function CategoryReportPage({
 
 			{/* Empty States */}
 			{!isPending && hasNoCategories && (
-				<EmptyState
-					title="Nenhuma categoria cadastrada"
-					description="Você precisa cadastrar categorias antes de visualizar o relatório."
-					media={<RiPieChartLine className="h-12 w-12" />}
-					mediaVariant="icon"
-				/>
+				<Card className="flex w-full items-center justify-center py-12">
+					<EmptyState
+						title="Nenhuma categoria cadastrada"
+						description="Você precisa cadastrar categorias antes de visualizar o relatório."
+						media={<RiPieChartLine className="size-6 text-primary" />}
+					/>
+				</Card>
 			)}
 
 			{!isPending &&
 				!hasNoCategories &&
 				hasNoData &&
 				filters.selectedCategories.length === 0 && (
-					<EmptyState
-						title="Selecione pelo menos uma categoria"
-						description="Use o filtro acima para selecionar as categorias que deseja visualizar no relatório."
-						media={<RiFilter3Line className="h-12 w-12" />}
-						mediaVariant="icon"
-					/>
+					<Card className="flex w-full items-center justify-center py-12">
+						<EmptyState
+							title="Selecione pelo menos uma categoria"
+							description="Use o filtro acima para selecionar as categorias que deseja visualizar no relatório."
+							media={<RiFilter3Line className="size-6 text-primary" />}
+						/>
+					</Card>
 				)}
 
 			{!isPending &&
 				!hasNoCategories &&
 				hasNoData &&
 				filters.selectedCategories.length > 0 && (
-					<EmptyState
-						title="Nenhum lançamento encontrado"
-						description="Não há transações no período selecionado para as categorias filtradas."
-						media={<RiPieChartLine className="h-12 w-12" />}
-						mediaVariant="icon"
-					/>
+					<Card className="flex w-full items-center justify-center py-12">
+						<EmptyState
+							title="Nenhum lançamento encontrado"
+							description="Não há transações no período selecionado para as categorias filtradas."
+							media={<RiPieChartLine className="size-6 text-primary" />}
+						/>
+					</Card>
 				)}
 
 			{/* Tabs: Table and Chart */}

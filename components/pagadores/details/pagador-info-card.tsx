@@ -148,7 +148,7 @@ export function PagadorInfoCard({
 							alt={`Avatar de ${pagador.name}`}
 							width={64}
 							height={64}
-							className="h-full w-full object-cover"
+							className="h-full w-full object-cover rounded-full"
 						/>
 					</div>
 
@@ -214,7 +214,7 @@ export function PagadorInfoCard({
 								{pagador.email}
 							</Link>
 						) : (
-							"—"
+							"Sem e-mail cadastrado"
 						)
 					}
 				/>
@@ -260,7 +260,7 @@ export function PagadorInfoCard({
 						pagador.note ? (
 							<span className="text-muted-foreground">{pagador.note}</span>
 						) : (
-							"—"
+							"Sem observações"
 						)
 					}
 					className="sm:col-span-2"

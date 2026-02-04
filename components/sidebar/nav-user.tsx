@@ -24,10 +24,15 @@ export function NavUser({ user, pagadorAvatarUrl }: NavUserProps) {
 	useSidebar();
 
 	const avatarSrc = useMemo(() => {
+		// Priorizar o avatar do pagador admin quando disponível
+		if (pagadorAvatarUrl) {
+			return getAvatarSrc(pagadorAvatarUrl);
+		}
+		// Fallback para a imagem do usuário (Google, etc)
 		if (user.image) {
 			return user.image;
 		}
-		return getAvatarSrc(pagadorAvatarUrl);
+		return getAvatarSrc(null);
 	}, [user.image, pagadorAvatarUrl]);
 
 	return (

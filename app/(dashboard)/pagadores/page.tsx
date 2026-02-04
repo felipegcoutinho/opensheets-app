@@ -1,7 +1,10 @@
 import { readdir } from "node:fs/promises";
 import path from "node:path";
+import { eq } from "drizzle-orm";
 import { PagadoresPage } from "@/components/pagadores/pagadores-page";
+import { user } from "@/db/schema";
 import { getUserId } from "@/lib/auth/server";
+import { db } from "@/lib/db";
 import { fetchPagadoresWithAccess } from "@/lib/pagadores/access";
 import type { PagadorStatus } from "@/lib/pagadores/constants";
 import {
@@ -44,10 +47,20 @@ const resolveStatus = (status: string | null): PagadorStatus => {
 export default async function Page() {
 	const userId = await getUserId();
 
-	const [pagadorRows, avatarOptions] = await Promise.all([
+	const [pagadorRows, localAvatarOptions, userData] = await Promise.all([
 		fetchPagadoresWithAccess(userId),
 		loadAvatarOptions(),
+		db.query.user.findFirst({
+			columns: { image: true },
+			where: eq(user.id, userId),
+		}),
 	]);
+
+	// Incluir a imagem do Google nas opções se disponível
+	const userImage = userData?.image;
+	const avatarOptions = userImage
+		? [userImage, ...localAvatarOptions]
+		: localAvatarOptions;
 
 	const pagadoresData = pagadorRows
 		.map((pagador) => ({

@@ -63,7 +63,7 @@ export function PagadorCard({ pagador, onEdit, onRemove }: PagadorCardProps) {
 					<p className="mt-1 text-xs text-muted-foreground">{pagador.email}</p>
 				) : (
 					<p className="mt-1 text-xs text-muted-foreground">
-						Sem Email cadastrado
+						Sem email cadastrado
 					</p>
 				)}
 

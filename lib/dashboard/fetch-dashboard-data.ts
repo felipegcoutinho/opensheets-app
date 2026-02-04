@@ -9,6 +9,7 @@ import { fetchIncomeExpenseBalance } from "./income-expense-balance";
 import { fetchDashboardInvoices } from "./invoices";
 import { fetchDashboardCardMetrics } from "./metrics";
 import { fetchDashboardNotifications } from "./notifications";
+import { fetchDashboardPagadores } from "./pagadores";
 import { fetchPaymentConditions } from "./payments/payment-conditions";
 import { fetchPaymentMethods } from "./payments/payment-methods";
 import { fetchPaymentStatus } from "./payments/payment-status";
@@ -25,6 +26,7 @@ export async function fetchDashboardData(userId: string, period: string) {
 		notificationsSnapshot,
 		paymentStatusData,
 		incomeExpenseBalanceData,
+		pagadoresSnapshot,
 		recentTransactionsData,
 		paymentConditionsData,
 		paymentMethodsData,
@@ -44,6 +46,7 @@ export async function fetchDashboardData(userId: string, period: string) {
 		fetchDashboardNotifications(userId, period),
 		fetchPaymentStatus(userId, period),
 		fetchIncomeExpenseBalance(userId, period),
+		fetchDashboardPagadores(userId, period),
 		fetchRecentTransactions(userId, period),
 		fetchPaymentConditions(userId, period),
 		fetchPaymentMethods(userId, period),
@@ -65,6 +68,7 @@ export async function fetchDashboardData(userId: string, period: string) {
 		notificationsSnapshot,
 		paymentStatusData,
 		incomeExpenseBalanceData,
+		pagadoresSnapshot,
 		recentTransactionsData,
 		paymentConditionsData,
 		paymentMethodsData,

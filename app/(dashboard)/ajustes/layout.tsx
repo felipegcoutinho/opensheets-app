@@ -1,4 +1,4 @@
-import { RiSettingsLine } from "@remixicon/react";
+import { RiSettings2Line } from "@remixicon/react";
 import PageDescription from "@/components/page-description";
 
 export const metadata = {
@@ -13,7 +13,7 @@ export default function RootLayout({
 	return (
 		<section className="space-y-6 px-6">
 			<PageDescription
-				icon={<RiSettingsLine />}
+				icon={<RiSettings2Line />}
 				title="Ajustes"
 				subtitle="Gerencie informações da conta, segurança e outras opções para otimizar sua experiência."
 			/>

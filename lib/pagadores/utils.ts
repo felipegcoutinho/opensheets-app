@@ -3,11 +3,22 @@ import { DEFAULT_PAGADOR_AVATAR } from "./constants";
 /**
  * Normaliza o caminho do avatar extraindo apenas o nome do arquivo.
  * Remove qualquer caminho anterior e retorna null se não houver avatar.
+ * Preserva URLs completas (http/https/data).
  */
 export const normalizeAvatarPath = (
 	avatar: string | null | undefined,
 ): string | null => {
 	if (!avatar) return null;
+
+	// Preservar URLs completas (Google, etc)
+	if (
+		avatar.startsWith("http://") ||
+		avatar.startsWith("https://") ||
+		avatar.startsWith("data:")
+	) {
+		return avatar;
+	}
+
 	const file = avatar.split("/").filter(Boolean).pop();
 	return file ?? avatar;
 };

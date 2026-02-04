@@ -1,6 +1,5 @@
 "use client";
 
-import type { ReactNode } from "react";
 import {
 	RiAndroidLine,
 	RiDownload2Line,
@@ -9,6 +8,7 @@ import {
 	RiQrCodeLine,
 	RiShieldCheckLine,
 } from "@remixicon/react";
+import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { ApiTokensForm } from "./api-tokens-form";
 
