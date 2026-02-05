@@ -98,8 +98,8 @@ export function CardsOverview({ data }: CardsOverviewProps) {
 			<div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
 				{summaryCards.map((card) => (
 					<Card key={card.title}>
-						<CardContent className="px-4 py-2">
-							<p className="text-xs text-muted-foreground mb-1">{card.title}</p>
+						<CardContent className="px-4">
+							<p className="text-xs text-muted-foreground">{card.title}</p>
 							{card.isMoney ? (
 								<MoneyValues
 									className="text-2xl font-semibold"
@@ -115,7 +115,7 @@ export function CardsOverview({ data }: CardsOverviewProps) {
 				))}
 			</div>
 
-			<p className="text-base font-bold ml-2">Meus cartões</p>
+			<p className="text-base font-bold ml-2 py-2">Meus cartões</p>
 
 			{/* Cards list */}
 			<div className="grid gap-2 grid-cols-2 lg:grid-cols-4 xl:grid-cols-4">
@@ -127,7 +127,7 @@ export function CardsOverview({ data }: CardsOverviewProps) {
 					return (
 						<Card
 							key={card.id}
-							className={cn("px-1 py-4", isSelected && "ring-1 ring-primary")}
+							className={cn("px-1 py-1", isSelected && "ring-1 ring-primary")}
 						>
 							<Link
 								href={buildUrl(card.id)}
