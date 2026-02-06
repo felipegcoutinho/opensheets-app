@@ -1,29 +1,49 @@
 import { Button } from "@/components/ui/button";
 import type { CalculatorButtonConfig } from "@/hooks/use-calculator-state";
+import type { Operator } from "@/lib/utils/calculator";
 import { cn } from "@/lib/utils/ui";
 
 type CalculatorKeypadProps = {
 	buttons: CalculatorButtonConfig[][];
+	activeOperator: Operator | null;
 };
 
-export function CalculatorKeypad({ buttons }: CalculatorKeypadProps) {
+const LABEL_TO_OPERATOR: Record<string, Operator> = {
+	"÷": "divide",
+	"×": "multiply",
+	"-": "subtract",
+	"+": "add",
+};
+
+export function CalculatorKeypad({
+	buttons,
+	activeOperator,
+}: CalculatorKeypadProps) {
 	return (
 		<div className="grid grid-cols-4 gap-2">
-			{buttons.flat().map((btn, index) => (
-				<Button
-					key={`${btn.label}-${index}`}
-					type="button"
-					variant={btn.variant ?? "outline"}
-					onClick={btn.onClick}
-					className={cn(
-						"h-12 text-base font-semibold",
-						btn.colSpan === 2 && "col-span-2",
-						btn.colSpan === 3 && "col-span-3",
-					)}
-				>
-					{btn.label}
-				</Button>
-			))}
+			{buttons.flat().map((btn, index) => {
+				const op = LABEL_TO_OPERATOR[btn.label];
+				const isActive = op != null && op === activeOperator;
+
+				return (
+					<Button
+						key={`${btn.label}-${index}`}
+						type="button"
+						variant={isActive ? "default" : (btn.variant ?? "outline")}
+						onClick={btn.onClick}
+						className={cn(
+							"h-12 text-base font-semibold",
+							btn.colSpan === 2 && "col-span-2",
+							btn.colSpan === 3 && "col-span-3",
+							isActive &&
+								"bg-primary text-primary-foreground hover:bg-primary/90 ring-2 ring-primary/30",
+							btn.className,
+						)}
+					>
+						{btn.label}
+					</Button>
+				);
+			})}
 		</div>
 	);
 }

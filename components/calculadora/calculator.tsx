@@ -1,26 +1,60 @@
 "use client";
 
 import { CalculatorKeypad } from "@/components/calculadora/calculator-keypad";
+import { Button } from "@/components/ui/button";
 import { useCalculatorKeyboard } from "@/hooks/use-calculator-keyboard";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 import { CalculatorDisplay } from "./calculator-display";
 
-export default function Calculator() {
+type CalculatorProps = {
+	isOpen?: boolean;
+	onSelectValue?: (value: string) => void;
+};
+
+export default function Calculator({
+	isOpen = true,
+	onSelectValue,
+}: CalculatorProps) {
 	const {
+		display,
+		operator,
 		expression,
 		history,
 		resultText,
 		copied,
 		buttons,
+		inputDigit,
+		inputDecimal,
+		setNextOperator,
+		evaluate,
+		deleteLastDigit,
+		reset,
+		applyPercent,
 		copyToClipboard,
 		pasteFromClipboard,
 	} = useCalculatorState();
 
 	useCalculatorKeyboard({
+		isOpen,
 		canCopy: Boolean(resultText),
 		onCopy: copyToClipboard,
 		onPaste: pasteFromClipboard,
+		inputDigit,
+		inputDecimal,
+		setNextOperator,
+		evaluate,
+		deleteLastDigit,
+		reset,
+		applyPercent,
 	});
+
+	const canUseValue = onSelectValue && display !== "Erro" && display !== "0";
+
+	const handleSelectValue = () => {
+		if (!onSelectValue) return;
+		const numericValue = Math.abs(Number(display)).toFixed(2);
+		onSelectValue(numericValue);
+	};
 
 	return (
 		<div className="space-y-4">
@@ -31,7 +65,18 @@ export default function Calculator() {
 				copied={copied}
 				onCopy={copyToClipboard}
 			/>
-			<CalculatorKeypad buttons={buttons} />
+			<CalculatorKeypad buttons={buttons} activeOperator={operator} />
+			{onSelectValue && (
+				<Button
+					type="button"
+					variant="default"
+					className="w-full"
+					disabled={!canUseValue}
+					onClick={handleSelectValue}
+				>
+					Usar valor
+				</Button>
+			)}
 		</div>
 	);
 }

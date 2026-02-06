@@ -7,7 +7,6 @@ import {
 } from "@remixicon/react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import * as React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -134,8 +133,8 @@ export function NavMain({ sections }: { sections: NavSection[] }) {
 											{item.items?.length ? (
 												<>
 													<CollapsibleTrigger asChild>
-														<SidebarMenuAction className="data-[state=open]:rotate-90 text-foreground px-2 trasition-transform duration-200">
-															<RiArrowRightSLine />
+														<SidebarMenuAction className="data-[state=open]:rotate-90 px-2 trasition-transform duration-200">
+															<RiArrowRightSLine className="text-primary" />
 															<span className="sr-only">Toggle</span>
 														</SidebarMenuAction>
 													</CollapsibleTrigger>

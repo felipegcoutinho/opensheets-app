@@ -15,6 +15,7 @@ export type CalculatorButtonConfig = {
 	onClick: () => void;
 	variant?: VariantProps<typeof buttonVariants>["variant"];
 	colSpan?: number;
+	className?: string;
 };
 
 export function useCalculatorState() {
@@ -242,8 +243,8 @@ export function useCalculatorState() {
 	const buttons: CalculatorButtonConfig[][] = [
 		[
 			{ label: "C", onClick: reset, variant: "destructive" },
-			{ label: "⌫", onClick: deleteLastDigit, variant: "default" },
-			{ label: "%", onClick: applyPercent, variant: "default" },
+			{ label: "⌫", onClick: deleteLastDigit, variant: "secondary" },
+			{ label: "%", onClick: applyPercent, variant: "secondary" },
 			{
 				label: "÷",
 				onClick: makeOperatorHandler("divide"),
@@ -277,7 +278,7 @@ export function useCalculatorState() {
 			{ label: "+", onClick: makeOperatorHandler("add"), variant: "outline" },
 		],
 		[
-			{ label: "±", onClick: toggleSign, variant: "default" },
+			{ label: "±", onClick: toggleSign, variant: "secondary" },
 			{ label: "0", onClick: () => inputDigit("0") },
 			{ label: ",", onClick: inputDecimal },
 			{ label: "=", onClick: evaluate, variant: "default" },
@@ -358,11 +359,20 @@ export function useCalculatorState() {
 	}, []);
 
 	return {
+		display,
+		operator,
 		expression,
 		history,
 		resultText,
 		copied,
 		buttons,
+		inputDigit,
+		inputDecimal,
+		setNextOperator,
+		evaluate,
+		deleteLastDigit,
+		reset,
+		applyPercent,
 		copyToClipboard,
 		pasteFromClipboard,
 	};

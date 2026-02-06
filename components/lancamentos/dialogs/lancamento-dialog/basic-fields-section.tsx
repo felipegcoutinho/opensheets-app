@@ -67,6 +67,7 @@ export function BasicFieldsSection({
 							variant="ghost"
 							size="icon-sm"
 							className="absolute right-1 top-1/2 h-7 w-7 -translate-y-1/2"
+							onSelectValue={(value) => onFieldChange("amount", value)}
 						>
 							<RiCalculatorLine className="h-4 w-4 text-muted-foreground" />
 						</CalculatorDialogButton>

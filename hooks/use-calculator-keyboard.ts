@@ -1,9 +1,18 @@
 import { useEffect } from "react";
+import type { Operator } from "@/lib/utils/calculator";
 
 type UseCalculatorKeyboardParams = {
+	isOpen: boolean;
 	canCopy: boolean;
 	onCopy: () => void | Promise<void>;
 	onPaste: () => void | Promise<void>;
+	inputDigit: (digit: string) => void;
+	inputDecimal: () => void;
+	setNextOperator: (op: Operator) => void;
+	evaluate: () => void;
+	deleteLastDigit: () => void;
+	reset: () => void;
+	applyPercent: () => void;
 };
 
 function shouldIgnoreForEditableTarget(target: EventTarget | null): boolean {
@@ -17,76 +26,118 @@ function shouldIgnoreForEditableTarget(target: EventTarget | null): boolean {
 	);
 }
 
+const KEY_TO_OPERATOR: Record<string, Operator> = {
+	"+": "add",
+	"-": "subtract",
+	"*": "multiply",
+	"/": "divide",
+};
+
 export function useCalculatorKeyboard({
+	isOpen,
 	canCopy,
 	onCopy,
 	onPaste,
+	inputDigit,
+	inputDecimal,
+	setNextOperator,
+	evaluate,
+	deleteLastDigit,
+	reset,
+	applyPercent,
 }: UseCalculatorKeyboardParams) {
 	useEffect(() => {
-		if (!canCopy) {
-			return;
-		}
+		if (!isOpen) return;
 
 		const handleKeyDown = (event: KeyboardEvent) => {
-			if (!(event.ctrlKey || event.metaKey)) {
+			const { key, ctrlKey, metaKey } = event;
+
+			// Ctrl/Cmd shortcuts
+			if (ctrlKey || metaKey) {
+				if (shouldIgnoreForEditableTarget(event.target)) return;
+
+				const lowerKey = key.toLowerCase();
+				if (lowerKey === "c" && canCopy) {
+					const selection = window.getSelection();
+					if (selection && selection.toString().trim().length > 0) return;
+					event.preventDefault();
+					void onCopy();
+				} else if (lowerKey === "v") {
+					const selection = window.getSelection();
+					if (selection && selection.toString().trim().length > 0) return;
+					if (!navigator.clipboard?.readText) return;
+					event.preventDefault();
+					void onPaste();
+				}
 				return;
 			}
 
-			if (shouldIgnoreForEditableTarget(event.target)) {
+			// Digits
+			if (key >= "0" && key <= "9") {
+				event.preventDefault();
+				inputDigit(key);
 				return;
 			}
 
-			if (event.key.toLowerCase() !== "c") {
+			// Decimal
+			if (key === "." || key === ",") {
+				event.preventDefault();
+				inputDecimal();
 				return;
 			}
 
-			const selection = window.getSelection();
-			if (selection && selection.toString().trim().length > 0) {
+			// Operators
+			const op = KEY_TO_OPERATOR[key];
+			if (op) {
+				event.preventDefault();
+				setNextOperator(op);
 				return;
 			}
 
-			event.preventDefault();
-			void onCopy();
+			// Evaluate
+			if (key === "Enter" || key === "=") {
+				event.preventDefault();
+				evaluate();
+				return;
+			}
+
+			// Backspace
+			if (key === "Backspace") {
+				event.preventDefault();
+				deleteLastDigit();
+				return;
+			}
+
+			// Escape resets calculator (dialog close is handled by onEscapeKeyDown)
+			if (key === "Escape") {
+				event.preventDefault();
+				reset();
+				return;
+			}
+
+			// Percent
+			if (key === "%") {
+				event.preventDefault();
+				applyPercent();
+				return;
+			}
 		};
 
 		document.addEventListener("keydown", handleKeyDown);
-
 		return () => {
 			document.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [canCopy, onCopy]);
-
-	useEffect(() => {
-		const handlePasteShortcut = (event: KeyboardEvent) => {
-			if (!(event.ctrlKey || event.metaKey)) {
-				return;
-			}
-
-			if (event.key.toLowerCase() !== "v") {
-				return;
-			}
-
-			if (shouldIgnoreForEditableTarget(event.target)) {
-				return;
-			}
-
-			const selection = window.getSelection();
-			if (selection && selection.toString().trim().length > 0) {
-				return;
-			}
-
-			if (!navigator.clipboard?.readText) {
-				return;
-			}
-
-			event.preventDefault();
-			void onPaste();
-		};
-
-		document.addEventListener("keydown", handlePasteShortcut);
-
-		return () => {
-			document.removeEventListener("keydown", handlePasteShortcut);
-		};
-	}, [onPaste]);
+	}, [
+		isOpen,
+		canCopy,
+		onCopy,
+		onPaste,
+		inputDigit,
+		inputDecimal,
+		setNextOperator,
+		evaluate,
+		deleteLastDigit,
+		reset,
+		applyPercent,
+	]);
 }

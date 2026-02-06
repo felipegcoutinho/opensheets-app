@@ -16,6 +16,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useDraggableDialog } from "@/hooks/use-draggable-dialog";
 import { cn } from "@/lib/utils/ui";
 
 type Variant = React.ComponentProps<typeof Button>["variant"];
@@ -27,7 +28,44 @@ type CalculatorDialogButtonProps = {
 	className?: string;
 	children?: React.ReactNode;
 	withTooltip?: boolean;
+	onSelectValue?: (value: string) => void;
 };
+
+function CalculatorDialogContent({
+	open,
+	onSelectValue,
+}: {
+	open: boolean;
+	onSelectValue?: (value: string) => void;
+}) {
+	const { dragHandleProps, contentRefCallback, resetPosition } =
+		useDraggableDialog();
+
+	React.useEffect(() => {
+		if (!open) {
+			resetPosition();
+		}
+	}, [open, resetPosition]);
+
+	return (
+		<DialogContent
+			ref={contentRefCallback}
+			className="p-4 sm:max-w-sm"
+			onEscapeKeyDown={(e) => e.preventDefault()}
+		>
+			<DialogHeader
+				className="cursor-grab select-none space-y-2 active:cursor-grabbing"
+				{...dragHandleProps}
+			>
+				<DialogTitle className="flex items-center gap-2 text-lg">
+					<RiCalculatorLine className="h-5 w-5" />
+					Calculadora
+				</DialogTitle>
+			</DialogHeader>
+			<Calculator isOpen={open} onSelectValue={onSelectValue} />
+		</DialogContent>
+	);
+}
 
 export function CalculatorDialogButton({
 	variant = "ghost",
@@ -35,10 +73,17 @@ export function CalculatorDialogButton({
 	className,
 	children,
 	withTooltip = false,
+	onSelectValue,
 }: CalculatorDialogButtonProps) {
 	const [open, setOpen] = React.useState(false);
 
-	// Se withTooltip for true, usa o estilo do header
+	const handleSelectValue = onSelectValue
+		? (value: string) => {
+				onSelectValue(value);
+				setOpen(false);
+			}
+		: undefined;
+
 	if (withTooltip) {
 		return (
 			<Dialog open={open} onOpenChange={setOpen}>
@@ -72,20 +117,14 @@ export function CalculatorDialogButton({
 						Calculadora
 					</TooltipContent>
 				</Tooltip>
-				<DialogContent className="p-4 sm:max-w-sm">
-					<DialogHeader className="space-y-2">
-						<DialogTitle className="flex items-center gap-2 text-lg">
-							<RiCalculatorLine className="h-5 w-5" />
-							Calculadora
-						</DialogTitle>
-					</DialogHeader>
-					<Calculator />
-				</DialogContent>
+				<CalculatorDialogContent
+					open={open}
+					onSelectValue={handleSelectValue}
+				/>
 			</Dialog>
 		);
 	}
 
-	// Estilo padrão para outros usos
 	return (
 		<Dialog open={open} onOpenChange={setOpen}>
 			<DialogTrigger asChild>
@@ -95,15 +134,7 @@ export function CalculatorDialogButton({
 					)}
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="p-4 sm:max-w-sm">
-				<DialogHeader className="space-y-2">
-					<DialogTitle className="flex items-center gap-2 text-lg">
-						<RiCalculatorLine className="h-5 w-5" />
-						Calculadora
-					</DialogTitle>
-				</DialogHeader>
-				<Calculator />
-			</DialogContent>
+			<CalculatorDialogContent open={open} onSelectValue={handleSelectValue} />
 		</Dialog>
 	);
 }

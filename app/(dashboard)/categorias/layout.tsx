@@ -15,7 +15,7 @@ export default function RootLayout({
 			<PageDescription
 				icon={<RiPriceTag3Line />}
 				title="Categorias"
-				subtitle="Gerencie suas categorias de despesas e receitas acompanhando o histórico de desempenho dos últimos 9 meses, permitindo ajustes financeiros precisos conforme necessário."
+				subtitle="Gerencie suas categorias de despesas e receitas, permitindo ajustes financeiros precisos conforme necessário."
 			/>
 			{children}
 		</section>
